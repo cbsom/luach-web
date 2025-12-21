@@ -161,7 +161,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   <Plus size={14} />
                 </button>
 
-                <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden">
+                <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden w-full">
                   {date.getDayOfWeek() === 6 && !date.isYomTovOrCholHamoed(location.Israel) && (
                     <div className="shabbos-indicator">
                       {lang === "he"
@@ -169,9 +169,11 @@ export const Calendar: React.FC<CalendarProps> = ({
                         : date.getSedra(location.Israel).toString()}
                     </div>
                   )}
-                  {dayEvents.length + notes.dayNotes.length > 0 && (
-                    <div className="flex flex-row gap-1 justify-center items-center mt-auto overflow-hidden">
-                      {dayEvents.slice(0, 3).map((e) => {
+
+                  {/* User Events - separate row with wrapping */}
+                  {dayEvents.length > 0 && (
+                    <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
+                      {dayEvents.slice(0, 5).map((e) => {
                         const anniv = getAnniversaryNumber(e, date);
                         return (
                           <button
@@ -190,22 +192,42 @@ export const Calendar: React.FC<CalendarProps> = ({
                               justifyContent: "center",
                               borderWidth: 0,
                               fontSize: "9px",
+                              flexShrink: 0,
                             }}>
                             <span
-                              className="truncate font-semibold drop-shadow-md text-[10px]"
-                              style={{ color: e.textColor || "#ffffff" }}>
+                              className="truncate font-semibold drop-shadow-md"
+                              style={{
+                                color: e.textColor || "#ffffff",
+                                maxWidth: "70px",
+                                fontSize: "11px",
+                              }}>
                               {e.name}
                             </span>
                             {anniv > 0 && (
                               <span
-                                className="opacity-80 text-[8px]"
-                                style={{ color: e.textColor || "#ffffff" }}>
-                                #{anniv}
+                                className="font-bold ml-2 px-2 py-0.5 rounded"
+                                style={{
+                                  backgroundColor: e.textColor || "#ffffff",
+                                  color: e.backColor || "var(--accent-amber)",
+                                  fontSize: "10px",
+                                }}>
+                                {anniv}
                               </span>
                             )}
                           </button>
                         );
                       })}
+                      {dayEvents.length > 5 && (
+                        <span className="text-[8px] text-text-secondary">
+                          +{dayEvents.length - 5}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Notifications/Holidays - separate row with wrapping */}
+                  {notes.dayNotes.length > 0 && (
+                    <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
                       {notes.dayNotes.map((note, idx) => (
                         <div key={idx} className="holiday-indicator">
                           {note}

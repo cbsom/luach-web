@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   jDate,
   ZmanimUtils,
@@ -13,6 +13,7 @@ import { EventModal } from "./components/EventModal";
 import { JumpDateModal } from "./components/JumpDateModal";
 import { translations } from "./translations";
 import { UserEvent, UserEventTypes } from "./types";
+import { initDB, getAllEvents, saveAllEvents, migrateFromLocalStorage } from "./db";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<"en" | "he">(() => {
@@ -40,12 +41,43 @@ const App: React.FC = () => {
   const [currentJDate, setCurrentJDate] = useState(new jDate());
   const [selectedJDate, setSelectedJDate] = useState(new jDate());
   const [locationName, setLocationName] = useState("Jerusalem");
-  const [events, setEvents] = useState<UserEvent[]>(() => {
-    const saved = localStorage.getItem("luach-events");
-    return saved ? JSON.parse(saved) : [];
-  });
+
+  // Events are now loaded from IndexedDB, not localStorage
+  const [events, setEvents] = useState<UserEvent[]>([]);
+  const [eventsLoaded, setEventsLoaded] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<UserEvent | null>(null);
+
+  // Initialize IndexedDB and load events on mount
+  useEffect(() => {
+    const initializeDB = async () => {
+      try {
+        // Initialize the database
+        await initDB();
+
+        // Migrate from localStorage if needed (one-time operation)
+        await migrateFromLocalStorage();
+
+        // Load all events from IndexedDB
+        const loadedEvents = await getAllEvents();
+        setEvents(loadedEvents);
+        setEventsLoaded(true);
+
+        console.log(`✅ Loaded ${loadedEvents.length} events from IndexedDB`);
+      } catch (error) {
+        console.error("❌ Failed to initialize database:", error);
+        // Fallback: try to load from localStorage if DB fails
+        const saved = localStorage.getItem("luach-events");
+        if (saved) {
+          setEvents(JSON.parse(saved));
+        }
+        setEventsLoaded(true);
+      }
+    };
+
+    initializeDB();
+  }, []); // Run once on mount
 
   // Form State
   const [formName, setFormName] = useState("");
@@ -73,9 +105,18 @@ const App: React.FC = () => {
     );
   }, [locationName]);
 
-  const saveEvents = (newEvents: UserEvent[]) => {
+  // Save events to IndexedDB (async operation)
+  const saveEvents = async (newEvents: UserEvent[]) => {
     setEvents(newEvents);
-    localStorage.setItem("luach-events", JSON.stringify(newEvents));
+
+    try {
+      await saveAllEvents(newEvents);
+      console.log(`✅ Saved ${newEvents.length} events to IndexedDB`);
+    } catch (error) {
+      console.error("❌ Failed to save events to IndexedDB:", error);
+      // Fallback: save to localStorage if DB fails
+      localStorage.setItem("luach-events", JSON.stringify(newEvents));
+    }
   };
 
   const handleAddEvent = () => {

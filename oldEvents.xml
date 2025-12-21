@@ -1,0 +1,930 @@
+<?xml version="1.0"?>
+<ArrayOfUserOccasion xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>719883</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1971-12-22T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>טאטי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>721204</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1975-08-04T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מאמי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>733029</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2007-12-19T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>לייזר</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>729385</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1997-12-27T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יהודה</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>730776</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2001-10-18T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>חזקיהו</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>727499</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1992-10-28T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מיכאל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>728898</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1996-08-27T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>בח</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>729997</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1999-08-31T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יצי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>728503</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1995-07-29T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>חומי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Lime" />
+    <Color ColorHtml="Black" />
+    <JewishDate>
+      <AbsoluteDate>738194</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-02-08T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נישואין של יצי וצביה</Name>
+    <Notes>אחר שקיעה - ח' אדר א'</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738122</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2021-11-28T07:35:04.1365565+02:00</GregorianDate>
+    </JewishDate>
+    <Name>ידידיה אהרן סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>730862</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2002-01-12T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>צביה</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Lime" />
+    <Color ColorHtml="#400040" />
+    <JewishDate>
+      <AbsoluteDate>735627</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2015-01-29T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נשואין חומי ומיכאל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Lime" />
+    <Color ColorHtml="#400000" />
+    <JewishDate>
+      <AbsoluteDate>728205</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1994-10-04T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נשואין מו"ט</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>734515</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2012-01-13T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>צביקי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>732191</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2005-09-02T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>שני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>731424</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2003-07-28T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אורי</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>735349</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2014-04-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>עקיבא</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>702420</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1924-02-29T14:46:38</GregorianDate>
+    </JewishDate>
+    <Name>Birthday Zaidy Zaidy</Name>
+    <Notes />
+    <SecularDate>1924-02-29T14:46:38</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>736055</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2016-04-01T08:39:01.620247+03:00</GregorianDate>
+    </JewishDate>
+    <Name>מרדכי מאיר אפרים וינקלר</Name>
+    <Notes>נולד בשעה 18:40</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>735294</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2014-03-02T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>עצרת המליון</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#80FF80" />
+    <Color ColorHtml="Green" />
+    <JewishDate>
+      <AbsoluteDate>736228</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2016-09-21T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>Vilna</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>736506</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2017-06-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מיכל חסיה וינקלר</Name>
+    <Notes>12:59 PM</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="Black" />
+    <JewishDate>
+      <AbsoluteDate>735558</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2014-11-21T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אירוסין מיכאל וחומי</Name>
+    <Notes>יום אירוסין ווואורט</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF8000" />
+    <Color ColorHtml="White" />
+    <JewishDate>
+      <AbsoluteDate>736840</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2018-05-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יארצייט זיידי זצ"ל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="Black" />
+    <JewishDate>
+      <AbsoluteDate>736871</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2018-06-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מזל טוב בח ושני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>736878</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2018-07-03T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אירוסין בח ושני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>736938</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2018-09-01T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אריה מנחם וינקלר</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Navy" />
+    <JewishDate>
+      <AbsoluteDate>711383</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1948-09-13T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>Ta</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="#8000FF" />
+    <JewishDate>
+      <AbsoluteDate>737341</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2019-10-09T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>תמר חנה בתיה סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="#9D009D" />
+    <JewishDate>
+      <AbsoluteDate>737422</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2019-12-29T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מזל טוב יהודה וחני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Lime" />
+    <Color ColorHtml="#005900" />
+    <JewishDate>
+      <AbsoluteDate>737500</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2020-03-16T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נשואין יהודה וחני</Name>
+    <Notes>חתונה הוקדמה מליל חמישי לליל שני עקב הבהלה ממגיפת הקורונה. התקיימה בבתים של משפחת קראוס ור' דוב יוסוביץ.</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="White" />
+    <JewishDate>
+      <AbsoluteDate>717311</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1964-12-06T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יארצייט סבא חיים בינוש</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF8000" />
+    <Color ColorHtml="White" />
+    <JewishDate>
+      <AbsoluteDate>737490</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2020-03-06T08:56:06.3874702+02:00</GregorianDate>
+    </JewishDate>
+    <Name>רבינו הגרא"י ברזל זצוק"ל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#80FF00" />
+    <Color ColorHtml="Green" />
+    <JewishDate>
+      <AbsoluteDate>736972</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2018-10-05T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נישואין בח ושני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="#0000A0" />
+    <JewishDate>
+      <AbsoluteDate>737587</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2020-06-11T14:38:46.0490453+03:00</GregorianDate>
+    </JewishDate>
+    <Name>משה שמואל וינקלר</Name>
+    <Notes>נולד בנתניה ב 04:16 בבוקר</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="#008040" />
+    <JewishDate>
+      <AbsoluteDate>737657</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2020-08-20T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>עברנו לירושלים - ארזי הבירה 49</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="#0000A0" />
+    <JewishDate>
+      <AbsoluteDate>737902</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2021-04-22T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אוריאל שלום סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>738097</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2021-11-03T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מזל טוב יצי וצביה</Name>
+    <Notes>אירוסין ווראט</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="#0000A0" />
+    <JewishDate>
+      <AbsoluteDate>712257</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1951-02-04T07:48:51</GregorianDate>
+    </JewishDate>
+    <Name>Ma Birthday</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738168</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-01-13T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יהודה וינקלר</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>738476</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-11-17T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>Bentzy Chasuna</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738476</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-11-17T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>רחל ליבא סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738477</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-11-18T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>שמואל אריה סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>730996</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2002-05-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>חני סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738519</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2022-12-30T12:18:18.1725919+02:00</GregorianDate>
+    </JewishDate>
+    <Name>חוה נעמי סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>738701</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2023-06-30T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>אירס כהן יבין - 11:30</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>738939</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2024-02-23T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>דר כהן יבין 10:00</Name>
+    <Notes>אפרים 10 מודיעין</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>738872</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2023-12-18T08:43:46.0914441+02:00</GregorianDate>
+    </JewishDate>
+    <Name>יהודית וינקלר</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739135</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2024-09-06T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>ד"ר כהן יבין - 11:30 רח' אפרים 10</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Navy" />
+    <JewishDate>
+      <AbsoluteDate>739049</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2024-06-12T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>עדינה חסיה סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>737927</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2021-05-17T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>פגישה עם הרב א. ולדן בענין ישיבת משכן ישראל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>728098</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>1994-06-19T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>פגישה ראשונה</Name>
+    <Notes>בבית של נוטיס</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF8000" />
+    <Color ColorHtml="White" />
+    <JewishDate>
+      <AbsoluteDate>739134</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2024-09-05T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>רבינו הגה"ר אברהם אזבנד זצוק"ל</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>739246</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2024-12-26T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מאיר אלחנן סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739295</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-02-13T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>Kiki Chasuna</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>739287</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-02-05T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>שמעון יהודה סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739306</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-02-24T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>ד"ר כהן יבין - 11:00 רח' אפרים 10</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>true</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="#FF80FF" />
+    <Color ColorHtml="White" />
+    <JewishDate>
+      <AbsoluteDate>739355</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-04-14T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>מזל טוב חזקיהו ושני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Lime" />
+    <Color ColorHtml="#004000" />
+    <JewishDate>
+      <AbsoluteDate>739418</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-06-16T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>יום נישואין - חזקיהו ושני</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739443</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-07-11T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>Dr. Engelbert</Name>
+    <Notes>Vitreous Retina Macula Consultants of New York
+12:00
+950 3rd Ave, 3rd Floor, New York, NY 10022
+(212) 861-9797</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739477</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-08-14T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>ביטוח לאומי לצביקי 11:30</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="#800040" />
+    <JewishDate>
+      <AbsoluteDate>739500</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-09-06T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>שבת בבנות חוה</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="" />
+    <Color ColorHtml="Maroon" />
+    <JewishDate>
+      <AbsoluteDate>739501</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-09-07T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>כנס בוגרות הסמינר החדש</Name>
+    <Notes>0431817</Notes>
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>OneTime</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>739547</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-10-23T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>לאה וינקלר</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+  <UserOccasion>
+    <BackColor ColorHtml="Yellow" />
+    <Color ColorHtml="Blue" />
+    <JewishDate>
+      <AbsoluteDate>739596</AbsoluteDate>
+      <TimeOfDay />
+      <GregorianDate>2025-12-11T00:00:00</GregorianDate>
+    </JewishDate>
+    <Name>דבורה לאה סומרס</Name>
+    <Notes />
+    <SecularDate>0001-01-01T00:00:00</SecularDate>
+    <UserOccasionType>HebrewDateRecurringYearly</UserOccasionType>
+    <SendEmailReminders>false</SendEmailReminders>
+  </UserOccasion>
+</ArrayOfUserOccasion>
