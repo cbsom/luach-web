@@ -12,6 +12,8 @@ import { Calendar } from "./components/Calendar";
 import { EventModal } from "./components/EventModal";
 import { JumpDateModal } from "./components/JumpDateModal";
 import { EventsListModal } from "./components/EventsListModal";
+import { ReminderBanner } from "./components/ReminderBanner";
+
 import { translations } from "./translations";
 import { UserEvent, UserEventTypes } from "./types";
 import { initDB, getAllEvents, saveAllEvents, migrateFromLocalStorage } from "./db";
@@ -93,6 +95,7 @@ const App: React.FC = () => {
 
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false);
   const [isEventsListOpen, setIsEventsListOpen] = useState(false);
+  const [showReminders, setShowReminders] = useState(true);
 
   // Jump State
   const [jumpGregDate, setJumpGregDate] = useState(new Date().toISOString().split("T")[0]);
@@ -230,6 +233,63 @@ const App: React.FC = () => {
   };
 
   const selectedEvents = useMemo(() => getEventsForDate(selectedJDate), [selectedJDate, events]);
+
+  // Check for events with reminders
+  const { todayReminders, tomorrowReminders } = useMemo(() => {
+    const today = new jDate();
+    const tomorrow = today.addDays(1);
+
+    const todayEvents = getEventsForDate(today).filter((e) => e.remindDayOf);
+    const tomorrowEvents = getEventsForDate(tomorrow).filter((e) => e.remindDayBefore);
+
+    return {
+      todayReminders: todayEvents,
+      tomorrowReminders: tomorrowEvents,
+    };
+  }, [events]);
+
+  // Check if reminders were dismissed today
+  useEffect(() => {
+    // Only check after events have loaded
+    if (!eventsLoaded) {
+      return;
+    }
+
+    const dismissedDate = localStorage.getItem("luach-reminders-dismissed");
+    const today = new Date().toDateString();
+
+    // Show reminders if:
+    // 1. Not dismissed today, AND
+    // 2. There are reminders to show
+    if (dismissedDate !== today && (todayReminders.length > 0 || tomorrowReminders.length > 0)) {
+      setShowReminders(true);
+    } else if (dismissedDate === today) {
+      setShowReminders(false);
+    } else if (todayReminders.length === 0 && tomorrowReminders.length === 0) {
+      setShowReminders(false);
+    }
+  }, [eventsLoaded, todayReminders, tomorrowReminders]);
+
+  // Keyboard shortcut to manually show reminders (Ctrl+Shift+R)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl+Shift+R to reset reminders
+      if (e.ctrlKey && e.shiftKey && e.key === "R") {
+        e.preventDefault();
+        localStorage.removeItem("luach-reminders-dismissed");
+        setShowReminders(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
+
+  const handleDismissReminders = () => {
+    const today = new Date().toDateString();
+    localStorage.setItem("luach-reminders-dismissed", today);
+    setShowReminders(false);
+  };
 
   const monthInfo = useMemo(() => {
     const year = currentJDate.Year;
@@ -426,6 +486,17 @@ const App: React.FC = () => {
         handleEditEvent={handleEditEvent}
         deleteEvent={deleteEvent}
       />
+
+      {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
+        <ReminderBanner
+          isOpen={showReminders}
+          todayEvents={todayReminders}
+          tomorrowEvents={tomorrowReminders}
+          lang={lang}
+          onDismiss={handleDismissReminders}
+          onEventClick={handleEditEvent}
+        />
+      )}
 
       <Calendar
         lang={lang}

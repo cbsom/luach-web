@@ -3,6 +3,7 @@ import { X, Download, Upload, Calendar, Edit2, Trash2, ChevronDown, ChevronUp } 
 import { jDate } from "jcal-zmanim";
 import { UserEvent, UserEventTypes } from "../types";
 import { getAnniversaryNumber } from "../utils";
+import { downloadAllEventsAsICS } from "../calendarExport";
 
 interface EventsListModalProps {
   isOpen: boolean;
@@ -352,6 +353,12 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
             <Upload size={16} />
             {lang === "he" ? "ייבא" : "Import"}
+          </button>
+          <button
+            onClick={() => downloadAllEventsAsICS(events)}
+            className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
+            <Download size={16} />
+            {lang === "he" ? "ייצא ליומן" : "Export Calendar"}
           </button>
         </div>
 
