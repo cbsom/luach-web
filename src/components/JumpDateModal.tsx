@@ -43,7 +43,10 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-xl font-black">{t.goToDate}</h3>
-          <button onClick={onClose} className="p-2 btn-warm-transparent rounded-xl transition-all">
+          <button
+            onClick={onClose}
+            className="btn-warm-transparent transition-all"
+            style={{ borderRadius: "100%", width: "2rem", height: "2rem" }}>
             ✕
           </button>
         </div>
@@ -55,7 +58,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
               <span className="w-1.5 h-1.5 rounded-full bg-accent-amber"></span>
               {t.gregDate}
             </h4>
-            <div className="flex gap-2">
+            <div className="flex gap-2 py-3">
               <input
                 type="date"
                 className="form-input"
@@ -74,17 +77,15 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
 
           {/* Jewish */}
           <div className="space-y-4">
-            <h4 className="font-bold text-accent-gold uppercase tracking-wider text-sm flex items-center gap-2">
+            <h4 className="font-bold text-accent-gold uppercase tracking-wider text-sm py-3">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
               {t.jewDate}
             </h4>
-            <div className={`grid grid-cols-3 gap-2 ${lang === "he" ? "rtl" : "ltr"}`}>
-              <div className="form-group">
-                <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-1 block">
-                  {t.day}
-                </label>
+            <div className={`flex gap-2 flex-col ${lang === "he" ? "rtl" : "ltr"}`}>
+              <div className="form-group flex flex-row items-center mb-3">
+                <label className="text-text-secondary">{t.day}</label>
                 <select
-                  className="form-input appearance-none cursor-pointer text-center"
+                  className="form-input appearance-none cursor-pointer text-center flex-1"
                   value={jumpJDay}
                   onChange={(e) => setJumpJDay(parseInt(e.target.value))}>
                   {Array.from({ length: 30 }, (_, i) => i + 1).map((d) => (
@@ -94,12 +95,10 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
                   ))}
                 </select>
               </div>
-              <div className="form-group">
-                <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-1 block">
-                  {t.month}
-                </label>
+              <div className="form-group flex flex-row items-center mb-3">
+                <label className="text-text-secondary">{t.month}</label>
                 <select
-                  className="form-input appearance-none cursor-pointer text-center"
+                  className="form-input appearance-none cursor-pointer text-center flex-1"
                   value={jumpJMonth}
                   onChange={(e) => setJumpJMonth(parseInt(e.target.value))}>
                   {(lang === "he" ? JewishMonthsHeb : JewishMonthsEng)
@@ -111,31 +110,23 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
                     ))}
                 </select>
               </div>
-              <div className="form-group">
-                <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-1 block">
-                  {t.year}
-                </label>
+              <div className="form-group flex flex-row items-center mb-3">
+                <label className="text-text-secondary">{t.year}</label>
                 <input
                   type="number"
-                  className="form-input text-center"
+                  className="form-input text-center flex-1"
                   value={jumpJYear}
                   onChange={(e) => setJumpJYear(parseInt(e.target.value))}
                 />
               </div>
             </div>
-            <button
-              onClick={handleJumpToJewish}
-              className="w-full py-3 mt-2 bg-gradient-to-r from-accent-gold/20 to-accent-gold/10 hover:from-accent-gold/30 hover:to-accent-gold/20 border border-accent-gold/20 text-accent-gold rounded-xl font-bold transition-all shadow-lg hover:shadow-accent-gold/10">
-              {t.goToJewish}
-            </button>
           </div>
         </div>
-
-        <div className="mt-8 flex justify-end">
+        <div className="flex items-center gap-3 py-3">
           <button
-            onClick={onClose}
-            className="px-6 py-2 text-sm font-bold opacity-60 hover:opacity-100 transition-all">
-            {t.close}
+            onClick={handleJumpToJewish}
+            className="px-6 py-3 btn-warm rounded-xl font-bold border transition-all flex-1">
+            {t.goToJewish}
           </button>
         </div>
       </div>

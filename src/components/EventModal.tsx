@@ -52,7 +52,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 2000 }}>
       <div
         className="modal-content glass-panel p-8 shadow-2xl"
         onClick={(e) => e.stopPropagation()}>
@@ -169,7 +169,8 @@ export const EventModal: React.FC<EventModalProps> = ({
         <div className="flex items-center gap-3 mt-8">
           <button
             onClick={onSave}
-            className="flex-grow py-3 bg-accent-amber text-bg-primary font-bold rounded-xl hover:bg-accent-amber/90 transition-all shadow-lg hover:shadow-accent-amber/20">
+            className="flex-grow py-3 bg-accent-amber font-bold rounded-xl hover:bg-accent-amber/90 transition-all shadow-lg hover:shadow-accent-amber/20"
+            style={{ color: "var(--btn-accent-text)" }}>
             {t.saveEvent}
           </button>
           <button

@@ -1,5 +1,13 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, Search, Printer, Plus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Printer,
+  Plus,
+  List,
+  Calendar as CalendarIcon,
+} from "lucide-react";
 import { Utils, jDate, getNotifications, Dafyomi } from "jcal-zmanim";
 import { UserEvent } from "../types";
 import { getAnniversaryNumber } from "../utils";
@@ -10,7 +18,7 @@ interface CalendarProps {
   currentJDate: jDate;
   currentMonthName: string;
   secularMonthRange: string;
-  monthInfo: { days: jDate[]; year: number; month: number };
+  monthInfo: { days: jDate[]; year: number; month: number; weeksNeeded: number };
   selectedJDate: jDate;
   location: any;
   events: UserEvent[];
@@ -19,6 +27,7 @@ interface CalendarProps {
   navigateMonth: (direction: number) => void;
   navigateYear: (direction: number) => void;
   setIsJumpModalOpen: (isOpen: boolean) => void;
+  setIsEventsListOpen: (isOpen: boolean) => void;
   handleAddNewEventForDate: (e: React.MouseEvent, date: jDate) => void;
   handleEditEvent: (event: UserEvent, date: jDate) => void;
   getEventsForDate: (date: jDate) => UserEvent[];
@@ -38,6 +47,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   navigateMonth,
   navigateYear,
   setIsJumpModalOpen,
+  setIsEventsListOpen,
   handleAddNewEventForDate,
   handleEditEvent,
   getEventsForDate,
@@ -107,8 +117,18 @@ export const Calendar: React.FC<CalendarProps> = ({
             style={{
               padding: "0.75rem 1rem",
             }}>
-            <Search size={16} />
+            <CalendarIcon size={16} />
             <span>{t.goToDate}</span>
+          </button>
+
+          <button
+            onClick={() => setIsEventsListOpen(true)}
+            className="btn-warm rounded-2xl border transition-all flex items-center gap-2 font-bold text-sm"
+            style={{
+              padding: "0.75rem 1rem",
+            }}>
+            <List size={16} />
+            <span>{lang === "he" ? "אירועים" : "Events"}</span>
           </button>
         </div>
       </header>
@@ -125,7 +145,11 @@ export const Calendar: React.FC<CalendarProps> = ({
             </div>
           ))}
         </div>
-        <div className="calendar-grid">
+        <div
+          className="calendar-grid"
+          style={{
+            gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
+          }}>
           {monthInfo.days.map((date, i) => {
             const isToday = date.Abs === new jDate().Abs;
             const isSelected = date.Abs === selectedJDate.Abs;
@@ -197,15 +221,15 @@ export const Calendar: React.FC<CalendarProps> = ({
                             <span
                               className="truncate font-semibold drop-shadow-md"
                               style={{
+                                padding: "1px 2px",
                                 color: e.textColor || "#ffffff",
-                                maxWidth: "70px",
-                                fontSize: "11px",
+                                fontSize: "10px",
                               }}>
                               {e.name}
                             </span>
                             {anniv > 0 && (
                               <span
-                                className="font-bold ml-2 px-2 py-0.5 rounded"
+                                className="font-bold px-1 py-0.5 rounded"
                                 style={{
                                   backgroundColor: e.textColor || "#ffffff",
                                   color: e.backColor || "var(--accent-amber)",

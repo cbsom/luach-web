@@ -11,6 +11,7 @@ import { Sidebar } from "./components/Sidebar";
 import { Calendar } from "./components/Calendar";
 import { EventModal } from "./components/EventModal";
 import { JumpDateModal } from "./components/JumpDateModal";
+import { EventsListModal } from "./components/EventsListModal";
 import { translations } from "./translations";
 import { UserEvent, UserEventTypes } from "./types";
 import { initDB, getAllEvents, saveAllEvents, migrateFromLocalStorage } from "./db";
@@ -91,6 +92,7 @@ const App: React.FC = () => {
   const [formRemindDayBefore, setFormRemindDayBefore] = useState(false);
 
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false);
+  const [isEventsListOpen, setIsEventsListOpen] = useState(false);
 
   // Jump State
   const [jumpGregDate, setJumpGregDate] = useState(new Date().toISOString().split("T")[0]);
@@ -233,13 +235,28 @@ const App: React.FC = () => {
     const year = currentJDate.Year;
     const month = currentJDate.Month;
     const firstOfMonth = new jDate(year, month, 1);
+    const lastOfMonth = new jDate(year, month, jDate.daysJMonth(year, month));
     const dayOfWeek = firstOfMonth.getDayOfWeek();
 
+    // Calculate how many weeks we need
+    // Start from the first day shown (which might be from previous month)
+    // End at the last day shown (which might be from next month)
+    const firstDayShown = firstOfMonth.addDays(-dayOfWeek);
+    const lastDayOfWeek = lastOfMonth.getDayOfWeek();
+    const daysAfterMonth = lastDayOfWeek === 6 ? 0 : 6 - lastDayOfWeek;
+    const lastDayShown = lastOfMonth.addDays(daysAfterMonth);
+
+    // Calculate total days needed
+    const totalDays = lastDayShown.Abs - firstDayShown.Abs + 1;
+    const weeksNeeded = Math.ceil(totalDays / 7);
+
     const days = [];
-    for (let i = 0; i < 42; i++) {
+    const daysToShow = weeksNeeded * 7;
+    for (let i = 0; i < daysToShow; i++) {
       days.push(firstOfMonth.addDays(i - dayOfWeek));
     }
-    return { days, year, month };
+
+    return { days, year, month, weeksNeeded };
   }, [currentJDate]);
 
   const secularMonthRange = useMemo(() => {
@@ -425,6 +442,7 @@ const App: React.FC = () => {
         navigateMonth={navigateMonth}
         navigateYear={navigateYear}
         setIsJumpModalOpen={setIsJumpModalOpen}
+        setIsEventsListOpen={setIsEventsListOpen}
         handleAddNewEventForDate={handleAddNewEventForDate}
         handleEditEvent={handleEditEvent}
         getEventsForDate={getEventsForDate}
@@ -469,6 +487,17 @@ const App: React.FC = () => {
         setJumpJYear={setJumpJYear}
         handleJumpToGregorian={handleJumpToGregorian}
         handleJumpToJewish={handleJumpToJewish}
+      />
+
+      <EventsListModal
+        isOpen={isEventsListOpen}
+        onClose={() => setIsEventsListOpen(false)}
+        events={events}
+        lang={lang}
+        t={t}
+        handleEditEvent={handleEditEvent}
+        deleteEvent={deleteEvent}
+        saveEvents={saveEvents}
       />
     </div>
   );
