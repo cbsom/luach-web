@@ -103,6 +103,10 @@ const App: React.FC = () => {
   const [jumpJMonth, setJumpJMonth] = useState(new jDate().Month);
   const [jumpJYear, setJumpJYear] = useState(new jDate().Year);
 
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarDateContext, setSidebarDateContext] = useState<jDate | null>(null);
+
   const location = useMemo(() => {
     return (
       Locations.find((l) => l.Name === locationName) ||
@@ -164,6 +168,10 @@ const App: React.FC = () => {
   const deleteEvent = (id: string) => {
     const newEvents = events.filter((e) => e.id !== id);
     saveEvents(newEvents);
+    // Close the modal and clear editing state after deletion
+    setIsModalOpen(false);
+    setEditingEvent(null);
+    resetForm();
     return true;
   };
 
@@ -185,6 +193,19 @@ const App: React.FC = () => {
     setSelectedJDate(date);
     resetForm();
     setIsModalOpen(true);
+  };
+
+  // Handle showing sidebar for a specific date on mobile
+  const handleShowDateInfo = (e: React.MouseEvent, date: jDate) => {
+    e.stopPropagation();
+    setSelectedJDate(date);
+    setSidebarDateContext(date);
+    setIsSidebarOpen(true);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
+    setSidebarDateContext(null);
   };
 
   const isMonthMatch = (occMonth: number, occYear: number, currMonth: number, currYear: number) => {
@@ -494,6 +515,9 @@ const App: React.FC = () => {
         location={location}
         handleEditEvent={handleEditEvent}
         deleteEvent={deleteEvent}
+        handleAddNewEventForDate={handleAddNewEventForDate}
+        isMobileOpen={isSidebarOpen}
+        onMobileClose={handleCloseSidebar}
       />
 
       {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
@@ -526,6 +550,12 @@ const App: React.FC = () => {
         handleAddNewEventForDate={handleAddNewEventForDate}
         handleEditEvent={handleEditEvent}
         getEventsForDate={getEventsForDate}
+        handleShowDateInfo={handleShowDateInfo}
+        setLang={setLang}
+        locationName={locationName}
+        setLocationName={setLocationName}
+        theme={theme}
+        setTheme={setTheme}
       />
 
       <EventModal

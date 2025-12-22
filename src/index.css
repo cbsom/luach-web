@@ -529,6 +529,415 @@ select {
   background: var(--btn-bg-hover);
 }
 
+/* Mobile Sidebar Styles */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.sidebar {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-close-btn {
+  display: none; /* Hidden by default on desktop */
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1001;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 12px;
+  padding: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar-close-btn:hover {
+  background: var(--btn-bg-hover);
+  border-color: var(--btn-border-hover);
+}
+
+/* Info button on date cells - hidden by default, shown on mobile */
+.day-info-btn {
+  display: none; /* Hidden on desktop */
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  background: var(--accent-coral);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
+  z-index: 10;
+}
+
+[dir="rtl"] .day-info-btn {
+  left: auto;
+  right: 10px;
+}
+
+.day-cell:hover .day-info-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.day-info-btn:hover {
+  background: var(--accent-amber);
+  transform: scale(1.1) !important;
+}
+
+/* Hide mobile controls on desktop */
+.mobile-header-controls,
+.mobile-add-event-btn {
+  display: none;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 1024px) {
+  /* Prevent horizontal scroll */
+  body,
+  #root,
+  .app-container {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-container {
+    padding: 8px;
+  }
+
+  /* Hide sidebar by default on mobile */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100vh;
+    width: 90%;
+    max-width: 400px;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  [dir="rtl"] .sidebar {
+    left: auto;
+    right: -100%;
+  }
+
+  /* Show sidebar when mobile-open class is added */
+  .sidebar.sidebar-mobile-open {
+    left: 0;
+  }
+
+  [dir="rtl"] .sidebar.sidebar-mobile-open {
+    left: auto;
+    right: 0;
+  }
+
+  /* Show close button on mobile */
+  .sidebar-close-btn {
+    display: flex;
+  }
+
+  /* Show info button on mobile */
+  .day-info-btn {
+    display: flex;
+  }
+
+  /* Hide sidebar top controls on mobile (they're in calendar header now) */
+  .sidebar-top-controls {
+    display: none !important;
+  }
+
+  /* Mobile header controls - hidden on desktop, shown on mobile */
+  .mobile-header-controls {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+  }
+
+  [dir="rtl"] .mobile-header-controls {
+    right: auto;
+    left: 12px;
+  }
+
+  .mobile-control-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-control-btn:hover {
+    background: var(--btn-bg-hover);
+    border-color: var(--btn-border-hover);
+  }
+
+  .mobile-control-text {
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+  }
+
+  .mobile-control-select {
+    padding: 4px 24px 4px 8px;
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.65rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    max-width: 120px;
+  }
+
+  .mobile-control-select:focus {
+    border-color: var(--accent-amber);
+  }
+
+  /* Show mobile Add Event button */
+  .mobile-add-event-btn {
+    display: flex !important;
+  }
+
+  /* Adjust main content to full width on mobile */
+  .app-container {
+    flex-direction: column;
+  }
+
+  .main-content {
+    width: 100%;
+    max-width: 100%;
+    gap: 12px;
+    padding: 0;
+  }
+
+  /* Responsive Calendar Header */
+  .glass-panel {
+    padding: 12px !important;
+  }
+
+  .main-content > header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch !important;
+    position: relative; /* For absolute positioning of mobile controls */
+  }
+
+  /* Make month/year text smaller on mobile to prevent overlap */
+  .calendar-month-year {
+    font-size: 1.1rem !important;
+    padding-right: 180px; /* Space for mobile controls */
+  }
+
+  [dir="rtl"] .calendar-month-year {
+    padding-right: 0;
+    padding-left: 180px;
+  }
+
+  .calendar-month-year span {
+    font-size: 0.7rem !important;
+  }
+
+  .main-content > header > div:first-child h1 {
+    font-size: 1.25rem !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .main-content > header > div:first-child h1 span {
+    font-size: 0.75rem !important;
+  }
+
+  /* Compact navigation buttons */
+  .main-content > header > div:last-child {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    justify-content: space-between;
+  }
+
+  .main-content > header button {
+    padding: 6px 8px !important;
+    font-size: 0.75rem !important;
+    min-width: auto !important;
+  }
+
+  .main-content > header button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Make navigation controls more compact */
+  .main-content > header > div:last-child > div:first-child {
+    padding: 4px !important;
+  }
+
+  .main-content > header > div:last-child > div:first-child button {
+    padding: 4px !important;
+  }
+
+  /* Responsive day labels */
+  .calendar-header-days {
+    font-size: 0.6rem;
+    padding: 0 0 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Responsive calendar grid - CRITICAL FIX */
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 2px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Responsive date cells */
+  .day-cell {
+    min-height: 70px;
+    min-width: 0;
+    padding: 4px;
+    gap: 2px;
+  }
+
+  .day-number-container {
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hebrew-day {
+    font-size: 0.7rem;
+  }
+
+  .secular-day {
+    font-size: 0.65rem;
+  }
+
+  /* Hide add button on mobile (info button replaces it) */
+  .day-add-btn {
+    display: none !important;
+  }
+
+  /* Adjust info button position */
+  .day-info-btn {
+    bottom: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [dir="rtl"] .day-info-btn {
+    left: auto;
+    right: 4px;
+  }
+
+  .day-info-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Shabbos indicator */
+  .shabbos-indicator {
+    font-size: 0.5rem;
+    padding: 2px 4px;
+  }
+
+  /* Holiday indicator */
+  .holiday-indicator {
+    font-size: 0.45rem;
+    padding: 1px 3px;
+  }
+
+  /* Event badges in cells */
+  .day-cell button[style*="backgroundColor"] {
+    font-size: 0.5rem !important;
+    padding: 1px 3px !important;
+    border-radius: 3px !important;
+  }
+
+  .day-cell button[style*="backgroundColor"] span {
+    font-size: 0.5rem !important;
+  }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 480px) {
+  .main-content {
+    gap: 8px;
+  }
+
+  .glass-panel {
+    padding: 8px !important;
+  }
+
+  .main-content > header > div:first-child h1 {
+    font-size: 1.1rem !important;
+  }
+
+  .main-content > header > div:first-child h1 span {
+    font-size: 0.7rem !important;
+  }
+
+  .calendar-header-days {
+    font-size: 0.55rem;
+  }
+
+  .day-cell {
+    min-height: 60px;
+    padding: 3px;
+  }
+
+  .hebrew-day {
+    font-size: 0.65rem;
+  }
+
+  .secular-day {
+    font-size: 0.6rem;
+  }
+
+  .shabbos-indicator {
+    font-size: 0.45rem;
+    padding: 1px 3px;
+  }
+
+  .holiday-indicator {
+    font-size: 0.4rem;
+    padding: 1px 2px;
+  }
+}
+
 /* Border Radius Utilities */
 .rounded-md {
   border-radius: 6px;

@@ -7,8 +7,11 @@ import {
   Plus,
   List,
   Calendar as CalendarIcon,
+  Info,
+  Globe,
+  Palette,
 } from "lucide-react";
-import { Utils, jDate, getNotifications, Dafyomi } from "jcal-zmanim";
+import { Utils, jDate, getNotifications, Dafyomi, Locations } from "jcal-zmanim";
 import { UserEvent } from "../types";
 import { getAnniversaryNumber } from "../utils";
 
@@ -31,6 +34,12 @@ interface CalendarProps {
   handleAddNewEventForDate: (e: React.MouseEvent, date: jDate) => void;
   handleEditEvent: (event: UserEvent, date: jDate) => void;
   getEventsForDate: (date: jDate) => UserEvent[];
+  handleShowDateInfo: (e: React.MouseEvent, date: jDate) => void;
+  setLang: (lang: "en" | "he") => void;
+  locationName: string;
+  setLocationName: (name: string) => void;
+  theme: "warm" | "dark" | "light";
+  setTheme: (theme: "warm" | "dark" | "light") => void;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -51,12 +60,63 @@ export const Calendar: React.FC<CalendarProps> = ({
   handleAddNewEventForDate,
   handleEditEvent,
   getEventsForDate,
+  handleShowDateInfo,
+  setLang,
+  locationName,
+  setLocationName,
+  theme,
+  setTheme,
 }) => {
+  const getThemeIcon = () => {
+    switch (theme) {
+      case "warm":
+        return "🔥";
+      case "dark":
+        return "🌙";
+      case "light":
+        return "☀️";
+    }
+  };
+
   return (
     <main className="main-content fade-in" style={{ animationDelay: "0.1s" }}>
-      <header className="glass-panel p-6 px-10 flex items-center justify-between">
+      <header className="glass-panel p-6 px-10 flex items-center justify-between calendar-header">
+        {/* Mobile-only controls - top right */}
+        <div className="mobile-header-controls">
+          <button
+            onClick={() => setLang(lang === "en" ? "he" : "en")}
+            className="mobile-control-btn"
+            title={lang === "en" ? "עברית" : "English"}>
+            <Globe size={16} />
+            <span className="mobile-control-text">{lang === "en" ? "HE" : "EN"}</span>
+          </button>
+
+          <select
+            value={locationName}
+            onChange={(e) => setLocationName(e.target.value)}
+            className="mobile-control-select">
+            {Locations.sort((a, b) => a.Name.localeCompare(b.Name)).map((loc) => (
+              <option key={loc.Name} value={loc.Name}>
+                {loc.Name}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={() => {
+              const themes: Array<"warm" | "dark" | "light"> = ["warm", "dark", "light"];
+              const currentIndex = themes.indexOf(theme);
+              const nextIndex = (currentIndex + 1) % themes.length;
+              setTheme(themes[nextIndex]);
+            }}
+            className="mobile-control-btn"
+            title="Change theme">
+            <span style={{ fontSize: "16px" }}>{getThemeIcon()}</span>
+          </button>
+        </div>
+
         <div className="flex items-center gap-6">
-          <h1 className="text-3xl font-black flex items-baseline gap-4">
+          <h1 className="text-3xl font-black flex items-baseline gap-4 calendar-month-year">
             {currentMonthName}{" "}
             {lang === "he" ? Utils.toJewishNumber(currentJDate.Year % 1000) : currentJDate.Year}
             <span className="text-lg font-medium text-text-secondary">{secularMonthRange}</span>
@@ -190,6 +250,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                     onClick={(e) => handleAddNewEventForDate(e, date)}
                     title={t.addEvent}>
                     <Plus size={14} />
+                  </button>
+
+                  <button
+                    className="day-info-btn"
+                    onClick={(e) => handleShowDateInfo(e, date)}
+                    title={lang === "he" ? "הצג פרטים" : "Show Details"}>
+                    <Info size={14} />
                   </button>
 
                   <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden w-full">
