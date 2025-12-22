@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }}>
               {Locations.sort((a, b) => a.Name.localeCompare(b.Name)).map((loc) => (
                 <option key={loc.Name} value={loc.Name} className="bg-bg-primary">
-                  {loc.Name}
+                  {lang === "he" && (loc as any).NameHebrew ? (loc as any).NameHebrew : loc.Name}
                 </option>
               ))}
             </select>
@@ -204,16 +204,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* DAILY NOTES */}
           {(() => {
-            const dafEng = Dafyomi.toString(selectedJDate);
-            const dafHeb = Dafyomi.toStringHeb(selectedJDate);
-            const filteredNotes = selectedNotes.dayNotes.filter(
-              (n: string) => n !== dafEng && n !== dafHeb
-            );
-
             return (
-              filteredNotes.length > 0 && (
+              selectedNotes.dayNotes.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {filteredNotes.map((note: string, idx: number) => (
+                  {selectedNotes.dayNotes.map((note: string, idx: number) => (
                     <span
                       key={idx}
                       className="font-bold text-accent-rose border border-accent-rose/10 leading-none shadow-sm"

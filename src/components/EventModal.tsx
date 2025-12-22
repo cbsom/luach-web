@@ -1,4 +1,5 @@
 import React from "react";
+import { Trash2 } from "lucide-react";
 import { jDate } from "jcal-zmanim";
 import { UserEvent, UserEventTypes } from "../types";
 
@@ -24,6 +25,7 @@ interface EventModalProps {
   formRemindDayBefore: boolean;
   setFormRemindDayBefore: (val: boolean) => void;
   onSave: () => void;
+  onDelete: (id: string) => void;
 }
 
 export const EventModal: React.FC<EventModalProps> = ({
@@ -48,6 +50,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   formRemindDayBefore,
   setFormRemindDayBefore,
   onSave,
+  onDelete,
 }) => {
   if (!isOpen) return null;
 
@@ -166,16 +169,31 @@ export const EventModal: React.FC<EventModalProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mt-8">
+        <div className="flex items-center gap-3 p-3">
+          {editingEvent && (
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    t.deleteConfirmation || "Are you sure you want to delete this event?"
+                  )
+                ) {
+                  onDelete(editingEvent.id);
+                  onClose();
+                }
+              }}
+              className="p-3 btn-warm rounded-xl border transition-all"
+              title={t.deleteEvent}>
+              <Trash2 size={18} />
+            </button>
+          )}
           <button
             onClick={onSave}
-            className="flex-grow py-3 bg-accent-amber font-bold rounded-xl hover:bg-accent-amber/90 transition-all shadow-lg hover:shadow-accent-amber/20"
-            style={{ color: "var(--btn-accent-text)" }}>
+            className="flex-grow py-3 btn-warm rounded-xl hover:bg-accent-amber/90 transition-all shadow-lg hover:shadow-accent-amber/20"
+            style={{ fontWeight: "bold" }}>
             {t.saveEvent}
           </button>
-          <button
-            onClick={onClose}
-            className="px-6 py-3 btn-warm rounded-xl font-bold border transition-all">
+          <button onClick={onClose} className="px-6 py-3 btn-warm rounded-xl border transition-all">
             {t.cancel}
           </button>
         </div>

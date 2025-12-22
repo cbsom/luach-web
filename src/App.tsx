@@ -387,19 +387,28 @@ const App: React.FC = () => {
   // Wait, I didn't import Dafyomi in the App code block above. I should add it.
 
   const navigateMonth = (direction: number) => {
+    let newDate;
     if (direction > 0) {
-      setCurrentJDate(currentJDate.addMonths(1));
+      newDate = currentJDate.addMonths(1);
     } else {
-      setCurrentJDate(currentJDate.addMonths(-1));
+      newDate = currentJDate.addMonths(-1);
     }
+    setCurrentJDate(newDate);
+    setSelectedJDate(newDate);
+    // Reset selected day to 1st of month to avoid confusion?
+    // Actually addMonths keeps the day if possible.
+    // "5th of Nisan" -> "5th of Iyar". This is reasonable.
   };
 
   const navigateYear = (direction: number) => {
+    let newDate;
     if (direction > 0) {
-      setCurrentJDate(currentJDate.addYears(1));
+      newDate = currentJDate.addYears(1);
     } else {
-      setCurrentJDate(currentJDate.addYears(-1));
+      newDate = currentJDate.addYears(-1);
     }
+    setCurrentJDate(newDate);
+    setSelectedJDate(newDate);
   };
 
   const handleJumpToGregorian = () => {
@@ -541,6 +550,7 @@ const App: React.FC = () => {
         formRemindDayBefore={formRemindDayBefore}
         setFormRemindDayBefore={setFormRemindDayBefore}
         onSave={handleAddEvent}
+        onDelete={deleteEvent}
       />
 
       <JumpDateModal

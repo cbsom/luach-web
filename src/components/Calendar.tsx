@@ -57,7 +57,8 @@ export const Calendar: React.FC<CalendarProps> = ({
       <header className="glass-panel p-6 px-10 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <h1 className="text-3xl font-black flex items-baseline gap-4">
-            {currentMonthName} {currentJDate.Year}
+            {currentMonthName}{" "}
+            {lang === "he" ? Utils.toJewishNumber(currentJDate.Year % 1000) : currentJDate.Year}
             <span className="text-lg font-medium text-text-secondary">{secularMonthRange}</span>
           </h1>
         </div>
@@ -150,119 +151,126 @@ export const Calendar: React.FC<CalendarProps> = ({
           style={{
             gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
           }}>
-          {monthInfo.days.map((date, i) => {
-            const isToday = date.Abs === new jDate().Abs;
-            const isSelected = date.Abs === selectedJDate.Abs;
-            const isOtherMonth = date.Month !== currentJDate.Month;
-            const notes = getNotifications(date, { hour: 10, minute: 0 }, location, lang === "en");
-            const dafEng = Dafyomi.toString(date);
-            const dafHeb = Dafyomi.toStringHeb(date);
-            notes.dayNotes = notes.dayNotes.filter((n) => n !== dafEng && n !== dafHeb);
-            const dayEvents = getEventsForDate(date);
+          {(() => {
+            const todayAbs = new jDate().Abs;
+            return monthInfo.days.map((date, i) => {
+              const isToday = date.Abs === todayAbs;
+              const isSelected = date.Abs === selectedJDate.Abs;
+              const isOtherMonth = date.Month !== currentJDate.Month;
+              const notes = getNotifications(
+                date,
+                { hour: 10, minute: 0 },
+                location,
+                lang === "en",
+                true,
+                false
+              );
+              const dayEvents = getEventsForDate(date);
 
-            // Shabbos or Yom Tov check for lighter background
-            const isYomTov = date.isYomTov(location.Israel);
-            const isShabbos = date.getDayOfWeek() === 6;
-            const isHolidayBg = isShabbos || isYomTov;
+              // Shabbos or Yom Tov check for lighter background
+              const isYomTov = date.isYomTov(location.Israel);
+              const isShabbos = date.getDayOfWeek() === 6;
+              const isHolidayBg = isShabbos || isYomTov;
 
-            return (
-              <div
-                key={i}
-                className={`day-cell ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${
-                  isOtherMonth ? "other-month" : ""
-                }`}
-                onClick={() => setSelectedJDate(date)}
-                style={isHolidayBg ? { background: "rgba(61, 36, 24, 0.3)" } : {}}>
-                <div className="day-number-container">
-                  <span className="hebrew-day">{Utils.toJewishNumber(date.Day)}</span>
-                  <span className="secular-day">{date.getDate().getDate()}</span>
-                </div>
+              return (
+                <div
+                  key={i}
+                  className={`day-cell ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${
+                    isOtherMonth ? "other-month" : ""
+                  }`}
+                  onClick={() => setSelectedJDate(date)}
+                  style={isHolidayBg ? { background: "rgba(61, 36, 24, 0.3)" } : {}}>
+                  <div className="day-number-container">
+                    <span className="hebrew-day">{Utils.toJewishNumber(date.Day)}</span>
+                    <span className="secular-day">{date.getDate().getDate()}</span>
+                  </div>
 
-                <button
-                  className="day-add-btn"
-                  onClick={(e) => handleAddNewEventForDate(e, date)}
-                  title={t.addEvent}>
-                  <Plus size={14} />
-                </button>
+                  <button
+                    className="day-add-btn"
+                    onClick={(e) => handleAddNewEventForDate(e, date)}
+                    title={t.addEvent}>
+                    <Plus size={14} />
+                  </button>
 
-                <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden w-full">
-                  {date.getDayOfWeek() === 6 && !date.isYomTovOrCholHamoed(location.Israel) && (
-                    <div className="shabbos-indicator">
-                      {lang === "he"
-                        ? date.getSedra(location.Israel).toStringHeb()
-                        : date.getSedra(location.Israel).toString()}
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden w-full">
+                    {date.getDayOfWeek() === 6 && !date.isYomTovOrCholHamoed(location.Israel) && (
+                      <div className="shabbos-indicator">
+                        {lang === "he"
+                          ? date.getSedra(location.Israel).toStringHeb()
+                          : date.getSedra(location.Israel).toString()}
+                      </div>
+                    )}
 
-                  {/* User Events - separate row with wrapping */}
-                  {dayEvents.length > 0 && (
-                    <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
-                      {dayEvents.slice(0, 5).map((e) => {
-                        const anniv = getAnniversaryNumber(e, date);
-                        return (
-                          <button
-                            key={e.id}
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                              handleEditEvent(e, date);
-                            }}
-                            style={{
-                              backgroundColor: e.backColor || "var(--accent-amber)",
-                              borderRadius: 6,
-                              padding: "2px 4px",
-                              textAlign: "center",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              borderWidth: 0,
-                              fontSize: "9px",
-                              flexShrink: 0,
-                            }}>
-                            <span
-                              className="truncate font-semibold drop-shadow-md"
+                    {/* User Events - separate row with wrapping */}
+                    {dayEvents.length > 0 && (
+                      <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
+                        {dayEvents.slice(0, 5).map((e) => {
+                          const anniv = getAnniversaryNumber(e, date);
+                          return (
+                            <button
+                              key={e.id}
+                              onClick={(evt) => {
+                                evt.stopPropagation();
+                                handleEditEvent(e, date);
+                              }}
                               style={{
-                                padding: "1px 2px",
-                                color: e.textColor || "#ffffff",
-                                fontSize: "10px",
+                                backgroundColor: e.backColor || "var(--accent-amber)",
+                                borderRadius: 6,
+                                padding: "2px 4px",
+                                textAlign: "center",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderWidth: 0,
+                                fontSize: "9px",
+                                flexShrink: 0,
                               }}>
-                              {e.name}
-                            </span>
-                            {anniv > 0 && (
                               <span
-                                className="font-bold px-1 py-0.5 rounded"
+                                className="truncate font-semibold drop-shadow-md"
                                 style={{
-                                  backgroundColor: e.textColor || "#ffffff",
-                                  color: e.backColor || "var(--accent-amber)",
+                                  padding: "1px 2px",
+                                  color: e.textColor || "#ffffff",
                                   fontSize: "10px",
                                 }}>
-                                {anniv}
+                                {e.name}
                               </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                      {dayEvents.length > 5 && (
-                        <span className="text-[8px] text-text-secondary">
-                          +{dayEvents.length - 5}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                              {anniv > 0 && (
+                                <span
+                                  className="font-bold px-1 py-0.5 rounded"
+                                  style={{
+                                    backgroundColor: e.textColor || "#ffffff",
+                                    color: e.backColor || "var(--accent-amber)",
+                                    fontSize: "10px",
+                                  }}>
+                                  {anniv}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                        {dayEvents.length > 5 && (
+                          <span className="text-[8px] text-text-secondary">
+                            +{dayEvents.length - 5}
+                          </span>
+                        )}
+                      </div>
+                    )}
 
-                  {/* Notifications/Holidays - separate row with wrapping */}
-                  {notes.dayNotes.length > 0 && (
-                    <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
-                      {notes.dayNotes.map((note, idx) => (
-                        <div key={idx} className="holiday-indicator">
-                          {note}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    {/* Notifications/Holidays - separate row with wrapping */}
+                    {notes.dayNotes.length > 0 && (
+                      <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
+                        {notes.dayNotes.map((note, idx) => (
+                          <div key={idx} className="holiday-indicator">
+                            {note}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       </section>
     </main>

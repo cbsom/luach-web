@@ -1,5 +1,5 @@
 import React from "react";
-import { jDate, JewishMonthsHeb, JewishMonthsEng } from "jcal-zmanim";
+import { jDate, JewishMonthsHeb, JewishMonthsEng, Utils } from "jcal-zmanim";
 
 interface JumpDateModalProps {
   isOpen: boolean;
@@ -112,12 +112,19 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
               </div>
               <div className="form-group flex flex-row items-center mb-3">
                 <label className="text-text-secondary">{t.year}</label>
-                <input
-                  type="number"
-                  className="form-input text-center flex-1"
+                <select
+                  className="form-input appearance-none cursor-pointer text-center flex-1"
                   value={jumpJYear}
-                  onChange={(e) => setJumpJYear(parseInt(e.target.value))}
-                />
+                  onChange={(e) => setJumpJYear(parseInt(e.target.value))}>
+                  {(() => {
+                    const currentYear = new jDate().Year;
+                    return Array.from({ length: 200 }, (_, i) => currentYear - 100 + i).map((y) => (
+                      <option key={y} value={y} className="bg-bg-primary">
+                        {lang === "he" ? Utils.toJewishNumber(y % 1000) : y}
+                      </option>
+                    ));
+                  })()}
+                </select>
               </div>
             </div>
           </div>
