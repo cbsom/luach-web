@@ -3,6 +3,7 @@ import { MapPin, BookOpen, HandHelping, X, Plus, Trash } from "lucide-react";
 import { Locations, Dafyomi, Utils, jDate } from "jcal-zmanim";
 import { UserEvent } from "../types";
 import { formatTime, getAnniversaryNumber } from "../utils";
+import { ToggleSwitch } from "./ToggleSwitch";
 
 interface SidebarProps {
   lang: "en" | "he";
@@ -22,6 +23,11 @@ interface SidebarProps {
   handleAddNewEventForDate: (e: React.MouseEvent, date: jDate) => void;
   isMobileOpen: boolean;
   onMobileClose: () => void;
+  onLogout: () => void;
+  user: any;
+  onLogin: () => void;
+  todayStartMode: "sunset" | "midnight";
+  setTodayStartMode: (mode: "sunset" | "midnight") => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -42,6 +48,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   handleAddNewEventForDate,
   isMobileOpen,
   onMobileClose,
+  onLogout,
+  user,
+  onLogin,
+  todayStartMode,
+  setTodayStartMode,
 }) => {
   const cycleTheme = () => {
     const themes: Array<"warm" | "dark" | "light"> = ["warm", "dark", "light"];
@@ -142,6 +153,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Today Start Mode Toggle */}
+            <div className="flex flex-col gap-1 mt-1">
+              <label className="text-[9px] font-bold uppercase tracking-wider opacity-60 px-1">
+                {t.todayStart}
+              </label>
+              <ToggleSwitch
+                leftLabel={t.sunset}
+                rightLabel={t.midnight}
+                value={todayStartMode === "sunset" ? "left" : "right"}
+                onChange={(val) => setTodayStartMode(val === "left" ? "sunset" : "midnight")}
+              />
             </div>
           </div>
         </div>
@@ -331,6 +355,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </div>
           </section>
+
+          {/* USER / AUTH SECTION */}
+          <div className="mt-auto pt-4 border-t border-glass-border/30">
+            {user ? (
+              <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt=""
+                      className="rounded-full border border-accent-gold/30"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  ) : (
+                    <div
+                      className="rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold font-bold"
+                      style={{ width: "20px", height: "20px", fontSize: "10px" }}>
+                      {user.displayName?.[0] || user.email?.[0] || "?"}
+                    </div>
+                  )}
+                  <div className="flex flex-col overflow-hidden">
+                    <span
+                      className="font-bold truncate leading-none mb-0.5"
+                      style={{ fontSize: "11px" }}>
+                      {user.displayName || user.email}
+                    </span>
+                    <span
+                      className="text-accent-gold font-bold uppercase tracking-widest opacity-70"
+                      style={{ fontSize: "9px" }}>
+                      {t.cloud}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={onLogout}
+                  className="p-2 hover:bg-red-500/10 text-red-400 hover:text-red-500 rounded-lg transition-all"
+                  title={t.signOut}>
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onLogin}
+                className="flex items-center justify-center gap-2 py-2 rounded-xl btn-warm border font-bold transition-all hover:scale-[1.02] shadow-lg"
+                style={{ width: "100%", fontSize: "11px" }}>
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt=""
+                  style={{ width: "14px", height: "14px" }}
+                />
+                <span>{t.signInWithGoogle}</span>
+              </button>
+            )}
+          </div>
         </div>
       </aside>
     </>

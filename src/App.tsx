@@ -6,6 +6,7 @@ import {
   JewishMonthsHeb,
   JewishMonthsEng,
   getNotifications,
+  Utils,
 } from "jcal-zmanim";
 import { Sidebar } from "./components/Sidebar";
 import { Calendar } from "./components/Calendar";
@@ -13,6 +14,19 @@ import { EventModal } from "./components/EventModal";
 import { JumpDateModal } from "./components/JumpDateModal";
 import { EventsListModal } from "./components/EventsListModal";
 import { ReminderBanner } from "./components/ReminderBanner";
+import { NotificationService } from "./NotificationService";
+import { auth, googleProvider, db } from "./firebase";
+import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
+import {
+  collection,
+  onSnapshot,
+  query,
+  setDoc,
+  doc,
+  deleteDoc,
+  writeBatch,
+  getDocs,
+} from "firebase/firestore";
 
 import { translations } from "./translations";
 import { UserEvent, UserEventTypes } from "./types";
@@ -29,7 +43,32 @@ const App: React.FC = () => {
     return saved === "warm" || saved === "dark" || saved === "light" ? saved : "warm";
   });
 
+  const [user, setUser] = useState<User | null>(null);
+
   const t = translations[lang];
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   React.useEffect(() => {
     document.body.dir = lang === "he" ? "rtl" : "ltr";
@@ -41,9 +80,23 @@ const App: React.FC = () => {
     localStorage.setItem("luach-theme", theme);
   }, [theme]);
 
-  const [currentJDate, setCurrentJDate] = useState(new jDate());
-  const [selectedJDate, setSelectedJDate] = useState(new jDate());
   const [locationName, setLocationName] = useState("Jerusalem");
+
+  const [todayStartMode, setTodayStartMode] = useState<"sunset" | "midnight">(() => {
+    return (localStorage.getItem("luach-today-start") as "sunset" | "midnight") || "sunset";
+  });
+
+  const location = useMemo(() => {
+    return (
+      Locations.find((l) => l.Name === locationName) ||
+      Locations.find((l) => l.Name === "Jerusalem")!
+    );
+  }, [locationName]);
+
+  const [currentJDate, setCurrentJDate] = useState(() =>
+    todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate()
+  );
+  const [selectedJDate, setSelectedJDate] = useState(currentJDate);
 
   // Events are now loaded from IndexedDB, not localStorage
   const [events, setEvents] = useState<UserEvent[]>([]);
@@ -52,35 +105,66 @@ const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<UserEvent | null>(null);
 
-  // Initialize IndexedDB and load events on mount
+  // Initialize events and handle Cloud Sync
   useEffect(() => {
-    const initializeDB = async () => {
-      try {
-        // Initialize the database
-        await initDB();
+    let unsubscribe: (() => void) | undefined;
 
-        // Migrate from localStorage if needed (one-time operation)
-        await migrateFromLocalStorage();
+    const syncEvents = async () => {
+      if (user) {
+        console.log("☁️ User logged in, setting up Firestore sync...");
+        const eventsRef = collection(db, "users", user.uid, "events");
+        const q = query(eventsRef);
 
-        // Load all events from IndexedDB
-        const loadedEvents = await getAllEvents();
-        setEvents(loadedEvents);
-        setEventsLoaded(true);
+        unsubscribe = onSnapshot(q, async (snapshot) => {
+          const cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
 
-        console.log(`✅ Loaded ${loadedEvents.length} events from IndexedDB`);
-      } catch (error) {
-        console.error("❌ Failed to initialize database:", error);
-        // Fallback: try to load from localStorage if DB fails
-        const saved = localStorage.getItem("luach-events");
-        if (saved) {
-          setEvents(JSON.parse(saved));
+          // Migration Logic: If cloud is empty but local has data
+          if (cloudEvents.length === 0) {
+            const localEvents = await getAllEvents();
+            if (localEvents.length > 0) {
+              console.log(`📦 Migrating ${localEvents.length} events to Cloud...`);
+              const batch = writeBatch(db);
+              localEvents.forEach((event) => {
+                const docRef = doc(db, "users", user.uid, "events", event.id);
+                batch.set(docRef, event);
+              });
+              await batch.commit();
+              return; // The next snapshot will have the data
+            }
+          }
+
+          setEvents(cloudEvents);
+          setEventsLoaded(true);
+        });
+      } else {
+        console.log("🏠 No user, loading from local IndexedDB...");
+        try {
+          await initDB();
+          await migrateFromLocalStorage();
+          const localEvents = await getAllEvents();
+          setEvents(localEvents);
+          setEventsLoaded(true);
+        } catch (error) {
+          console.error("❌ Local DB Load Failed:", error);
+          setEventsLoaded(true);
         }
-        setEventsLoaded(true);
       }
     };
 
-    initializeDB();
-  }, []); // Run once on mount
+    syncEvents();
+    return () => unsubscribe?.();
+  }, [user]);
+
+  // Check for notifications when events are loaded
+  useEffect(() => {
+    if (eventsLoaded && events.length > 0) {
+      // Delay slightly to ensure user has focused the page/app
+      const timer = setTimeout(() => {
+        NotificationService.checkAndNotify(events, user, db);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [events, eventsLoaded]);
 
   // Form State
   const [formName, setFormName] = useState("");
@@ -107,30 +191,116 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarDateContext, setSidebarDateContext] = useState<jDate | null>(null);
 
-  const location = useMemo(() => {
-    return (
-      Locations.find((l) => l.Name === locationName) ||
-      Locations.find((l) => l.Name === "Jerusalem")!
-    );
-  }, [locationName]);
+  useEffect(() => {
+    localStorage.setItem("luach-today-start", todayStartMode);
+    const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+    setCurrentJDate(today);
+    // Only update selectedJDate if it was already "today"
+    if (Utils.isSameJdate(selectedJDate, currentJDate)) {
+      setSelectedJDate(today);
+    }
+  }, [todayStartMode, location]);
 
-  // Save events to IndexedDB (async operation)
-  const saveEvents = async (newEvents: UserEvent[]) => {
-    setEvents(newEvents);
+  // Automatic Refresh logic (Midnight & Sunset)
+  useEffect(() => {
+    let timeoutId: any;
+
+    const scheduleNextRefresh = () => {
+      const now = new Date();
+
+      // 1. Calculate ms to next Midnight (Secular Refresh)
+      const nextMidnight = new Date();
+      nextMidnight.setHours(24, 0, 0, 0);
+      const msToMidnight = nextMidnight.getTime() - now.getTime();
+
+      // 2. Calculate ms to next Sunset (Jewish Date Refresh)
+      const getSunset = (date: jDate) => {
+        const zmanim = ZmanimUtils.getAllZmanim(date, location);
+        return zmanim.find((z) => z.zmanType.id === 15)?.time;
+      };
+
+      const sunsetTime = getSunset(new jDate());
+      let msToSunset = -1;
+
+      if (sunsetTime) {
+        const sunsetDate = new Date();
+        sunsetDate.setHours(sunsetTime.hour, sunsetTime.minute, 0, 0);
+        msToSunset = sunsetDate.getTime() - now.getTime();
+      }
+
+      // If sunset already passed today or wasn't found, get tomorrow's sunset
+      if (msToSunset <= 0) {
+        const tomorrowJ = new jDate().addDays(1);
+        const sunsetTimeTomorrow = getSunset(tomorrowJ);
+        if (sunsetTimeTomorrow) {
+          const sunsetTomorrow = new Date();
+          sunsetTomorrow.setDate(sunsetTomorrow.getDate() + 1);
+          sunsetTomorrow.setHours(sunsetTimeTomorrow.hour, sunsetTimeTomorrow.minute, 0, 0);
+          msToSunset = sunsetTomorrow.getTime() - now.getTime();
+        } else {
+          msToSunset = msToMidnight + 1000; // Fallback to after midnight
+        }
+      }
+
+      // Refresh at whichever comes first, but at least 10 seconds apart
+      const msToNextRefresh = Math.max(10000, Math.min(msToMidnight, msToSunset));
+
+      console.log(
+        `🕒 Next auto-refresh in ${Math.round(msToNextRefresh / 60000)}m (at ${
+          msToMidnight < msToSunset ? "Midnight" : "Sunset"
+        })`
+      );
+
+      timeoutId = setTimeout(() => {
+        console.log("🔄 Refreshing Luach for new day...");
+        const refreshedDate =
+          todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+        setCurrentJDate(refreshedDate);
+        setSelectedJDate(refreshedDate);
+        scheduleNextRefresh();
+      }, msToNextRefresh + 2000);
+    };
+
+    scheduleNextRefresh();
+    return () => clearTimeout(timeoutId);
+  }, [location, locationName, todayStartMode]);
+
+  // Save events to appropriate storage (Cloud or Local)
+  const saveEvents = async (newEvents: UserEvent[], eventToUpdate?: UserEvent) => {
+    setEvents(newEvents); // Optimistic UI Update
+
+    // If we're updating a single event and we're logged in, we can be more efficient
+    if (user && eventToUpdate) {
+      try {
+        const docRef = doc(db, "users", user.uid, "events", eventToUpdate.id);
+        await setDoc(docRef, eventToUpdate);
+        console.log(`☁️ Event updated in Cloud: ${eventToUpdate.name}`);
+      } catch (error) {
+        console.error("❌ Cloud Save Failed:", error);
+      }
+      return;
+    }
 
     try {
-      await saveAllEvents(newEvents);
-      console.log(`✅ Saved ${newEvents.length} events to IndexedDB`);
+      if (user) {
+        // Full sync to cloud (usually for migration or mass changes)
+        const batch = writeBatch(db);
+        newEvents.forEach((ev) => {
+          batch.set(doc(db, "users", user.uid, "events", ev.id), ev);
+        });
+        await batch.commit();
+      } else {
+        await saveAllEvents(newEvents);
+      }
     } catch (error) {
-      console.error("❌ Failed to save events to IndexedDB:", error);
-      // Fallback: save to localStorage if DB fails
-      localStorage.setItem("luach-events", JSON.stringify(newEvents));
+      console.error("❌ Storage Failed:", error);
     }
   };
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
+    const newId = editingEvent?.id || Math.random().toString(36).substr(2, 9);
     const newEvent: UserEvent = {
-      id: editingEvent?.id || Math.random().toString(36).substr(2, 9),
+      id: newId,
       name: formName || "New Event",
       notes: formNotes,
       type: formType,
@@ -145,9 +315,11 @@ const App: React.FC = () => {
     };
 
     if (editingEvent) {
-      saveEvents(events.map((e) => (e.id === editingEvent.id ? newEvent : e)));
+      const updatedEvents = events.map((e) => (e.id === editingEvent.id ? newEvent : e));
+      await saveEvents(updatedEvents, newEvent);
     } else {
-      saveEvents([...events, newEvent]);
+      const updatedEvents = [...events, newEvent];
+      await saveEvents(updatedEvents, newEvent);
     }
 
     setIsModalOpen(false);
@@ -165,9 +337,22 @@ const App: React.FC = () => {
     setEditingEvent(null);
   };
 
-  const deleteEvent = (id: string) => {
+  const deleteEvent = async (id: string) => {
     const newEvents = events.filter((e) => e.id !== id);
-    saveEvents(newEvents);
+    setEvents(newEvents); // Optimistic UI Update
+
+    if (user) {
+      try {
+        await deleteDoc(doc(db, "users", user.uid, "events", id));
+        console.log(`☁️ Event deleted from Cloud: ${id}`);
+      } catch (error) {
+        console.error("❌ Cloud Delete Failed:", error);
+      }
+    } else {
+      const newEvents = events.filter((e) => e.id !== id);
+      await saveEvents(newEvents);
+    }
+
     // Close the modal and clear editing state after deletion
     setIsModalOpen(false);
     setEditingEvent(null);
@@ -257,7 +442,7 @@ const App: React.FC = () => {
 
   // Check for events with reminders
   const { todayReminders, tomorrowReminders } = useMemo(() => {
-    const today = new jDate();
+    const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
     const tomorrow = today.addDays(1);
 
     const todayEvents = getEventsForDate(today).filter((e) => e.remindDayOf);
@@ -267,7 +452,7 @@ const App: React.FC = () => {
       todayReminders: todayEvents,
       tomorrowReminders: tomorrowEvents,
     };
-  }, [events]);
+  }, [events, todayStartMode, location]);
 
   // Check if reminders were dismissed today
   useEffect(() => {
@@ -473,7 +658,7 @@ const App: React.FC = () => {
           newDate = selectedJDate.addDays(7);
           break;
         case "t": {
-          const today = new jDate();
+          const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
           setSelectedJDate(today);
           setCurrentJDate(today);
           return;
@@ -518,6 +703,11 @@ const App: React.FC = () => {
         handleAddNewEventForDate={handleAddNewEventForDate}
         isMobileOpen={isSidebarOpen}
         onMobileClose={handleCloseSidebar}
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        todayStartMode={todayStartMode}
+        setTodayStartMode={setTodayStartMode}
       />
 
       {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
@@ -556,6 +746,10 @@ const App: React.FC = () => {
         setLocationName={setLocationName}
         theme={theme}
         setTheme={setTheme}
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        todayStartMode={todayStartMode}
       />
 
       <EventModal

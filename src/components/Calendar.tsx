@@ -10,6 +10,7 @@ import {
   Info,
   Globe,
   Palette,
+  LogOut,
 } from "lucide-react";
 import { Utils, jDate, getNotifications, Dafyomi, Locations } from "jcal-zmanim";
 import { UserEvent } from "../types";
@@ -40,6 +41,10 @@ interface CalendarProps {
   setLocationName: (name: string) => void;
   theme: "warm" | "dark" | "light";
   setTheme: (theme: "warm" | "dark" | "light") => void;
+  onLogout: () => void;
+  user: any;
+  onLogin: () => void;
+  todayStartMode: "sunset" | "midnight";
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -66,6 +71,10 @@ export const Calendar: React.FC<CalendarProps> = ({
   setLocationName,
   theme,
   setTheme,
+  user,
+  onLogin,
+  onLogout,
+  todayStartMode,
 }) => {
   const getThemeIcon = () => {
     switch (theme) {
@@ -113,6 +122,24 @@ export const Calendar: React.FC<CalendarProps> = ({
             title="Change theme">
             <span style={{ fontSize: "16px" }}>{getThemeIcon()}</span>
           </button>
+
+          {/* Mobile Auth Button */}
+          {user ? (
+            <button
+              onClick={onLogout}
+              className="mobile-control-btn text-red-400"
+              title={t.signOut}>
+              <LogOut size={14} />
+            </button>
+          ) : (
+            <button onClick={onLogin} className="mobile-control-btn" title={t.signInWithGoogle}>
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt=""
+                style={{ width: "14px", height: "14px" }}
+              />
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-6">
@@ -146,7 +173,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             </button>
             <button
               onClick={() => {
-                const today = new jDate();
+                const today =
+                  todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
                 setCurrentJDate(today);
                 setSelectedJDate(today);
               }}
@@ -212,9 +240,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
           }}>
           {(() => {
-            const todayAbs = new jDate().Abs;
             return monthInfo.days.map((date, i) => {
-              const isToday = date.Abs === todayAbs;
+              const isToday = date.Abs === currentJDate.Abs;
               const isSelected = date.Abs === selectedJDate.Abs;
               const isOtherMonth = date.Month !== currentJDate.Month;
               const notes = getNotifications(

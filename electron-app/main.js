@@ -19,6 +19,14 @@ function createWindow() {
     // Decide whether to load dev server or local file
     const isDev = process.argv.includes('--dev');
 
+    // EXTREME SPOOF: Remove Electron identity from headers
+    win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+        const { requestHeaders } = details;
+        delete requestHeaders['X-Requested-With'];
+        delete requestHeaders['X-Electron-Process-Type'];
+        callback({ requestHeaders });
+    });
+
     if (isDev) {
         win.loadURL('http://localhost:5173');
         win.webContents.openDevTools();
@@ -41,6 +49,27 @@ function createWindow() {
     // Remove default menu for a cleaner look
     Menu.setApplicationMenu(null);
 
+    // FIX: Handle Google Auth Popups in Electron
+    const firefoxUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0';
+    win.webContents.setUserAgent(firefoxUA);
+
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.includes('google.com') || url.includes('firebase') || url.includes('firebaseapp.com')) {
+            return {
+                action: 'allow',
+                overrideBrowserWindowOptions: {
+                    autoHideMenuBar: true,
+                    webPreferences: {
+                        nodeIntegration: false,
+                        contextIsolation: true,
+                        userAgent: firefoxUA
+                    }
+                }
+            };
+        }
+        return { action: 'allow' };
+    });
+
     // Escape key to exit fullscreen
     win.webContents.on('before-input-event', (event, input) => {
         if (input.key === 'Escape' && win.isFullScreen()) {
@@ -50,6 +79,9 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+    // Set global fallback to a clean Firefox identity
+    app.userAgentFallback = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0';
+
     createWindow();
 
     app.on('activate', () => {
