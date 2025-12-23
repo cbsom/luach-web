@@ -6,7 +6,7 @@ import {
     persistentLocalCache,
     persistentMultipleTabManager
 } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, browserLocalPersistence, setPersistence } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,13 +24,21 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics conditionally (it often fails in local dev or certain environments)
-let analytics;
-import("firebase/analytics").then(({ isSupported, getAnalytics }) => {
-    isSupported().then(yes => {
-        if (yes) analytics = getAnalytics(app);
-    });
-}).catch(err => console.error("Firebase Analytics not supported:", err));
+// Initialize Analytics conditionally
+// It often fails in local dev, private modes, or if the library fails to load
+const initAnalytics = async () => {
+    try {
+        const { isSupported, getAnalytics } = await import("firebase/analytics");
+        const supported = await isSupported();
+        if (supported) {
+            return getAnalytics(app);
+        }
+    } catch (e) {
+        // Silently fail - analytics isn't critical
+    }
+};
+
+initAnalytics();
 
 // Initialize Firestore with persistent cache enabled (Offline Support)
 // This replacement for getFirestore() sets up IndexedDB persistence automatically
@@ -40,8 +48,10 @@ const db = initializeFirestore(app, {
     })
 });
 
-// Initialize Auth
+// Initialize Auth with persistence
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence);
+
 const googleProvider = new GoogleAuthProvider();
 
 export { db, auth, googleProvider };

@@ -1,9 +1,10 @@
 import React from "react";
-import { MapPin, BookOpen, HandHelping, X, Plus, Trash } from "lucide-react";
+import { MapPin, BookOpen, HandHelping, X, Plus, Trash, Bell, Check, MenuIcon } from "lucide-react";
 import { Locations, Dafyomi, Utils, jDate } from "jcal-zmanim";
 import { UserEvent } from "../types";
 import { formatTime, getAnniversaryNumber } from "../utils";
 import { ToggleSwitch } from "./ToggleSwitch";
+import { NotificationService } from "../NotificationService";
 
 interface SidebarProps {
   lang: "en" | "he";
@@ -28,6 +29,8 @@ interface SidebarProps {
   onLogin: () => void;
   todayStartMode: "sunset" | "midnight";
   setTodayStartMode: (mode: "sunset" | "midnight") => void;
+  emailEnabled: boolean;
+  setEmailEnabled: (enabled: boolean) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -53,7 +56,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogin,
   todayStartMode,
   setTodayStartMode,
+  emailEnabled,
+  setEmailEnabled,
 }) => {
+  const [notifStatus, setNotifStatus] = React.useState(NotificationService.getPermissionStatus());
+  const [showSettings, setShowSettings] = React.useState(false);
+  const handleEnableNotifications = async () => {
+    const status = await NotificationService.requestPermission();
+    setNotifStatus(status);
+  };
+
   const cycleTheme = () => {
     const themes: Array<"warm" | "dark" | "light"> = ["warm", "dark", "light"];
     const currentIndex = themes.indexOf(theme);
@@ -76,26 +88,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile overlay */}
       {isMobileOpen && <div className="sidebar-overlay" onClick={onMobileClose} />}
-
+      <div
+        style={{
+          position: "absolute",
+          top: "2px",
+          left: lang === "he" ? "auto" : "10px",
+          right: lang === "he" ? "10px" : "auto",
+          cursor: "pointer",
+        }}
+        onClick={() => setShowSettings(!showSettings)}>
+        <MenuIcon size={15} />
+      </div>
       <aside className={`sidebar ${isMobileOpen ? "sidebar-mobile-open" : ""}`}>
         {/* Mobile close button */}
         <button className="sidebar-close-btn" onClick={onMobileClose} aria-label="Close sidebar">
           <X size={24} />
         </button>
 
-        {/* Exit Button for Electron */}
-        {typeof (window as any).electron !== "undefined" && (
-          <button
-            onClick={() => (window as any).electron.quit()}
-            className="electron-quit-btn"
-            title="Quit Application">
-            <X size={14} />
-          </button>
-        )}
-
-        <div className="glass-panel p-4 flex flex-col gap-3 flex-shrink-0 sidebar-top-controls">
+        <div
+          className={
+            showSettings
+              ? "glass-panel p-4 flex flex-col gap-3 flex-shrink-0 sidebar-top-controls"
+              : ""
+          }
+          style={{
+            height: showSettings ? "auto" : "40px",
+            overflow: showSettings ? "visible" : "hidden",
+          }}>
           <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center w-full justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1 bg-accent-amber/10 rounded-xl overflow-hidden shadow-inner">
                   <img
@@ -108,27 +129,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 <h1 className="text-lg font-black tracking-tight">{t.title}</h1>
               </div>
+              {showSettings && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={cycleTheme}
+                    className="py-1.5 px-3 rounded-xl btn-warm border transition-all text-[10px] font-black uppercase tracking-tighter"
+                    style={{
+                      padding: "0.5rem 1rem",
+                    }}
+                    title={`Theme: ${theme}`}>
+                    {getThemeIcon()}
+                  </button>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={cycleTheme}
-                  className="py-1.5 px-3 rounded-xl btn-warm border transition-all text-[10px] font-black uppercase tracking-tighter"
-                  style={{
-                    padding: "0.5rem 1rem",
-                  }}
-                  title={`Theme: ${theme}`}>
-                  {getThemeIcon()}
-                </button>
-
-                <button
-                  onClick={() => setLang(lang === "en" ? "he" : "en")}
-                  className="py-1.5 px-3 rounded-xl btn-warm border transition-all text-[10px] font-black uppercase tracking-tighter"
-                  style={{
-                    padding: "0.5rem 1rem",
-                  }}>
-                  {lang === "en" ? "עברית" : "EN"}
-                </button>
-              </div>
+                  <button
+                    onClick={() => setLang(lang === "en" ? "he" : "en")}
+                    className="py-1.5 px-3 rounded-xl btn-warm border transition-all text-[10px] font-black uppercase tracking-tighter"
+                    style={{
+                      padding: "0.5rem 1rem",
+                    }}>
+                    {lang === "en" ? "עברית" : "EN"}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="relative w-full flex items-center gap-2">
@@ -166,6 +188,93 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 value={todayStartMode === "sunset" ? "left" : "right"}
                 onChange={(val) => setTodayStartMode(val === "left" ? "sunset" : "midnight")}
               />
+            </div>
+
+            {/* Email Reminders Toggle */}
+            <div className="flex flex-col gap-1 mt-1">
+              <label className="text-[9px] font-bold uppercase tracking-wider opacity-60 px-1">
+                {t.emailReminders}
+              </label>
+              <ToggleSwitch
+                leftLabel={t.on}
+                rightLabel={t.off}
+                value={emailEnabled ? "left" : "right"}
+                onChange={(val) => setEmailEnabled(val === "left")}
+              />
+            </div>
+
+            {/* Notification Settings */}
+            <div className="flex flex-col gap-1 mt-1">
+              <label className="text-[9px] font-bold uppercase tracking-wider opacity-60 px-1">
+                {t.notificationSettings}
+              </label>
+              {notifStatus === "granted" ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-amber/10 rounded-xl text-accent-amber text-[10px] font-bold">
+                  <Check size={12} />
+                  <span>{t.notificationsEnabled}</span>
+                </div>
+              ) : (
+                <button
+                  onClick={handleEnableNotifications}
+                  className="flex items-center justify-center gap-2 px-3 py-1.5 btn-warm border rounded-xl text-[10px] font-bold transition-all hover:bg-accent-amber hover:text-slate-900">
+                  <Bell size={12} />
+                  <span>{t.enableNotifications}</span>
+                </button>
+              )}
+            </div>
+
+            {/* USER / AUTH SECTION */}
+            <div className="mt-auto pt-4 border-t border-glass-border/30">
+              {user ? (
+                <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt=""
+                        className="rounded-full border border-accent-gold/30"
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    ) : (
+                      <div
+                        className="rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold font-bold"
+                        style={{ width: "20px", height: "20px", fontSize: "10px" }}>
+                        {user.displayName?.[0] || user.email?.[0] || "?"}
+                      </div>
+                    )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span
+                        className="font-bold truncate leading-none mb-0.5"
+                        style={{ fontSize: "11px" }}>
+                        {user.displayName || user.email}
+                      </span>
+                      <span
+                        className="text-accent-gold font-bold uppercase tracking-widest opacity-70"
+                        style={{ fontSize: "9px" }}>
+                        {t.cloud}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={onLogout}
+                    className="p-2 hover:bg-red-500/10 text-red-400 hover:text-red-500 rounded-lg transition-all"
+                    title={t.signOut}>
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={onLogin}
+                  className="flex items-center justify-center gap-2 py-2 rounded-xl btn-warm border font-bold transition-all hover:scale-[1.02] shadow-lg"
+                  style={{ width: "100%", fontSize: "11px" }}>
+                  <img
+                    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                    alt=""
+                    style={{ width: "14px", height: "14px" }}
+                  />
+                  <span>{t.signInWithGoogle}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -355,60 +464,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </div>
           </section>
-
-          {/* USER / AUTH SECTION */}
-          <div className="mt-auto pt-4 border-t border-glass-border/30">
-            {user ? (
-              <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  {user.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      alt=""
-                      className="rounded-full border border-accent-gold/30"
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  ) : (
-                    <div
-                      className="rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold font-bold"
-                      style={{ width: "20px", height: "20px", fontSize: "10px" }}>
-                      {user.displayName?.[0] || user.email?.[0] || "?"}
-                    </div>
-                  )}
-                  <div className="flex flex-col overflow-hidden">
-                    <span
-                      className="font-bold truncate leading-none mb-0.5"
-                      style={{ fontSize: "11px" }}>
-                      {user.displayName || user.email}
-                    </span>
-                    <span
-                      className="text-accent-gold font-bold uppercase tracking-widest opacity-70"
-                      style={{ fontSize: "9px" }}>
-                      {t.cloud}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={onLogout}
-                  className="p-2 hover:bg-red-500/10 text-red-400 hover:text-red-500 rounded-lg transition-all"
-                  title={t.signOut}>
-                  <X size={16} />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={onLogin}
-                className="flex items-center justify-center gap-2 py-2 rounded-xl btn-warm border font-bold transition-all hover:scale-[1.02] shadow-lg"
-                style={{ width: "100%", fontSize: "11px" }}>
-                <img
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                  alt=""
-                  style={{ width: "14px", height: "14px" }}
-                />
-                <span>{t.signInWithGoogle}</span>
-              </button>
-            )}
-          </div>
         </div>
       </aside>
     </>

@@ -1,79 +1,58 @@
-# <img src="public/icon.svg" width="48" height="48" valign="middle"> Luach – Jewish Calendar Web App
+# <img src="public/icon.svg" width="48" height="48" valign="middle"> Luach – Jewish Calendar
 
-A **beautiful**, modern React + TypeScript web application that brings the Hebrew calendar to life. It blends **rich visual design** with **powerful functionality**: Zmanim calculations, bilingual support (English/Hebrew), event management, and offline persistence.
+A **beautiful**, modern React + TypeScript application that brings the Hebrew calendar to life. It blends **rich visual design** with **powerful functionality**: Zmanim calculations, bilingual support, cloud sync, and a native desktop experience via PWA.
 
 ## ✨ Core Features
 
-- **Interactive Calendar** – Hebrew dates with Gregorian equivalents, smooth month/year navigation, keyboard shortcuts, and subtle animations.
+- **Interactive Calendar** – Hebrew dates with Gregorian equivalents, smooth month/year navigation, and keyboard shortcuts.
 - **Zmanim Sidebar** – Daily prayer times calculated for any location, displayed in a clean glass‑morphic panel.
-- **Event Management** – Create, edit, delete, and repeat events (yearly, monthly, one‑time). Events are stored in **IndexedDB** for offline‑first reliability.
-- **Smart Reminders** – Day‑of and day‑before notifications with persistent dismissal.
-- **Import / Export** – JSON, CSV, and iCalendar (.ics) formats for easy backup and integration.
-- **Theming** – Warm 🔥, Dark 🌙, and Light ☀️ themes with smooth transitions and persistent selection.
-- **Bilingual UI** – English and Hebrew with RTL layout support, instantly switchable.
+- **Cloud Sync** – Optional Google Login to sync your events and settings across devices.
+- **Email Reminders** – Receive automated email notifications for your events (Yahrzeits, Anniversaries, etc.).
+- **Desktop & Mobile App (PWA)** – Install it directly to your taskbar or home screen for a fast, native-like experience.
+- **Offline Reliability** – Events are stored in **IndexedDB**, allowing the app to work even without an internet connection.
+- **Theming** – Warm 🔥, Dark 🌙, and Light ☀️ themes with smooth transitions.
 
-## 🚀 Getting Started
+## 🚀 Installation & Usage
 
-### Prerequisites
+### 💻 Desktop / Mobile Install (Recommended)
 
-- **Node.js** (v14 or higher)
-- **npm** or **yarn**
+You can install Luach as a standalone application:
 
-### Installation
+1. Visit **[luach-web.web.app](https://luach-web.web.app)** in Chrome or Edge.
+2. Click the **Install** icon in the address bar (or "Add to Home Screen" on mobile).
+3. The app will now appear in your app drawer and can be pinned to your taskbar.
+
+### 🛠️ Developer Setup
 
 ```bash
+# Clone and install
 git clone https://github.com/yourusername/luach-web.git
 cd luach-web
 npm install
-```
 
-### Development
-
-```bash
+# Start development server
 npm run dev
-```
 
-Open `http://localhost:5173` in your browser. The app will automatically adjust to your system’s light/dark preference.
-
-### Production Build
-
-```bash
+# Build for production
 npm run build
-# Built assets are placed in the `dist` folder
 ```
 
 ## 🛠️ Technology Stack
 
-- **React 18** with hooks – UI components and state management
-- **TypeScript** – type safety and developer ergonomics
-- **Vite** – lightning‑fast bundler and dev server
-- **jcal-zmanim** – accurate Jewish calendar and Zmanim calculations
-- **Lucide React** – crisp, consistent icons
-- **IndexedDB** – client‑side storage for events and settings
-- **CSS custom properties** – dynamic theming and glass‑morphic effects
-
-## 📦 Data Persistence
-
-All events live in the browser’s **IndexedDB**. On first launch any legacy data in `localStorage` is migrated automatically, ensuring a seamless upgrade path.
+- **React 19** – UI components and state management.
+- **TypeScript** – Type-safe development.
+- **Vite** – High-performance build tool and PWA generator.
+- **Firebase** – Authentication, Firestore (Cloud Sync), and Cloud Functions (Email Reminders).
+- **jcal-zmanim** – Accurate Jewish calendar and Zmanim calculations.
+- **IndexedDB** – Local storage for extreme reliability and offline use.
 
 ## ⌨️ Keyboard Shortcuts
 
-- **← → ↑ ↓** – navigate dates
-- **T** – jump to today
-- **Esc** – close any open modal
-- **Ctrl + Shift + R** – show reminders (if previously dismissed)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Run `npm run build` to ensure the TypeScript build succeeds
-4. Submit a pull request with a clear description of your changes
+- **← → ↑ ↓** – Navigate dates.
+- **T** – Jump to today.
+- **Esc** – Close any open modal.
+- **Enter** – Add new event for selected date.
 
 ## 📄 License
 
 MIT License – feel free to use, modify, and share.
-
-## 📬 Contact
-
-Have questions or ideas? Open an issue on GitHub – we love community feedback!

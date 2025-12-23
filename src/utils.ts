@@ -8,9 +8,12 @@ export const formatTime = (time: Time | undefined) => {
 };
 
 export const getAnniversaryNumber = (event: UserEvent, date: jDate) => {
+    // If we have jAbs, use its components (Year) for accurate delta.
+    const startYear = event.jAbs ? new jDate(event.jAbs).Year : event.jYear;
+
     switch (event.type) {
         case UserEventTypes.HebrewDateRecurringYearly:
-            return date.Year - event.jYear;
+            return date.Year - startYear;
         case UserEventTypes.HebrewDateRecurringMonthly: {
             let months = 0;
             for (let y = event.jYear; y < date.Year; y++) {

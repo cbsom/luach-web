@@ -14,6 +14,7 @@ export interface UserEvent {
     jYear: number;
     jMonth: number;
     jDay: number;
+    jAbs: number;
     sDate: string; // ISO string
     backColor?: string;
     textColor?: string;

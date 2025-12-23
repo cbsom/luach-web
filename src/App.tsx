@@ -86,6 +86,14 @@ const App: React.FC = () => {
     return (localStorage.getItem("luach-today-start") as "sunset" | "midnight") || "sunset";
   });
 
+  const [emailRemindersEnabled, setEmailRemindersEnabled] = useState<boolean>(() => {
+    return localStorage.getItem("luach-email-reminders") !== "false";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("luach-email-reminders", emailRemindersEnabled.toString());
+  }, [emailRemindersEnabled]);
+
   const location = useMemo(() => {
     return (
       Locations.find((l) => l.Name === locationName) ||
@@ -101,6 +109,7 @@ const App: React.FC = () => {
   // Events are now loaded from IndexedDB, not localStorage
   const [events, setEvents] = useState<UserEvent[]>([]);
   const [eventsLoaded, setEventsLoaded] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<UserEvent | null>(null);
@@ -109,9 +118,34 @@ const App: React.FC = () => {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
-    const syncEvents = async () => {
+    const syncData = async () => {
       if (user) {
         console.log("☁️ User logged in, setting up Firestore sync...");
+
+        // 1. Sync Settings
+        const settingsRef = doc(db, "users", user.uid, "settings", "general");
+        const settingsSnap = await getDocs(query(collection(db, "users", user.uid, "settings")));
+        const generalSettings = settingsSnap.docs.find((d) => d.id === "general")?.data();
+
+        if (generalSettings) {
+          if (generalSettings.locationName) setLocationName(generalSettings.locationName);
+          if (generalSettings.todayStartMode) setTodayStartMode(generalSettings.todayStartMode);
+          if (generalSettings.emailRemindersEnabled !== undefined) {
+            setEmailRemindersEnabled(generalSettings.emailRemindersEnabled);
+          }
+          if (generalSettings.lang) setLang(generalSettings.lang);
+        } else {
+          // Initial sync of local settings to cloud
+          await setDoc(settingsRef, {
+            locationName,
+            todayStartMode,
+            emailRemindersEnabled,
+            lang,
+          });
+        }
+        setSettingsLoaded(true);
+
+        // 2. Sync Events
         const eventsRef = collection(db, "users", user.uid, "events");
         const q = query(eventsRef);
 
@@ -126,6 +160,10 @@ const App: React.FC = () => {
               const batch = writeBatch(db);
               localEvents.forEach((event) => {
                 const docRef = doc(db, "users", user.uid, "events", event.id);
+                // Ensure jAbs exists for legacy events being migrated
+                if (event.jAbs === undefined) {
+                  event.jAbs = jDate.absJd(event.jYear, event.jMonth, event.jDay);
+                }
                 batch.set(docRef, event);
               });
               await batch.commit();
@@ -144,23 +182,44 @@ const App: React.FC = () => {
           const localEvents = await getAllEvents();
           setEvents(localEvents);
           setEventsLoaded(true);
+          setSettingsLoaded(true); // Treat local load as "settings loaded" too
         } catch (error) {
           console.error("❌ Local DB Load Failed:", error);
           setEventsLoaded(true);
+          setSettingsLoaded(true);
         }
       }
     };
 
-    syncEvents();
+    syncData();
     return () => unsubscribe?.();
   }, [user]);
+
+  // Push settings changes to Firestore
+  useEffect(() => {
+    if (user && settingsLoaded) {
+      const settingsRef = doc(db, "users", user.uid, "settings", "general");
+      setDoc(
+        settingsRef,
+        {
+          locationName,
+          todayStartMode,
+          emailRemindersEnabled,
+          lang,
+          email: user.email, // Store email for the Cloud Function
+          lastUpdated: new Date().toISOString(),
+        },
+        { merge: true }
+      ).catch((err) => console.error("Failed to sync settings:", err));
+    }
+  }, [user, locationName, todayStartMode, emailRemindersEnabled, lang]);
 
   // Check for notifications when events are loaded
   useEffect(() => {
     if (eventsLoaded && events.length > 0) {
       // Delay slightly to ensure user has focused the page/app
       const timer = setTimeout(() => {
-        NotificationService.checkAndNotify(events, user, db);
+        NotificationService.checkAndNotify(events, user, db, currentJDate, emailRemindersEnabled);
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -304,10 +363,16 @@ const App: React.FC = () => {
       name: formName || "New Event",
       notes: formNotes,
       type: formType,
-      jYear: selectedJDate.Year,
-      jMonth: selectedJDate.Month,
-      jDay: selectedJDate.Day,
-      sDate: selectedJDate.getDate().toISOString(),
+      // Use jAbs as the primary anchor for date preservation.
+      jAbs:
+        editingEvent?.jAbs ??
+        (editingEvent
+          ? jDate.absJd(editingEvent.jYear, editingEvent.jMonth, editingEvent.jDay)
+          : selectedJDate.Abs),
+      jYear: editingEvent?.jYear ?? selectedJDate.Year,
+      jMonth: editingEvent?.jMonth ?? selectedJDate.Month,
+      jDay: editingEvent?.jDay ?? selectedJDate.Day,
+      sDate: editingEvent?.sDate ?? selectedJDate.getDate().toISOString(),
       backColor: formColor,
       textColor: formTextColor,
       remindDayOf: formRemindDayOf,
@@ -409,14 +474,15 @@ const App: React.FC = () => {
   const getEventsForDate = (date: jDate) => {
     const sDate = date.getDate();
     return events.filter((uo) => {
+      // ⚡ High Efficiency Match using Absolute Date
       if (uo.type === UserEventTypes.OneTime) {
         return (
-          (uo.jDay === date.Day && uo.jMonth === date.Month && uo.jYear === date.Year) ||
-          new Date(uo.sDate).toDateString() === sDate.toDateString()
+          uo.jAbs === date.Abs ||
+          (uo.jDay === date.Day && uo.jMonth === date.Month && uo.jYear === date.Year)
         );
       }
 
-      const eventStartAbs = jDate.absJd(uo.jYear, uo.jMonth, uo.jDay);
+      const eventStartAbs = uo.jAbs || jDate.absJd(uo.jYear, uo.jMonth, uo.jDay);
       if (eventStartAbs > date.Abs) return false;
 
       switch (uo.type) {
@@ -708,6 +774,8 @@ const App: React.FC = () => {
         onLogout={handleLogout}
         todayStartMode={todayStartMode}
         setTodayStartMode={setTodayStartMode}
+        emailEnabled={emailRemindersEnabled}
+        setEmailEnabled={setEmailRemindersEnabled}
       />
 
       {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
