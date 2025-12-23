@@ -1,0 +1,47 @@
+{
+  "name": "luach-electron",
+  "version": "1.0.0",
+  "description": "Desktop wrapper for Luach Jewish Calendar",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.luach.calendar",
+    "productName": "Luach",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      {
+        "from": "../dist",
+        "to": "dist",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "../public/Luach.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "../public/icon.png"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
