@@ -72,13 +72,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <X size={24} />
         </button>
 
+        {/* Exit Button for Electron */}
+        {typeof (window as any).electron !== "undefined" && (
+          <button
+            onClick={() => (window as any).electron.quit()}
+            className="electron-quit-btn"
+            title="Quit Application">
+            <X size={14} />
+          </button>
+        )}
+
         <div className="glass-panel p-4 flex flex-col gap-3 flex-shrink-0 sidebar-top-controls">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <div className="p-1 bg-accent-amber/10 rounded-xl overflow-hidden shadow-inner">
                   <img
-                    src="/icon.svg"
+                    src="./icon.svg"
                     width="32"
                     height="32"
                     alt="Luach Logo"

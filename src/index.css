@@ -1080,3 +1080,43 @@ select {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.electron-quit-btn {
+  position: absolute;
+  top: 7px;
+  z-index: 1000;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.1);
+  color: #863333;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.electron-quit-btn:hover {
+  background: #9e2525;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Position based on document direction */
+[dir="ltr"] .electron-quit-btn {
+  right: 10px;
+}
+
+[dir="rtl"] .electron-quit-btn {
+  left: 10px;
+}
+
+/* Hide on mobile where sidebar is overlay */
+@media (max-width: 1024px) {
+  .electron-quit-btn {
+    display: none;
+  }
+}

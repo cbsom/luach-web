@@ -1,10 +1,11 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
         height: 800,
+        fullscreen: true,
         title: "Luach - Jewish Calendar",
         webPreferences: {
             nodeIntegration: false,
@@ -38,7 +39,14 @@ function createWindow() {
     }
 
     // Remove default menu for a cleaner look
-    // Menu.setApplicationMenu(null);
+    Menu.setApplicationMenu(null);
+
+    // Escape key to exit fullscreen
+    win.webContents.on('before-input-event', (event, input) => {
+        if (input.key === 'Escape' && win.isFullScreen()) {
+            win.setFullScreen(false);
+        }
+    });
 }
 
 app.whenReady().then(() => {
@@ -55,4 +63,9 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+// Handle quit request from UI
+ipcMain.on('quit-app', () => {
+    app.quit();
 });
