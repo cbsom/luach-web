@@ -290,19 +290,23 @@ body,
 
 .holiday-indicator {
   font-size: 0.65rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(251, 113, 133, 0.1);
+  font-weight: 700;
   color: var(--accent-rose);
   width: fit-content;
   max-width: 100%;
-  white-space: normal; /* Allow wrapping */
-  overflow: visible;
-  text-overflow: clip;
-  line-height: 1.2;
+  white-space: normal;
+  line-height: 1.1;
   text-align: center;
   flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.candle-lighting-text {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--accent-amber);
+  margin-top: 1px;
+  text-align: center;
 }
 
 .shabbos-indicator {
@@ -877,7 +881,10 @@ select {
   /* Holiday indicator */
   .holiday-indicator {
     font-size: 0.45rem;
-    padding: 1px 3px;
+  }
+
+  .candle-lighting-text {
+    font-size: 0.45rem;
   }
 
   /* Event badges in cells */
@@ -934,7 +941,10 @@ select {
 
   .holiday-indicator {
     font-size: 0.4rem;
-    padding: 1px 2px;
+  }
+
+  .candle-lighting-text {
+    font-size: 0.4rem;
   }
 }
 

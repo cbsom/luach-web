@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Utils, jDate, getNotifications, Dafyomi, Locations } from "jcal-zmanim";
 import { UserEvent } from "../types";
-import { getAnniversaryNumber } from "../utils";
+import { formatTime, getAnniversaryNumber } from "../utils";
 
 interface CalendarProps {
   lang: "en" | "he";
@@ -259,7 +259,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                     <Info size={14} />
                   </button>
 
-                  <div className="flex flex-col gap-1 justify-center items-center mt-auto overflow-hidden w-full">
+                  <div className="flex flex-col gap-0.5 justify-center items-center mt-auto overflow-hidden w-full">
+                    {/* Parasha */}
                     {date.getDayOfWeek() === 6 && !date.isYomTovOrCholHamoed(location.Israel) && (
                       <div className="shabbos-indicator">
                         {lang === "he"
@@ -268,9 +269,22 @@ export const Calendar: React.FC<CalendarProps> = ({
                       </div>
                     )}
 
-                    {/* User Events - separate row with wrapping */}
+                    {/* Candle Lighting */}
+                    {(() => {
+                      const candles = date.getCandleLighting(location, true);
+                      return candles ? (
+                        <div className="candle-lighting-text">
+                          <span className="opacity-70">
+                            {lang === "he" ? "הדלקת נרות" : "Candles"}:
+                          </span>{" "}
+                          {formatTime(candles)}
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {/* User Events */}
                     {dayEvents.length > 0 && (
-                      <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
+                      <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full my-0.5">
                         {dayEvents.slice(0, 5).map((e) => {
                           const anniv = getAnniversaryNumber(e, date);
                           return (
@@ -323,16 +337,65 @@ export const Calendar: React.FC<CalendarProps> = ({
                       </div>
                     )}
 
-                    {/* Notifications/Holidays - separate row with wrapping */}
-                    {notes.dayNotes.length > 0 && (
-                      <div className="flex flex-row flex-wrap gap-1 justify-center items-center w-full">
-                        {notes.dayNotes.map((note, idx) => (
-                          <div key={idx} className="holiday-indicator">
-                            {note}
+                    {/* Notifications/Holidays & Special Tags */}
+                    {(() => {
+                      const allNotes: string[] = [];
+
+                      // 1. Omer
+                      const omerDay = date.getDayOfOmer();
+                      if (omerDay > 0) {
+                        allNotes.push(
+                          lang === "he"
+                            ? `עומר: ${Utils.toJewishNumber(omerDay)}`
+                            : `Omer: ${omerDay}`
+                        );
+                      }
+
+                      // 2. Chanukah (if not already in dayNotes)
+                      // getNotifications usually has it, but we can ensure it
+
+                      // 3. Day Notes (Holidays)
+                      (notes.dayNotes || []).forEach((n: string) => allNotes.push(n));
+
+                      // 4. Special Shabbos / Mevarchim (from shulNotes)
+                      const shulNotes = (notes as any).shulNotes || [];
+                      const shulNotesToDisplay = shulNotes.filter(
+                        (n: string) =>
+                          n.includes("Mevarchim") ||
+                          n.includes("מברכים") ||
+                          n.includes("Shkalim") ||
+                          n.includes("שקלים") ||
+                          n.includes("Zachor") ||
+                          n.includes("זכור") ||
+                          n.includes("Parah") ||
+                          n.includes("פרה") ||
+                          n.includes("Hachodesh") ||
+                          n.includes("החודש") ||
+                          n.includes("Hagadol") ||
+                          n.includes("הגדול") ||
+                          n.includes("Shuva") ||
+                          n.includes("שובה") ||
+                          n.includes("Chazon") ||
+                          n.includes("חזון") ||
+                          n.includes("Shira") ||
+                          n.includes("שירה")
+                      );
+                      shulNotesToDisplay.forEach((n: string) => {
+                        if (!allNotes.includes(n)) allNotes.push(n);
+                      });
+
+                      return (
+                        allNotes.length > 0 && (
+                          <div className="flex flex-col gap-0 justify-center items-center w-full">
+                            {allNotes.map((note, idx) => (
+                              <div key={idx} className="holiday-indicator">
+                                {note}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        )
+                      );
+                    })()}
                   </div>
                 </div>
               );
