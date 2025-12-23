@@ -87,8 +87,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-accent-amber/20 rounded-xl text-accent-amber">
-                  <CalendarIcon size={20} />
+                <div className="p-1 bg-accent-amber/10 rounded-xl overflow-hidden shadow-inner">
+                  <img
+                    src="/icon.svg"
+                    width="32"
+                    height="32"
+                    alt="Luach Logo"
+                    style={{ display: "block" }}
+                  />
                 </div>
                 <h1 className="text-lg font-black tracking-tight">{t.title}</h1>
               </div>

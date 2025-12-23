@@ -1,4 +1,4 @@
-# 📅 Luach – Jewish Calendar Web App
+# <img src="public/icon.svg" width="48" height="48" valign="middle"> Luach – Jewish Calendar Web App
 
 A **beautiful**, modern React + TypeScript web application that brings the Hebrew calendar to life. It blends **rich visual design** with **powerful functionality**: Zmanim calculations, bilingual support (English/Hebrew), event management, and offline persistence.
 
