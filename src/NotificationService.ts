@@ -30,7 +30,8 @@ export class NotificationService {
      * Checks all events and triggers notifications for today and tomorrow
      * based on the event's reminder settings.
      */
-    static async checkAndNotify(events: UserEvent[], user: User | null, db: Firestore, today: jDate, emailEnabled: boolean): Promise<void> {
+    static async checkAndNotify(events: UserEvent[], user: User | null, db: Firestore, today: jDate, emailEnabled: boolean, browserNotificationsEnabled: boolean): Promise<void> {
+        if (!browserNotificationsEnabled) return;
         const permission = this.getPermissionStatus();
         const canNotify = permission === "granted";
 

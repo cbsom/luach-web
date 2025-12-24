@@ -1,5 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { X, Download, Upload, Calendar, Edit2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  X,
+  Download,
+  Upload,
+  Calendar,
+  Edit2,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Search,
+} from "lucide-react";
 import { jDate } from "jcal-zmanim";
 import { UserEvent, UserEventTypes } from "../types";
 import { getAnniversaryNumber } from "../utils";
@@ -14,6 +24,7 @@ interface EventsListModalProps {
   handleEditEvent: (event: UserEvent, date: jDate) => void;
   deleteEvent: (id: string) => void;
   saveEvents: (events: UserEvent[]) => void;
+  navigateToDate: (date: jDate) => void;
 }
 
 type SortField = "name" | "date" | "type";
@@ -28,13 +39,21 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
   handleEditEvent,
   deleteEvent,
   saveEvents,
+  navigateToDate,
 }) => {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Sort events
+  // Sort and Filter events
   const sortedEvents = useMemo(() => {
-    const sorted = [...events].sort((a, b) => {
+    const query = searchQuery.toLowerCase();
+    const filtered = events.filter(
+      (e) =>
+        e.name.toLowerCase().includes(query) || (e.notes && e.notes.toLowerCase().includes(query))
+    );
+
+    const sorted = [...filtered].sort((a, b) => {
       let comparison = 0;
 
       switch (sortField) {
@@ -56,7 +75,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
     });
 
     return sorted;
-  }, [events, sortField, sortDirection]);
+  }, [events, sortField, sortDirection, searchQuery]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -364,6 +383,34 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <div
+            className={`absolute inset-y-0 ${
+              lang === "he" ? "right-3" : "left-3"
+            } flex items-center pointer-events-none`}>
+            <Search size={16} className="text-text-secondary opacity-50" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={lang === "he" ? "חיפוש אירועים..." : "Search events..."}
+            className={`w-full bg-white/5 border border-glass-border rounded-xl py-2 ${
+              lang === "he" ? "pr-10 pl-4 text-right" : "pl-10 pr-4"
+            } text-sm focus:outline-none focus:border-accent-amber/50 transition-all`}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className={`absolute inset-y-0 ${
+                lang === "he" ? "left-3" : "right-3"
+              } flex items-center text-text-secondary hover:text-accent-amber transition-colors`}>
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
         {/* Sort Controls */}
         <div className="flex gap-3 mb-2 pb-2 border-b border-glass-border text-xs">
           <span className="text-text-secondary">{lang === "he" ? "מיין:" : "Sort:"}</span>
@@ -396,7 +443,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
                       padding: "1px 3px",
                       margin: "1px 0",
                     }}
-                    onClick={() => handleEditEvent(event, eventDate)}>
+                    onClick={() => navigateToDate(eventDate)}>
                     <div className="flex items-center justify-between brightness-50 transition-all">
                       {/* Event Info */}
                       <div className="flex-1 min-w-0 flex items-center gap-2">

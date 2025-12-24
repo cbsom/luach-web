@@ -8,7 +8,10 @@ import {
   getNotifications,
   Utils,
 } from "jcal-zmanim";
-import { Sidebar } from "./components/Sidebar";
+import { DailyInfoSidebar } from "./components/DailyInfoSidebar";
+import { SettingsSidebar } from "./components/SettingsSidebar";
+import { Header } from "./components/Header";
+import { MobileFooter } from "./components/MobileFooter";
 import { Calendar } from "./components/Calendar";
 import { EventModal } from "./components/EventModal";
 import { JumpDateModal } from "./components/JumpDateModal";
@@ -90,9 +93,17 @@ const App: React.FC = () => {
     return localStorage.getItem("luach-email-reminders") !== "false";
   });
 
+  const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState<boolean>(() => {
+    return localStorage.getItem("luach-browser-notifications") !== "false";
+  });
+
   useEffect(() => {
     localStorage.setItem("luach-email-reminders", emailRemindersEnabled.toString());
   }, [emailRemindersEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("luach-browser-notifications", browserNotificationsEnabled.toString());
+  }, [browserNotificationsEnabled]);
 
   const location = useMemo(() => {
     return (
@@ -133,6 +144,9 @@ const App: React.FC = () => {
           if (generalSettings.emailRemindersEnabled !== undefined) {
             setEmailRemindersEnabled(generalSettings.emailRemindersEnabled);
           }
+          if (generalSettings.browserNotificationsEnabled !== undefined) {
+            setBrowserNotificationsEnabled(generalSettings.browserNotificationsEnabled);
+          }
           if (generalSettings.lang) setLang(generalSettings.lang);
         } else {
           // Initial sync of local settings to cloud
@@ -140,6 +154,7 @@ const App: React.FC = () => {
             locationName,
             todayStartMode,
             emailRemindersEnabled,
+            browserNotificationsEnabled,
             lang,
           });
         }
@@ -205,6 +220,7 @@ const App: React.FC = () => {
           locationName,
           todayStartMode,
           emailRemindersEnabled,
+          browserNotificationsEnabled,
           lang,
           email: user.email, // Store email for the Cloud Function
           lastUpdated: new Date().toISOString(),
@@ -212,18 +228,32 @@ const App: React.FC = () => {
         { merge: true }
       ).catch((err) => console.error("Failed to sync settings:", err));
     }
-  }, [user, locationName, todayStartMode, emailRemindersEnabled, lang]);
+  }, [
+    user,
+    locationName,
+    todayStartMode,
+    emailRemindersEnabled,
+    browserNotificationsEnabled,
+    lang,
+  ]);
 
   // Check for notifications when events are loaded
   useEffect(() => {
     if (eventsLoaded && events.length > 0) {
       // Delay slightly to ensure user has focused the page/app
       const timer = setTimeout(() => {
-        NotificationService.checkAndNotify(events, user, db, currentJDate, emailRemindersEnabled);
+        NotificationService.checkAndNotify(
+          events,
+          user,
+          db,
+          currentJDate,
+          emailRemindersEnabled,
+          browserNotificationsEnabled
+        );
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [events, eventsLoaded]);
+  }, [events, eventsLoaded, browserNotificationsEnabled]);
 
   // Form State
   const [formName, setFormName] = useState("");
@@ -246,18 +276,14 @@ const App: React.FC = () => {
   const [jumpJMonth, setJumpJMonth] = useState(new jDate().Month);
   const [jumpJYear, setJumpJYear] = useState(new jDate().Year);
 
-  // Mobile sidebar state
+  // Sidebar states
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sidebarDateContext, setSidebarDateContext] = useState<jDate | null>(null);
 
   useEffect(() => {
     localStorage.setItem("luach-today-start", todayStartMode);
-    const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
-    setCurrentJDate(today);
-    // Only update selectedJDate if it was already "today"
-    if (Utils.isSameJdate(selectedJDate, currentJDate)) {
-      setSelectedJDate(today);
-    }
+    // Note: We no longer force setCurrentJDate(today) here to prevent unexpected jumps during sync
   }, [todayStartMode, location]);
 
   // Automatic Refresh logic (Midnight & Sunset)
@@ -323,6 +349,12 @@ const App: React.FC = () => {
     scheduleNextRefresh();
     return () => clearTimeout(timeoutId);
   }, [location, locationName, todayStartMode]);
+
+  const handleGoToToday = () => {
+    const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+    setCurrentJDate(today);
+    setSelectedJDate(today);
+  };
 
   // Save events to appropriate storage (Cloud or Local)
   const saveEvents = async (newEvents: UserEvent[], eventToUpdate?: UserEvent) => {
@@ -443,14 +475,6 @@ const App: React.FC = () => {
     setSelectedJDate(date);
     resetForm();
     setIsModalOpen(true);
-  };
-
-  // Handle showing sidebar for a specific date on mobile
-  const handleShowDateInfo = (e: React.MouseEvent, date: jDate) => {
-    e.stopPropagation();
-    setSelectedJDate(date);
-    setSidebarDateContext(date);
-    setIsSidebarOpen(true);
   };
 
   const handleCloseSidebar = () => {
@@ -659,25 +683,64 @@ const App: React.FC = () => {
   // Wait, I didn't import Dafyomi in the App code block above. I should add it.
 
   const navigateMonth = (direction: number) => {
+    const hasHebrewRecurringEvent = selectedEvents.some(
+      (e) =>
+        e.type === UserEventTypes.HebrewDateRecurringYearly ||
+        e.type === UserEventTypes.HebrewDateRecurringMonthly
+    );
+    const useJewish = todayStartMode === "sunset" || hasHebrewRecurringEvent;
+
     let newDate;
-    if (direction > 0) {
-      newDate = currentJDate.addMonths(1);
+    if (useJewish) {
+      newDate = selectedJDate.addMonths(direction);
     } else {
-      newDate = currentJDate.addMonths(-1);
+      const sDate = selectedJDate.getDate();
+      const nextSDate = new Date(
+        sDate.getFullYear(),
+        sDate.getMonth() + direction,
+        sDate.getDate()
+      );
+      // Handle day overflow (e.g., Jan 31 -> Feb 31 -> Mar 3)
+      if (nextSDate.getMonth() !== (sDate.getMonth() + direction + 12) % 12) {
+        nextSDate.setDate(0);
+      }
+      newDate = new jDate(nextSDate);
     }
     setCurrentJDate(newDate);
     setSelectedJDate(newDate);
-    // Reset selected day to 1st of month to avoid confusion?
-    // Actually addMonths keeps the day if possible.
-    // "5th of Nisan" -> "5th of Iyar". This is reasonable.
+  };
+
+  const handleSelectDate = (date: jDate) => {
+    setSelectedJDate(date);
+    // On mobile/tablet, also open the sidebar when a day is clicked
+    if (window.innerWidth <= 1200) {
+      setIsSidebarOpen(true);
+    }
   };
 
   const navigateYear = (direction: number) => {
+    const hasHebrewRecurringEvent = selectedEvents.some(
+      (e) =>
+        e.type === UserEventTypes.HebrewDateRecurringYearly ||
+        e.type === UserEventTypes.HebrewDateRecurringMonthly
+    );
+    const useJewish = todayStartMode === "sunset" || hasHebrewRecurringEvent;
+
     let newDate;
-    if (direction > 0) {
-      newDate = currentJDate.addYears(1);
+    if (useJewish) {
+      newDate = selectedJDate.addYears(direction);
     } else {
-      newDate = currentJDate.addYears(-1);
+      const sDate = selectedJDate.getDate();
+      const nextSDate = new Date(
+        sDate.getFullYear() + direction,
+        sDate.getMonth(),
+        sDate.getDate()
+      );
+      // Handle Feb 29 leap year overflow
+      if (nextSDate.getMonth() !== sDate.getMonth()) {
+        nextSDate.setDate(0);
+      }
+      newDate = new jDate(nextSDate);
     }
     setCurrentJDate(newDate);
     setSelectedJDate(newDate);
@@ -702,6 +765,12 @@ const App: React.FC = () => {
     } catch (e) {
       alert("Invalid Jewish Date");
     }
+  };
+
+  const navigateToDate = (date: jDate) => {
+    setCurrentJDate(date);
+    setSelectedJDate(date);
+    setIsEventsListOpen(false);
   };
 
   React.useEffect(() => {
@@ -749,33 +818,24 @@ const App: React.FC = () => {
   const currentMonthName =
     lang === "he" ? JewishMonthsHeb[currentJDate.Month] : JewishMonthsEng[currentJDate.Month];
 
+  const today = useMemo(() => {
+    return todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+  }, [todayStartMode, location]);
+
   return (
     <div className="app-container">
-      <Sidebar
+      <Header
         lang={lang}
-        setLang={setLang}
-        theme={theme}
-        setTheme={setTheme}
         t={t}
-        locationName={locationName}
-        setLocationName={setLocationName}
-        selectedJDate={selectedJDate}
-        selectedEvents={selectedEvents}
-        selectedNotes={selectedNotes}
-        selectedZmanim={selectedZmanim}
-        location={location}
-        handleEditEvent={handleEditEvent}
-        deleteEvent={deleteEvent}
-        handleAddNewEventForDate={handleAddNewEventForDate}
-        isMobileOpen={isSidebarOpen}
-        onMobileClose={handleCloseSidebar}
-        user={user}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-        todayStartMode={todayStartMode}
-        setTodayStartMode={setTodayStartMode}
-        emailEnabled={emailRemindersEnabled}
-        setEmailEnabled={setEmailRemindersEnabled}
+        currentJDate={currentJDate}
+        currentMonthName={currentMonthName}
+        secularMonthRange={secularMonthRange}
+        navigateMonth={navigateMonth}
+        navigateYear={navigateYear}
+        handleGoToToday={handleGoToToday}
+        setIsJumpModalOpen={setIsJumpModalOpen}
+        setIsEventsListOpen={setIsEventsListOpen}
+        onSettingsOpen={() => setIsSettingsOpen(true)}
       />
 
       {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
@@ -789,35 +849,68 @@ const App: React.FC = () => {
         />
       )}
 
-      <Calendar
+      <div className="main-layout">
+        <DailyInfoSidebar
+          lang={lang}
+          t={t}
+          selectedJDate={selectedJDate}
+          selectedEvents={selectedEvents}
+          selectedNotes={selectedNotes}
+          selectedZmanim={selectedZmanim}
+          location={location}
+          handleEditEvent={handleEditEvent}
+          deleteEvent={deleteEvent}
+          handleAddNewEventForDate={handleAddNewEventForDate}
+          isMobileOpen={isSidebarOpen}
+          onMobileClose={handleCloseSidebar}
+        />
+
+        <Calendar
+          lang={lang}
+          t={t}
+          currentJDate={currentJDate}
+          monthInfo={monthInfo}
+          selectedJDate={selectedJDate}
+          location={location}
+          events={events}
+          setSelectedJDate={handleSelectDate}
+          handleAddNewEventForDate={handleAddNewEventForDate}
+          handleEditEvent={handleEditEvent}
+          getEventsForDate={getEventsForDate}
+          navigateMonth={navigateMonth}
+          today={today}
+        />
+      </div>
+
+      <MobileFooter
         lang={lang}
         t={t}
-        currentJDate={currentJDate}
-        currentMonthName={currentMonthName}
-        secularMonthRange={secularMonthRange}
-        monthInfo={monthInfo}
-        selectedJDate={selectedJDate}
-        location={location}
-        events={events} // Pass all events if needed, or we might need filtered events in calendar day cells
-        setCurrentJDate={setCurrentJDate}
-        setSelectedJDate={setSelectedJDate}
         navigateMonth={navigateMonth}
         navigateYear={navigateYear}
+        handleGoToToday={handleGoToToday}
         setIsJumpModalOpen={setIsJumpModalOpen}
         setIsEventsListOpen={setIsEventsListOpen}
-        handleAddNewEventForDate={handleAddNewEventForDate}
-        handleEditEvent={handleEditEvent}
-        getEventsForDate={getEventsForDate}
-        handleShowDateInfo={handleShowDateInfo}
+      />
+
+      <SettingsSidebar
+        lang={lang}
         setLang={setLang}
-        locationName={locationName}
-        setLocationName={setLocationName}
         theme={theme}
         setTheme={setTheme}
+        t={t}
+        locationName={locationName}
+        setLocationName={setLocationName}
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onLogout={handleLogout}
         user={user}
         onLogin={handleLogin}
-        onLogout={handleLogout}
         todayStartMode={todayStartMode}
+        setTodayStartMode={setTodayStartMode}
+        emailEnabled={emailRemindersEnabled}
+        setEmailEnabled={setEmailRemindersEnabled}
+        browserNotificationsEnabled={browserNotificationsEnabled}
+        setBrowserNotificationsEnabled={setBrowserNotificationsEnabled}
       />
 
       <EventModal
@@ -871,6 +964,7 @@ const App: React.FC = () => {
         handleEditEvent={handleEditEvent}
         deleteEvent={deleteEvent}
         saveEvents={saveEvents}
+        navigateToDate={navigateToDate}
       />
     </div>
   );

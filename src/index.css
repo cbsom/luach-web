@@ -152,14 +152,25 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  overscroll-behavior: none;
 }
 
 .app-container {
   display: flex;
+  flex-direction: column;
   height: 100vh;
-  gap: 20px;
-  padding: 20px;
+  height: 100dvh;
+  gap: 12px;
+  padding: 12px;
   overflow: hidden;
+  background-color: var(--bg-primary);
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  min-height: 0;
 }
 
 .glass-panel {
@@ -172,20 +183,62 @@ body,
 }
 
 .sidebar {
-  width: 340px; /* Balanced width */
+  width: 360px;
   height: 100%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-height: 0; /* Important for children overflow */
+  min-height: 0;
+  z-index: 100;
 }
 
-.main-content {
-  flex: 1; /* Shorthand for grow, shrink, and basis */
+/* Settings Sidebar - Floating on all screens */
+.settings-sidebar {
+  position: fixed;
+  top: 20px;
+  bottom: 20px;
+  left: -420px; /* Start off-screen on left */
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  z-index: 2000;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  padding: 30px;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 25px 0 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+[dir="rtl"] .settings-sidebar {
+  left: auto;
+  right: -420px;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-sidebar.open {
+  left: 20px;
+}
+
+[dir="rtl"] .settings-sidebar.open {
+  left: auto;
+  right: 20px;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1500;
+}
+
+.calendar-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   min-width: 0;
   min-height: 0;
 }
@@ -255,12 +308,25 @@ body,
   border-color: transparent; /* Hide default border to let box-shadow shine */
 }
 
+.astroid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
 .day-cell.selected {
-  /* Subtle amber tint for Selected */
   background: rgba(251, 191, 36, 0.15);
-  border-color: var(--accent-amber);
+  border-color: var(--selected-border, var(--accent-amber));
   box-shadow: inset 0 0 15px rgba(251, 191, 36, 0.1);
-  transform: none; /* Reset transform if previously set */
+  transform: none;
   z-index: 5;
 }
 
@@ -352,6 +418,7 @@ body,
 
 .day-add-btn:hover {
   background: var(--text-primary);
+  color: var(--cell-bg, var(--bg-primary));
   transform: scale(1.1) !important;
 }
 
@@ -550,12 +617,7 @@ select {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar-close-btn {
-  display: none; /* Hidden by default on desktop */
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1001;
+.close-btn {
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
   border-radius: 12px;
@@ -565,66 +627,168 @@ select {
   transition: all 0.3s ease;
 }
 
-.sidebar-close-btn:hover {
+.close-btn:hover {
   background: var(--btn-bg-hover);
   border-color: var(--btn-border-hover);
 }
 
-/* Info button on date cells - hidden by default, shown on mobile */
-.day-info-btn {
-  display: none; /* Hidden on desktop */
+.sidebar-close-btn {
+  display: none; /* Hidden by default on desktop */
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  width: 24px;
-  height: 24px;
-  background: var(--accent-coral);
-  color: var(--bg-primary);
-  border: none;
-  border-radius: 8px;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(5px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  top: 16px;
+  right: 16px;
+  z-index: 1001;
+}
+
+.settings-close-btn {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  z-index: 1001;
+  background: transparent;
+  color: var(--accent-rose);
+  border: 0;
+  line-height: 6px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
-  z-index: 10;
 }
 
-[dir="rtl"] .day-info-btn {
-  left: auto;
-  right: 10px;
+.settings-close-btn:hover {
+  color: #f00;
 }
 
-.day-cell:hover .day-info-btn {
-  opacity: 1;
-  transform: translateY(0);
+/* Main Header Styling */
+.main-header h1 {
+  white-space: nowrap;
 }
 
-.day-info-btn:hover {
-  background: var(--accent-amber);
-  transform: scale(1.1) !important;
+@media (max-width: 600px) {
+  .main-header h1 {
+    display: none;
+  }
+  .main-header .p-1.bg-accent-amber\/10 {
+    display: none;
+  }
+}
+
+.mobile-only-info-btn {
+  display: none;
+}
+
+.mobile-footer {
+  display: flex;
+  height: 60px;
+  flex-shrink: 0;
+  z-index: 1000;
+  border-radius: 20px 20px 0 0 !important;
+  margin-top: auto;
+}
+
+.sidebar-close-btn {
+  display: none; /* Hide on desktop */
+}
+
+@media (max-width: 1200px) {
+  .desktop-settings-controls {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1201px) {
+  .mobile-footer {
+    display: none !important;
+  }
+}
+
+/* Toggle buttons visibility */
+.settings-toggle-btn {
+  display: flex !important;
+}
+
+.mobile-info-toggle-btn {
+  display: none !important; /* Only on mobile */
+}
+
+/* Settings sidebar specific styles */
+.settings-sidebar .close-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.settings-sidebar label {
+  color: var(--text-secondary);
 }
 
 /* Hide mobile controls on desktop */
-.mobile-header-controls,
 .mobile-add-event-btn {
   display: none;
 }
 
 /* Mobile Responsive Styles */
-@media (max-width: 1024px) {
-  /* Prevent horizontal scroll */
+@media (max-width: 1200px) {
+  /* Prevent horizontal and vertical scroll */
+  html,
   body,
-  #root,
-  .app-container {
+  #root {
     max-width: 100vw;
-    overflow-x: hidden;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    overscroll-behavior: none;
   }
 
   .app-container {
-    padding: 8px;
+    padding: 8px !important;
+    height: 100dvh !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .main-header {
+    border-radius: 20px 20px 0 0 !important;
+    padding: 8px 12px !important;
+    border-bottom: none !important;
+  }
+
+  .main-layout {
+    gap: 0;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .calendar-main {
+    overflow-y: auto !important;
+    height: 100% !important;
+    background: var(--glass-bg) !important;
+    border-left: 1px solid var(--glass-border) !important;
+    border-right: 1px solid var(--glass-border) !important;
+  }
+
+  .mobile-footer {
+    width: 100% !important;
+    height: 65px !important;
+    flex-shrink: 0 !important;
+    border-radius: 0 0 20px 20px !important;
+    border-top: 1px solid var(--glass-border) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    margin: 0 !important;
+  }
+
+  .nav-controls {
+    display: none !important;
+  }
+
+  .main-header > div:last-child {
+    display: none !important;
+  }
+
+  .sidebar-close-btn {
+    display: flex !important;
+  }
+
+  .calendar-month-year {
+    font-size: 1.1rem !important;
   }
 
   /* Hide sidebar by default on mobile */
@@ -632,77 +796,49 @@ select {
     position: fixed;
     top: 0;
     left: -100%;
-    height: 100vh;
+    height: 100dvh;
     width: 90%;
     max-width: 400px;
-    z-index: 1000;
-    overflow-y: auto;
+    z-index: 1800;
+    transition: left 0.4s ease;
   }
 
   [dir="rtl"] .sidebar {
     left: auto;
     right: -100%;
+    transition: right 0.4s ease;
   }
 
-  /* Show sidebar when mobile-open class is added */
   .sidebar.sidebar-mobile-open {
     left: 0;
   }
 
   [dir="rtl"] .sidebar.sidebar-mobile-open {
-    left: auto;
     right: 0;
+    left: auto;
   }
 
-  /* Show close button on mobile */
-  .sidebar-close-btn {
-    display: flex;
+  .calendar-grid {
+    gap: 4px !important;
+    padding: 0 4px !important;
   }
 
-  /* Show info button on mobile */
-  .day-info-btn {
-    display: flex;
+  .day-cell {
+    padding: 4px !important;
+    border-radius: 8px !important;
   }
 
-  /* Hide sidebar top controls on mobile (they're in calendar header now) */
-  .sidebar-top-controls {
-    display: none !important;
+  .calendar-header-days {
+    font-size: 0.6rem !important;
+    padding-bottom: 4px !important;
   }
 
-  /* Mobile header controls - hidden on desktop, shown on mobile */
-  .mobile-header-controls {
-    display: flex !important;
-    align-items: center;
-    gap: 6px;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
+  .secular-day {
+    font-size: 10px !important;
   }
 
-  [dir="rtl"] .mobile-header-controls {
-    right: auto;
-    left: 12px;
-  }
-
-  .mobile-control-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    background: var(--btn-bg);
-    border: 1px solid var(--btn-border);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 0.7rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .mobile-control-btn:hover {
-    background: var(--btn-bg-hover);
-    border-color: var(--btn-border-hover);
+  .jewish-day {
+    font-size: 14px !important;
   }
 
   .mobile-control-text {
@@ -740,31 +876,35 @@ select {
   .main-content {
     width: 100%;
     max-width: 100%;
-    gap: 12px;
+    gap: 0; /* Remove gap entirely between header and wrapper */
     padding: 0;
   }
 
   /* Responsive Calendar Header */
   .glass-panel {
-    padding: 12px !important;
+    padding: 6px !important;
+  }
+
+  .calendar-header {
+    padding: 8px 12px !important;
   }
 
   .main-content > header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch !important;
-    position: relative; /* For absolute positioning of mobile controls */
+    flex-direction: row !important;
+    gap: 4px; /* Even smaller gap */
+    align-items: center !important;
+    position: relative;
+    padding: 6px !important; /* Smaller padding */
+    min-height: auto !important;
   }
 
   /* Make month/year text smaller on mobile to prevent overlap */
   .calendar-month-year {
-    font-size: 1.1rem !important;
-    padding-right: 180px; /* Space for mobile controls */
-  }
-
-  [dir="rtl"] .calendar-month-year {
-    padding-right: 0;
-    padding-left: 180px;
+    font-size: 1rem !important;
+    text-align: center;
+    flex: 1;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .calendar-month-year span {
@@ -772,9 +912,10 @@ select {
   }
 
   .main-content > header > div:first-child h1 {
-    font-size: 1.25rem !important;
-    flex-direction: column;
-    align-items: flex-start !important;
+    font-size: 1rem !important; /* Smaller title */
+    display: flex;
+    flex-direction: row !important;
+    align-items: center !important;
     gap: 4px !important;
   }
 
@@ -784,9 +925,10 @@ select {
 
   /* Compact navigation buttons */
   .main-content > header > div:last-child {
-    flex-wrap: wrap;
-    gap: 8px !important;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: row !important;
+    gap: 4px !important;
+    align-items: center !important;
   }
 
   .main-content > header button {
@@ -812,24 +954,33 @@ select {
   /* Responsive day labels */
   .calendar-header-days {
     font-size: 0.6rem;
-    padding: 0 0 8px;
+    padding: 0 0 4px;
     letter-spacing: 0.05em;
   }
 
-  /* Responsive calendar grid - CRITICAL FIX */
+  /* Responsive calendar grid - FIXED for aspect ratio */
   .calendar-grid {
     grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
     gap: 2px;
     width: 100%;
     max-width: 100%;
+    max-height: 65vh; /* Cap height to prevent extreme elongation */
+    margin: 0 auto;
+  }
+
+  .calendar-wrapper {
+    justify-content: flex-start;
+    padding-top: 0; /* Remove padding top */
+    gap: 0; /* Remove gap inside wrapper */
   }
 
   /* Responsive date cells */
   .day-cell {
-    min-height: 70px;
+    min-height: 55px;
     min-width: 0;
-    padding: 4px;
-    gap: 2px;
+    padding: 3px;
+    gap: 1px;
+    border-radius: 8px; /* Slightly smaller radius for small cells */
   }
 
   .day-number-container {
@@ -906,7 +1057,7 @@ select {
   }
 
   .glass-panel {
-    padding: 8px !important;
+    padding: 4px !important;
   }
 
   .main-content > header > div:first-child h1 {
@@ -922,8 +1073,8 @@ select {
   }
 
   .day-cell {
-    min-height: 60px;
-    padding: 3px;
+    min-height: 48px;
+    padding: 2px;
   }
 
   .hebrew-day {
