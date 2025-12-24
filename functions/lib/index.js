@@ -31,11 +31,11 @@ admin.initializeApp();
 const db = admin.firestore();
 var UserEventTypes;
 (function (UserEventTypes) {
-    UserEventTypes["OneTime"] = "one-time";
-    UserEventTypes["HebrewDateRecurringYearly"] = "hebrew-yearly";
-    UserEventTypes["HebrewDateRecurringMonthly"] = "hebrew-monthly";
-    UserEventTypes["SecularDateRecurringYearly"] = "secular-yearly";
-    UserEventTypes["SecularDateRecurringMonthly"] = "secular-monthly";
+    UserEventTypes[UserEventTypes["OneTime"] = 0] = "OneTime";
+    UserEventTypes[UserEventTypes["HebrewDateRecurringYearly"] = 1] = "HebrewDateRecurringYearly";
+    UserEventTypes[UserEventTypes["HebrewDateRecurringMonthly"] = 2] = "HebrewDateRecurringMonthly";
+    UserEventTypes[UserEventTypes["SecularDateRecurringYearly"] = 3] = "SecularDateRecurringYearly";
+    UserEventTypes[UserEventTypes["SecularDateRecurringMonthly"] = 4] = "SecularDateRecurringMonthly";
 })(UserEventTypes || (UserEventTypes = {}));
 const isMonthMatch = (occMonth, occYear, currMonth, currYear) => {
     if (currMonth >= 12 && occMonth >= 12) {
@@ -67,7 +67,16 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
             .doc("general")
             .get();
         const settings = settingsSnap.data();
-        if (!settings || !settings.emailRemindersEnabled || !settings.email) {
+        if (!settings) {
+            console.log(`⚠️ No settings found for user ${userId}`);
+            continue;
+        }
+        if (!settings.emailRemindersEnabled) {
+            console.log(`ℹ️ Email reminders disabled for user ${userId}`);
+            continue;
+        }
+        if (!settings.email) {
+            console.log(`⚠️ No email found for user ${userId}`);
             continue;
         }
         const locationName = settings.locationName || "Jerusalem";
@@ -75,77 +84,78 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
             jcal_zmanim_1.Locations.find((l) => l.Name === "Jerusalem");
         const todayStartMode = settings.todayStartMode || "sunset";
         const today = todayStartMode === "sunset" ? jcal_zmanim_1.Utils.nowAtLocation(location) : new jcal_zmanim_1.jDate();
-        // Determine local hour to see if we should send Now
-        // We want to send reminders around 7:00 AM local time.
-        // Simple timezone offset calculation (approximate since Locations doesn't have offset)
-        // Actually, we can use the current time and check if it's the right "Jewish Date"
-        // and if we haven't sent it yet.
-        // To keep it simple and robust across timezones:
-        // If we haven't sent a reminder for THIS Jewish Date yet, and it's morning time in the user's location.
-        // Since we don't have TZ offsets easily, we'll just check if jAbs changed.
         const statusRef = db.collection("users").doc(userId).collection("status").doc("lastDailyCheck");
         const lastCheckSnap = await statusRef.get();
         const lastCheck = lastCheckSnap.data();
         if (lastCheck && lastCheck.jAbs === today.Abs) {
-            // Already processed for today
+            console.log(`ℹ️ Already processed ${today.toString()} for user ${userId}. Skipping.`);
             continue;
         }
         // Check for events
         const eventsSnap = await db.collection("users").doc(userId).collection("events").get();
         const events = eventsSnap.docs.map((d) => d.data());
-        const sDate = today.getDate();
-        const matches = events.filter((uo) => {
-            // Must have reminders enabled for this event
-            if (!uo.remindDayOf)
-                return false;
-            if (uo.type === UserEventTypes.OneTime) {
-                return (uo.jAbs === today.Abs ||
-                    (uo.jDay === today.Day && uo.jMonth === today.Month && uo.jYear === today.Year));
+        const isEventOnDate = (uo, date) => {
+            const sDate = date.getDate();
+            const type = uo.type;
+            // Handle both numeric and string types for safety
+            const isOneTime = type === UserEventTypes.OneTime || type === "one-time" || type === 0;
+            const isHebrewYearly = type === UserEventTypes.HebrewDateRecurringYearly || type === "hebrew-yearly" || type === 1;
+            const isHebrewMonthly = type === UserEventTypes.HebrewDateRecurringMonthly || type === "hebrew-monthly" || type === 2;
+            const isSecularYearly = type === UserEventTypes.SecularDateRecurringYearly || type === "secular-yearly" || type === 3;
+            const isSecularMonthly = type === UserEventTypes.SecularDateRecurringMonthly || type === "secular-monthly" || type === 4;
+            if (isOneTime) {
+                return (uo.jAbs === date.Abs ||
+                    (uo.jDay === date.Day && uo.jMonth === date.Month && uo.jYear === date.Year));
             }
             const eventStartAbs = uo.jAbs || jcal_zmanim_1.jDate.absJd(uo.jYear, uo.jMonth, uo.jDay);
-            if (eventStartAbs > today.Abs)
+            if (eventStartAbs > date.Abs)
                 return false;
-            switch (uo.type) {
-                case UserEventTypes.HebrewDateRecurringYearly:
-                    return uo.jDay === today.Day && isMonthMatch(uo.jMonth, uo.jYear, today.Month, today.Year);
-                case UserEventTypes.HebrewDateRecurringMonthly:
-                    return uo.jDay === today.Day;
-                case UserEventTypes.SecularDateRecurringYearly: {
-                    const occSDate = new Date(uo.sDate);
-                    return occSDate.getDate() === sDate.getDate() && occSDate.getMonth() === sDate.getMonth();
-                }
-                case UserEventTypes.SecularDateRecurringMonthly: {
-                    const occSDate = new Date(uo.sDate);
-                    return occSDate.getDate() === sDate.getDate();
-                }
-                default:
-                    return false;
+            if (isHebrewYearly) {
+                return uo.jDay === date.Day && isMonthMatch(uo.jMonth, uo.jYear, date.Month, date.Year);
             }
-        });
-        if (matches.length > 0) {
-            console.log(`📧 Sending ${matches.length} reminders to ${settings.email}`);
-            // Group multiple reminders into one email?
-            // For now, "Trigger Email" extension usually works per-doc.
-            // Let's send a single digest email.
+            if (isHebrewMonthly) {
+                return uo.jDay === date.Day;
+            }
+            if (isSecularYearly) {
+                const occSDate = new Date(uo.sDate);
+                return occSDate.getDate() === sDate.getDate() && occSDate.getMonth() === sDate.getMonth();
+            }
+            if (isSecularMonthly) {
+                const occSDate = new Date(uo.sDate);
+                return occSDate.getDate() === sDate.getDate();
+            }
+            return false;
+        };
+        const todayMatches = events.filter(e => e.remindDayOf && isEventOnDate(e, today));
+        const tomorrowMatches = events.filter(e => e.remindDayBefore && isEventOnDate(e, today.addDays(1)));
+        if (todayMatches.length > 0 || tomorrowMatches.length > 0) {
+            console.log(`📧 Sending reminders to ${settings.email} (Today: ${todayMatches.length}, Tomorrow: ${tomorrowMatches.length})`);
+            const buildMatchList = (matches, label, targetDate) => {
+                if (matches.length === 0)
+                    return "";
+                const list = matches.map(m => {
+                    const anniversary = targetDate.Year - (m.jYear || 0);
+                    const anniversaryText = (anniversary > 0 && !m.jAbs) ? ` (${anniversary}${getOrdinal(anniversary)} Anniversary)` : '';
+                    return `<li><b>${m.name}</b>${anniversaryText}${m.notes ? `: ${m.notes}` : ''}</li>`;
+                }).join("");
+                return `<h4>${label} (${targetDate.toString()}):</h4><ul>${list}</ul>`;
+            };
+            const emailBody = `
+                ${buildMatchList(todayMatches, "Today", today)}
+                ${buildMatchList(tomorrowMatches, "Tomorrow", today.addDays(1))}
+            `;
             const mailId = `digest_${userId}_${today.Abs}`;
-            const emailBody = matches.map(m => {
-                const anniversary = today.Year - (m.jYear || 0);
-                const anniversaryText = anniversary > 0 ? ` (${anniversary}${getOrdinal(anniversary)} Anniversary)` : '';
-                return `<li><b>${m.name}</b>${anniversaryText}${m.notes ? `: ${m.notes}` : ''}</li>`;
-            }).join("");
             await db.collection("mail").doc(mailId).set({
                 to: settings.email,
                 message: {
-                    subject: `Luach Daily Reminders - ${today.toString()}`,
+                    subject: `Luach Reminders - ${today.toString()}`,
                     html: `
-              <h3>Good morning!</h3>
-              <p>You have the following events today, <b>${today.toString()}</b>:</p>
-              <ul>
-                ${emailBody}
-              </ul>
-              <hr/>
-              <p><small>Sent by Luach-Web. You can disable these in your settings.</small></p>
-            `
+                        <h3>Good morning!</h3>
+                        <p>You have the following events coming up:</p>
+                        ${emailBody}
+                        <hr/>
+                        <p><small>Sent by Luach-Web. You can disable these in your settings.</small></p>
+                    `
                 }
             }, { merge: true });
         }
