@@ -97,6 +97,14 @@ const App: React.FC = () => {
     return localStorage.getItem("luach-browser-notifications") !== "false";
   });
 
+  const [calendarView, setCalendarView] = useState<"jewish" | "secular">(() => {
+    return (localStorage.getItem("luach-calendar-view") as "jewish" | "secular") || "jewish";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("luach-calendar-view", calendarView);
+  }, [calendarView]);
+
   useEffect(() => {
     localStorage.setItem("luach-email-reminders", emailRemindersEnabled.toString());
   }, [emailRemindersEnabled]);
@@ -588,15 +596,24 @@ const App: React.FC = () => {
   };
 
   const monthInfo = useMemo(() => {
-    const year = currentJDate.Year;
-    const month = currentJDate.Month;
-    const firstOfMonth = new jDate(year, month, 1);
-    const lastOfMonth = new jDate(year, month, jDate.daysJMonth(year, month));
+    let firstOfMonth: jDate, lastOfMonth: jDate;
+
+    if (calendarView === "jewish") {
+      const year = currentJDate.Year;
+      const month = currentJDate.Month;
+      firstOfMonth = new jDate(year, month, 1);
+      lastOfMonth = new jDate(year, month, jDate.daysJMonth(year, month));
+    } else {
+      const sDate = currentJDate.getDate();
+      const firstSDate = new Date(sDate.getFullYear(), sDate.getMonth(), 1);
+      const lastSDate = new Date(sDate.getFullYear(), sDate.getMonth() + 1, 0);
+      firstOfMonth = new jDate(firstSDate);
+      lastOfMonth = new jDate(lastSDate);
+    }
+
     const dayOfWeek = firstOfMonth.getDayOfWeek();
 
     // Calculate how many weeks we need
-    // Start from the first day shown (which might be from previous month)
-    // End at the last day shown (which might be from next month)
     const firstDayShown = firstOfMonth.addDays(-dayOfWeek);
     const lastDayOfWeek = lastOfMonth.getDayOfWeek();
     const daysAfterMonth = lastDayOfWeek === 6 ? 0 : 6 - lastDayOfWeek;
@@ -609,30 +626,56 @@ const App: React.FC = () => {
     const days = [];
     const daysToShow = weeksNeeded * 7;
     for (let i = 0; i < daysToShow; i++) {
-      days.push(firstOfMonth.addDays(i - dayOfWeek));
+      days.push(firstDayShown.addDays(i));
     }
 
-    return { days, year, month, weeksNeeded };
-  }, [currentJDate]);
+    return {
+      days,
+      weeksNeeded,
+      year: firstOfMonth.Year,
+      month: firstOfMonth.Month,
+    };
+  }, [currentJDate, calendarView]);
 
-  const secularMonthRange = useMemo(() => {
-    const firstDay = currentJDate.getDate();
-    const lastDay = currentJDate
-      .addDays(jDate.daysJMonth(currentJDate.Year, currentJDate.Month) - 1)
-      .getDate();
+  const secondaryDateRange = useMemo(() => {
+    if (calendarView === "jewish") {
+      // Show Secular range for Jewish month
+      const firstDay = currentJDate.addDays(-(currentJDate.Day - 1)).getDate();
+      const lastDay = currentJDate
+        .addDays(jDate.daysJMonth(currentJDate.Year, currentJDate.Month) - currentJDate.Day)
+        .getDate();
 
-    const locale = lang === "he" ? "he-IL" : "en-US";
-    const m1 = firstDay.toLocaleDateString(locale, { month: "long" });
-    const y1 = firstDay.getFullYear();
-    const m2 = lastDay.toLocaleDateString(locale, { month: "long" });
-    const y2 = lastDay.getFullYear();
+      const locale = lang === "he" ? "he-IL" : "en-US";
+      const m1 = firstDay.toLocaleDateString(locale, { month: "long" });
+      const y1 = firstDay.getFullYear();
+      const m2 = lastDay.toLocaleDateString(locale, { month: "long" });
+      const y2 = lastDay.getFullYear();
 
-    if (y1 === y2) {
-      if (m1 === m2) return `${m1} ${y1}`;
-      return `${m1} - ${m2} ${y1}`;
+      if (y1 === y2) {
+        if (m1 === m2) return `${m1} ${y1}`;
+        return `${m1} - ${m2} ${y1}`;
+      }
+      return `${m1} ${y1} - ${m2} ${y2}`;
+    } else {
+      // Show Jewish range for Secular month
+      const sDate = currentJDate.getDate();
+      const firstSDate = new Date(sDate.getFullYear(), sDate.getMonth(), 1);
+      const lastSDate = new Date(sDate.getFullYear(), sDate.getMonth() + 1, 0);
+      const firstJ = new jDate(firstSDate);
+      const lastJ = new jDate(lastSDate);
+
+      const m1 = lang === "he" ? JewishMonthsHeb[firstJ.Month] : JewishMonthsEng[firstJ.Month];
+      const m2 = lang === "he" ? JewishMonthsHeb[lastJ.Month] : JewishMonthsEng[lastJ.Month];
+      const y1 = firstJ.Year;
+      const y2 = lastJ.Year;
+
+      if (y1 === y2) {
+        if (m1 === m2) return `${m1} ${y1}`;
+        return `${m1} - ${m2} ${y1}`;
+      }
+      return `${m1} ${y1} - ${m2} ${y2}`;
     }
-    return `${m1} ${y1} - ${m2} ${y2}`;
-  }, [currentJDate, lang]);
+  }, [currentJDate, lang, calendarView]);
 
   const selectedZmanim = useMemo(() => {
     return ZmanimUtils.getAllZmanim(selectedJDate, location);
@@ -688,7 +731,7 @@ const App: React.FC = () => {
         e.type === UserEventTypes.HebrewDateRecurringYearly ||
         e.type === UserEventTypes.HebrewDateRecurringMonthly
     );
-    const useJewish = todayStartMode === "sunset" || hasHebrewRecurringEvent;
+    const useJewish = hasHebrewRecurringEvent || calendarView === "jewish";
 
     let newDate;
     if (useJewish) {
@@ -724,7 +767,7 @@ const App: React.FC = () => {
         e.type === UserEventTypes.HebrewDateRecurringYearly ||
         e.type === UserEventTypes.HebrewDateRecurringMonthly
     );
-    const useJewish = todayStartMode === "sunset" || hasHebrewRecurringEvent;
+    const useJewish = hasHebrewRecurringEvent || calendarView === "jewish";
 
     let newDate;
     if (useJewish) {
@@ -815,8 +858,24 @@ const App: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedJDate, currentJDate, isModalOpen, isJumpModalOpen, lang]);
 
-  const currentMonthName =
-    lang === "he" ? JewishMonthsHeb[currentJDate.Month] : JewishMonthsEng[currentJDate.Month];
+  const currentMonthName = useMemo(() => {
+    if (calendarView === "jewish") {
+      return lang === "he"
+        ? JewishMonthsHeb[currentJDate.Month]
+        : JewishMonthsEng[currentJDate.Month];
+    } else {
+      const locale = lang === "he" ? "he-IL" : "en-US";
+      return currentJDate.getDate().toLocaleDateString(locale, { month: "long" });
+    }
+  }, [currentJDate, calendarView, lang]);
+
+  const currentYearName = useMemo(() => {
+    if (calendarView === "jewish") {
+      return currentJDate.Year.toString();
+    } else {
+      return currentJDate.getDate().getFullYear().toString();
+    }
+  }, [currentJDate, calendarView]);
 
   const today = useMemo(() => {
     return todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
@@ -829,7 +888,8 @@ const App: React.FC = () => {
         t={t}
         currentJDate={currentJDate}
         currentMonthName={currentMonthName}
-        secularMonthRange={secularMonthRange}
+        currentYearName={currentYearName}
+        secondaryDateRange={secondaryDateRange}
         navigateMonth={navigateMonth}
         navigateYear={navigateYear}
         handleGoToToday={handleGoToToday}
@@ -879,6 +939,7 @@ const App: React.FC = () => {
           getEventsForDate={getEventsForDate}
           navigateMonth={navigateMonth}
           today={today}
+          calendarView={calendarView}
         />
       </div>
 
@@ -911,6 +972,8 @@ const App: React.FC = () => {
         setEmailEnabled={setEmailRemindersEnabled}
         browserNotificationsEnabled={browserNotificationsEnabled}
         setBrowserNotificationsEnabled={setBrowserNotificationsEnabled}
+        calendarView={calendarView}
+        setCalendarView={setCalendarView}
       />
 
       <EventModal

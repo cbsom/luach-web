@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { BookOpen, HandHelping, Plus, Trash, X } from "lucide-react";
 import { Dafyomi, Utils, jDate } from "jcal-zmanim";
 import { UserEvent } from "../types";
@@ -34,13 +34,31 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
   onMobileClose,
 }) => {
   const prakim = selectedJDate.getPirkeiAvos(location.Israel);
+  const scrollRef = useRef<HTMLElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 2;
+      setIsAtBottom(atBottom);
+    }
+  };
+
+  useEffect(() => {
+    // Check on open and when date changes
+    setTimeout(checkScroll, 100);
+  }, [isMobileOpen, selectedJDate]);
 
   return (
     <>
       {/* Mobile overlay */}
       {isMobileOpen && <div className="sidebar-overlay" onClick={onMobileClose} />}
 
-      <aside className={`sidebar daily-info-sidebar ${isMobileOpen ? "sidebar-mobile-open" : ""}`}>
+      <aside
+        className={`sidebar daily-info-sidebar glass-panel scroll-affordance ${
+          isAtBottom ? "at-bottom" : "has-more"
+        } ${isMobileOpen ? "sidebar-mobile-open" : ""}`}>
         {/* Mobile close button */}
         <button
           className="close-btn sidebar-close-btn"
@@ -49,7 +67,7 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
           <X size={24} />
         </button>
 
-        <div className="glass-panel p-6 flex flex-col gap-4 overflow-hidden h-full">
+        <div className="p-6 flex flex-col gap-4 overflow-hidden h-full">
           {/* Header with selected date */}
           <div className="flex flex-col gap-1">
             <h2 className="text-xl font-black">
@@ -77,7 +95,10 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
             <span>{t.addEvent}</span>
           </button>
 
-          <section className="flex-grow overflow-y-auto pr-1 flex flex-col gap-4">
+          <section
+            ref={scrollRef}
+            onScroll={checkScroll}
+            className="flex-grow overflow-y-auto pr-1 flex flex-col gap-4">
             {/* EVENTS */}
             {selectedEvents.length > 0 && (
               <div className="flex flex-col gap-2">

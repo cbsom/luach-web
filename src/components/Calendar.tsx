@@ -31,6 +31,7 @@ interface CalendarProps {
   getEventsForDate: (date: jDate) => UserEvent[];
   navigateMonth: (direction: number) => void;
   today: jDate;
+  calendarView: "jewish" | "secular";
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -47,6 +48,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   getEventsForDate,
   navigateMonth,
   today,
+  calendarView,
 }) => {
   // Swipe detection for month navigation
   const [touchStart, setTouchStart] = React.useState<{ x: number; y: number } | null>(null);
@@ -128,10 +130,13 @@ export const Calendar: React.FC<CalendarProps> = ({
             gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
           }}>
           {(() => {
-            return monthInfo.days.map((date, i) => {
+            return monthInfo.days.map((date: jDate, i: number) => {
               const isToday = date.Abs === today.Abs;
               const isSelected = date.Abs === selectedJDate.Abs;
-              const isOtherMonth = date.Month !== currentJDate.Month;
+              const isOtherMonth =
+                calendarView === "jewish"
+                  ? date.Month !== currentJDate.Month
+                  : date.getDate().getMonth() !== currentJDate.getDate().getMonth();
               const notes = getNotifications(
                 date,
                 { hour: 10, minute: 0 },
@@ -168,22 +173,36 @@ export const Calendar: React.FC<CalendarProps> = ({
                         } as React.CSSProperties)
                       : {}),
                   }}>
-                  {isSelected && (
-                    <div className="astroid-overlay">
+                  {isToday && (
+                    <div className="astroid-overlay" style={{ zIndex: 1, pointerEvents: "none" }}>
                       <svg
                         viewBox="0 0 100 100"
                         preserveAspectRatio="none"
-                        style={{ width: "100%", height: "100%" }}>
+                        style={{ width: "200%", height: "120%" }}>
                         <path
                           d="M 50 0 Q 50 50 100 50 Q 50 50 50 100 Q 50 50 0 50 Q 50 50 50 0"
-                          fill="rgba(0,0,0,0.25)"
+                          fill="rgba(0, 0, 100, 0.25)"
                         />
                       </svg>
                     </div>
                   )}
-                  <div className="day-number-container">
-                    <span className="hebrew-day">{Utils.toJewishNumber(date.Day)}</span>
-                    <span className="secular-day">{date.getDate().getDate()}</span>
+                  <div
+                    className={`day-number-container ${
+                      calendarView === "secular" ? "flex-row-reverse" : ""
+                    }`}>
+                    {calendarView === "jewish" ? (
+                      <>
+                        <span className="hebrew-day">{Utils.toJewishNumber(date.Day)}</span>
+                        <span className="secular-day">{date.getDate().getDate()}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="hebrew-day-secondary">
+                          {Utils.toJewishNumber(date.Day)}
+                        </span>
+                        <span className="secular-day-primary">{date.getDate().getDate()}</span>
+                      </>
+                    )}
                   </div>
 
                   <button

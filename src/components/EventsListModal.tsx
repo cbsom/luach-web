@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  X,
   Download,
   Upload,
   Calendar,
@@ -14,6 +13,7 @@ import { jDate } from "jcal-zmanim";
 import { UserEvent, UserEventTypes } from "../types";
 import { getAnniversaryNumber } from "../utils";
 import { downloadAllEventsAsICS } from "../calendarExport";
+import { Modal } from "./Modal";
 
 interface EventsListModalProps {
   isOpen: boolean;
@@ -172,7 +172,6 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           const name = values[0] || "";
           const notes = values[1] || "";
           const typeStr = values[2] || "";
-          const hebrewDate = values[3] || "";
           const backColor = values[5] || "#fde047";
           const textColor = values[6] || "#1e293b";
 
@@ -321,8 +320,6 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
     input.click();
   };
 
-  if (!isOpen) return null;
-
   const SortButton = ({ field, label }: { field: SortField; label: string }) => (
     <button
       onClick={() => handleSort(field)}
@@ -335,184 +332,139 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
   );
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1000 }}>
-      <div
-        className="modal-content glass-panel p-4 max-h-[85vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "800px", width: "90%" }}>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-black flex items-center gap-2">
-            <Calendar size={20} className="text-accent-amber" />
-            {lang === "he" ? "רשימת אירועים" : "Events List"}
-            <span className="text-xs font-normal text-text-secondary">({events.length})</span>
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-white/10 transition-all"
-            title={t.close}>
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Export Buttons */}
-        <div className="flex gap-2 mb-4">
-          <button
-            onClick={exportToJSON}
-            className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
-            <Download size={16} />
-            {lang === "he" ? "ייצא JSON" : "Export JSON"}
-          </button>
-          <button
-            onClick={exportToCSV}
-            className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
-            <Download size={16} />
-            {lang === "he" ? "ייצא CSV" : "Export CSV"}
-          </button>
-          <button
-            onClick={handleImportClick}
-            className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
-            <Upload size={16} />
-            {lang === "he" ? "ייבא" : "Import"}
-          </button>
-          <button
-            onClick={() => downloadAllEventsAsICS(events)}
-            className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
-            <Download size={16} />
-            {lang === "he" ? "ייצא ליומן" : "Export Calendar"}
-          </button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative mb-4">
-          <div
-            className={`absolute inset-y-0 ${
-              lang === "he" ? "right-3" : "left-3"
-            } flex items-center pointer-events-none`}>
-            <Search size={16} className="text-text-secondary opacity-50" />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === "he" ? "חיפוש אירועים..." : "Search events..."}
-            className={`w-full bg-white/5 border border-glass-border rounded-xl py-2 ${
-              lang === "he" ? "pr-10 pl-4 text-right" : "pl-10 pr-4"
-            } text-sm focus:outline-none focus:border-accent-amber/50 transition-all`}
-          />
-          {searchQuery && (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="800px"
+      height="90vh"
+      title={lang === "he" ? "רשימת אירועים" : "Events List"}
+      subtitle={`${events.length} ${lang === "he" ? "אירועים" : "events"}`}
+      subHeader={
+        <div className="flex flex-col gap-4">
+          {/* Export Buttons */}
+          <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => setSearchQuery("")}
-              className={`absolute inset-y-0 ${
-                lang === "he" ? "left-3" : "right-3"
-              } flex items-center text-text-secondary hover:text-accent-amber transition-colors`}>
-              <X size={14} />
+              onClick={exportToJSON}
+              className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
+              <Download size={16} />
+              {lang === "he" ? "ייצא JSON" : "Export JSON"}
             </button>
-          )}
-        </div>
+            <button
+              onClick={exportToCSV}
+              className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
+              <Download size={16} />
+              {lang === "he" ? "ייצא CSV" : "Export CSV"}
+            </button>
+            <button
+              onClick={handleImportClick}
+              className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
+              <Upload size={16} />
+              {lang === "he" ? "ייבא" : "Import"}
+            </button>
+            <button
+              onClick={() => downloadAllEventsAsICS(events)}
+              className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
+              <Download size={16} />
+              {lang === "he" ? "ייצא ליומן" : "Export Calendar"}
+            </button>
+          </div>
 
-        {/* Sort Controls */}
-        <div className="flex gap-3 mb-2 pb-2 border-b border-glass-border text-xs">
-          <span className="text-text-secondary">{lang === "he" ? "מיין:" : "Sort:"}</span>
-          <SortButton field="name" label={lang === "he" ? "שם" : "Name"} />
-          <SortButton field="date" label={lang === "he" ? "תאריך" : "Date"} />
-          <SortButton field="type" label={lang === "he" ? "סוג" : "Type"} />
-        </div>
-
-        {/* Events List - Scrollable */}
-        <div
-          className="flex-1 overflow-y-auto pr-1 -mr-1"
-          style={{ minHeight: 0, maxHeight: "calc(85vh - 180px)" }}>
-          {sortedEvents.length === 0 ? (
-            <div className="text-center py-8 text-text-secondary text-sm">
-              {lang === "he" ? "אין אירועים" : "No events"}
+          {/* Search Bar */}
+          <div className="relative">
+            <div
+              className={`absolute inset-y-0 ${
+                lang === "he" ? "right-3" : "left-3"
+              } flex items-center pointer-events-none`}>
+              <Search size={16} className="text-text-secondary opacity-50" />
             </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {sortedEvents.map((event) => {
-                const eventDate = new jDate(event.jYear, event.jMonth, event.jDay);
-                const today = new jDate();
-                const anniv = getAnniversaryNumber(event, today);
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={lang === "he" ? "חיפוש אירועים..." : "Search events..."}
+              className={`w-full bg-white/5 border border-glass-border rounded-xl py-2 ${
+                lang === "he" ? "pr-10 pl-4 text-right" : "pl-10 pr-4"
+              } text-sm focus:outline-none focus:border-accent-amber/50 transition-all`}
+            />
+          </div>
 
-                return (
-                  <div
-                    key={event.id}
-                    className="rounded-lg border border-glass-border hover:brightness-110 transition-all cursor-pointer group"
-                    style={{
-                      backgroundColor: event.backColor || "var(--accent-amber)",
-                      padding: "1px 3px",
-                      margin: "1px 0",
-                    }}
-                    onClick={() => navigateToDate(eventDate)}>
-                    <div className="flex items-center justify-between brightness-50 transition-all">
-                      {/* Event Info */}
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <h3
-                          className="font-bold truncate"
-                          style={{ color: event.textColor || "#ffffff", fontSize: "11px" }}>
-                          {event.name}
-                        </h3>
-                        {anniv > 0 && (
-                          <span
-                            className="font-bold text-xs px-1.5 py-0.5 rounded flex-shrink-0"
-                            style={{
-                              backgroundColor: event.textColor || "#ffffff",
-                              color: event.backColor || "var(--accent-amber)",
-                              fontSize: "10px",
-                              padding: "2px",
-                            }}>
-                            {anniv}
-                          </span>
-                        )}
+          {/* Sort Controls */}
+          <div className="flex gap-3 pb-2 border-b border-glass-border text-xs">
+            <span className="text-text-secondary">{lang === "he" ? "מיין:" : "Sort:"}</span>
+            <SortButton field="name" label={lang === "he" ? "שם" : "Name"} />
+            <SortButton field="date" label={lang === "he" ? "תאריך" : "Date"} />
+            <SortButton field="type" label={lang === "he" ? "סוג" : "Type"} />
+          </div>
+        </div>
+      }>
+      {/* List Content */}
+      <div className="flex flex-col gap-2">
+        {sortedEvents.length === 0 ? (
+          <div className="text-center py-8 text-text-secondary text-sm">
+            {lang === "he" ? "אין אירועים" : "No events"}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {sortedEvents.map((event) => {
+              const eventDate = new jDate(event.jYear, event.jMonth, event.jDay);
+              const today = new jDate();
+              const anniv = getAnniversaryNumber(event, today);
 
-                        <div
-                          className="flex items-center gap-1.5 text-[8px] flex-shrink-0"
-                          style={{
-                            color: event.textColor || "#ffffff",
-                            opacity: 0.85,
-                            fontSize: "10px",
-                          }}>
-                          <span className="font-semibold">
-                            {lang === "he" ? eventDate.toStringHeb() : eventDate.toString()}
-                          </span>
-                          <span className="opacity-60">•</span>
-                          <span className="opacity-75">{getEventTypeLabel(event.type)}</span>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditEvent(event, eventDate);
-                          }}
-                          className="p-1.5 rounded-md hover:bg-black/20 transition-all"
-                          style={{ color: event.textColor || "#ffffff" }}
-                          title={t.editEvent}>
-                          <Edit2 size={14} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (confirm(lang === "he" ? "למחוק אירוע זה?" : "Delete this event?")) {
-                              deleteEvent(event.id);
-                            }
-                          }}
-                          className="p-1.5 rounded-md hover:bg-red-500/40 transition-all"
-                          style={{ color: event.textColor || "#ffffff" }}
-                          title={t.deleteEvent}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+              return (
+                <div
+                  key={event.id}
+                  className="rounded-lg border border-glass-border hover:brightness-110 transition-all cursor-pointer group"
+                  style={{
+                    backgroundColor: event.backColor || "var(--accent-amber)",
+                    padding: "8px 12px",
+                  }}
+                  onClick={() => {
+                    navigateToDate(eventDate);
+                    onClose();
+                  }}>
+                  <div className="flex items-center justify-between brightness-90">
+                    <div className="flex-1 min-w-0 flex items-center gap-2">
+                      <h3
+                        className="font-bold truncate text-sm"
+                        style={{ color: event.textColor || "#ffffff" }}>
+                        {event.name}
+                      </h3>
+                      {anniv > 0 && (
+                        <span
+                          className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-bold"
+                          style={{ color: event.textColor }}>
+                          {anniv}
+                        </span>
+                      )}
+                      <span className="text-[10px] opacity-70" style={{ color: event.textColor }}>
+                        {lang === "he" ? eventDate.toStringHeb() : eventDate.toString()}
+                      </span>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditEvent(event, eventDate);
+                        }}
+                        className="p-1.5 hover:bg-black/10 rounded transition-all">
+                        <Edit2 size={16} style={{ color: event.textColor }} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(lang === "he" ? "למחוק?" : "Delete?")) deleteEvent(event.id);
+                        }}
+                        className="p-1.5 hover:bg-red-500/20 rounded transition-all">
+                        <Trash2 size={16} style={{ color: event.textColor }} />
+                      </button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </div>
+    </Modal>
   );
 };

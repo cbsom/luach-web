@@ -58,6 +58,9 @@ export const translations = {
         off: "Off",
         zmanim: "Prayer Times",
         location: "Location",
+        calendarView: "Calendar Layout",
+        jewishMonth: "Jewish Month",
+        secularMonth: "Secular Month",
     },
     he: {
         title: "לוח",
@@ -118,5 +121,8 @@ export const translations = {
         off: "כבוי",
         zmanim: "זמני תפילה",
         location: "מיקום",
+        calendarView: "מבנה הלוח",
+        jewishMonth: "חודש עברי",
+        secularMonth: "חודש לועזי",
     },
 };

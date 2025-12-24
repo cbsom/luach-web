@@ -15,7 +15,8 @@ interface HeaderProps {
   t: any;
   currentJDate: jDate;
   currentMonthName: string;
-  secularMonthRange: string;
+  currentYearName: string;
+  secondaryDateRange: string;
   navigateMonth: (direction: number) => void;
   navigateYear: (direction: number) => void;
   handleGoToToday: () => void;
@@ -29,7 +30,8 @@ export const Header: React.FC<HeaderProps> = ({
   t,
   currentJDate,
   currentMonthName,
-  secularMonthRange,
+  currentYearName,
+  secondaryDateRange,
   navigateMonth,
   navigateYear,
   handleGoToToday,
@@ -116,9 +118,8 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
         <h2 className="text-3xl font-black flex items-baseline gap-4 calendar-month-year">
-          {currentMonthName}{" "}
-          {lang === "he" ? Utils.toJewishNumber(currentJDate.Year % 1000) : currentJDate.Year}
-          <span className="text-lg font-medium text-text-secondary">{secularMonthRange}</span>
+          {currentMonthName} {currentYearName}
+          <span className="text-lg font-medium text-text-secondary">{secondaryDateRange}</span>
         </h2>
       </div>
       <div className="flex items-center gap-2">

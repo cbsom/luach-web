@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MapPin, X, Palette, Bell, Check, Globe } from "lucide-react";
 import { Locations, jDate } from "jcal-zmanim";
 import { ToggleSwitch } from "./ToggleSwitch";
@@ -23,6 +23,8 @@ interface SettingsSidebarProps {
   setEmailEnabled: (enabled: boolean) => void;
   browserNotificationsEnabled: boolean;
   setBrowserNotificationsEnabled: (enabled: boolean) => void;
+  calendarView: "jewish" | "secular";
+  setCalendarView: (view: "jewish" | "secular") => void;
 }
 
 export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
@@ -44,7 +46,28 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   setEmailEnabled,
   browserNotificationsEnabled,
   setBrowserNotificationsEnabled,
+  calendarView,
+  setCalendarView,
 }) => {
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  const checkScroll = () => {
+    if (sidebarRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = sidebarRef.current;
+      // Use a small buffer (2px) for rounding errors
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 2;
+      setIsAtBottom(atBottom);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      // Small timeout to let content render before initial check
+      setTimeout(checkScroll, 100);
+    }
+  }, [isOpen]);
+
   const cycleTheme = () => {
     const themes: Array<"warm" | "dark" | "light"> = ["warm", "dark", "light"];
     const currentIndex = themes.indexOf(theme);
@@ -67,7 +90,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} style={{ zIndex: 1100 }} />}
       <aside
-        className={`settings-sidebar glass-panel ${isOpen ? "open" : ""}`}
+        ref={sidebarRef}
+        onScroll={checkScroll}
+        className={`settings-sidebar glass-panel scroll-affordance ${isOpen ? "open" : ""} ${
+          isAtBottom ? "at-bottom" : "has-more"
+        }`}
         style={{ zIndex: 1200 }}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-black tracking-tight">{t.settings || "Settings"}</h2>
@@ -76,7 +103,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
           </button>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pb-10">
           {/* Theme & Language Icons - Original Style */}
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
@@ -182,6 +209,18 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                   if (enabled) await NotificationService.requestPermission();
                   setBrowserNotificationsEnabled(enabled);
                 }}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
+                {t.calendarView}
+              </label>
+              <ToggleSwitch
+                leftLabel={t.jewishMonth}
+                rightLabel={t.secularMonth}
+                value={calendarView === "jewish" ? "left" : "right"}
+                onChange={(val) => setCalendarView(val === "left" ? "jewish" : "secular")}
               />
             </div>
           </div>

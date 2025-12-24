@@ -204,8 +204,88 @@ body,
   display: flex;
   flex-direction: column;
   padding: 30px;
-  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 25px 0 50px -12px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-amber) transparent;
+  overscroll-behavior: contain;
+  transition:
+    left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    right 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Generic Scroll Affordance Utility */
+.scroll-affordance {
+  transition:
+    border-radius 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.scroll-affordance.has-more {
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 -40px 40px -20px rgba(251, 191, 36, 0.15) !important;
+}
+
+.scroll-affordance.at-bottom {
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 0 0 0 transparent !important;
+}
+
+/* Specific Sidebar scroll affordance tweaks */
+.settings-sidebar.scroll-affordance.at-bottom {
+  border-bottom-left-radius: 30px !important;
+  border-bottom-right-radius: 30px !important;
+}
+
+.daily-info-sidebar.scroll-affordance.at-bottom {
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+/* Scroll Affordance Scrollbar Styles */
+.scroll-affordance::-webkit-scrollbar,
+.scroll-affordance *::-webkit-scrollbar {
+  width: 4px;
+}
+.scroll-affordance::-webkit-scrollbar-track,
+.scroll-affordance *::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-affordance::-webkit-scrollbar-thumb,
+.scroll-affordance *::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+}
+
+.modal-content.scroll-affordance.at-bottom {
+  border-bottom-left-radius: 28px !important;
+  border-bottom-right-radius: 28px !important;
+}
+
+/* Custom Scrollbar for Settings Sidebar */
+.settings-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.settings-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.settings-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+}
+
+@media (max-height: 800px) {
+  .settings-sidebar {
+    top: 10px;
+    bottom: 10px;
+    padding: 20px;
+  }
 }
 
 [dir="rtl"] .settings-sidebar {
@@ -349,6 +429,19 @@ body,
 }
 
 .secular-day {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.secular-day-primary {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.hebrew-day-secondary {
+  font-family: "Assistant", sans-serif;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-secondary);
@@ -1199,6 +1292,9 @@ select {
 .py-1 {
   padding-top: 4px;
   padding-bottom: 4px;
+}
+.pb-10 {
+  padding-bottom: 40px;
 }
 .py-3 {
   padding-top: 12px;
