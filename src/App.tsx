@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   jDate,
   ZmanimUtils,
@@ -120,10 +120,11 @@ const App: React.FC = () => {
     );
   }, [locationName]);
 
-  const [currentJDate, setCurrentJDate] = useState(() =>
-    todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate()
-  );
+  const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+
+  const [currentJDate, setCurrentJDate] = useState(today);
   const [selectedJDate, setSelectedJDate] = useState(currentJDate);
+  const [lastTickAbs, setLastTickAbs] = useState(today.Abs);
 
   // Events are now loaded from IndexedDB, not localStorage
   const [events, setEvents] = useState<UserEvent[]>([]);
@@ -295,6 +296,9 @@ const App: React.FC = () => {
   }, [todayStartMode, location]);
 
   // Automatic Refresh logic (Midnight & Sunset)
+  // We calculate the next transition time and use a ticker to watch for it
+  const nextRefreshTimestamp = useRef<number>(0);
+
   useEffect(() => {
     let timeoutId: any;
 
@@ -337,6 +341,7 @@ const App: React.FC = () => {
 
       // Refresh at whichever comes first, but at least 10 seconds apart
       const msToNextRefresh = Math.max(10000, Math.min(msToMidnight, msToSunset));
+      nextRefreshTimestamp.current = Date.now() + msToNextRefresh;
 
       console.log(
         `🕒 Next auto-refresh in ${Math.round(msToNextRefresh / 60000)}m (at ${
@@ -345,11 +350,12 @@ const App: React.FC = () => {
       );
 
       timeoutId = setTimeout(() => {
-        console.log("🔄 Refreshing Luach for new day...");
         const refreshedDate =
           todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+        console.log("🔄 Refreshing Luach for new day:", refreshedDate.toString());
         setCurrentJDate(refreshedDate);
         setSelectedJDate(refreshedDate);
+        setLastTickAbs(refreshedDate.Abs);
         scheduleNextRefresh();
       }, msToNextRefresh + 2000);
     };
@@ -357,6 +363,21 @@ const App: React.FC = () => {
     scheduleNextRefresh();
     return () => clearTimeout(timeoutId);
   }, [location, locationName, todayStartMode]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (Date.now() >= nextRefreshTimestamp.current && nextRefreshTimestamp.current !== 0) {
+        console.log("🔄 Minute ticker detected refresh deadline. Refreshing...");
+        const refreshedDate =
+          todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
+        setCurrentJDate(refreshedDate);
+        setSelectedJDate(refreshedDate);
+        setLastTickAbs(refreshedDate.Abs);
+      }
+    }, 60000); // Check every minute as a fail-safe
+
+    return () => clearInterval(intervalId);
+  }, [todayStartMode, location]);
 
   const handleGoToToday = () => {
     const today = todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
@@ -876,10 +897,6 @@ const App: React.FC = () => {
       return currentJDate.getDate().getFullYear().toString();
     }
   }, [currentJDate, calendarView]);
-
-  const today = useMemo(() => {
-    return todayStartMode === "sunset" ? Utils.nowAtLocation(location) : new jDate();
-  }, [todayStartMode, location]);
 
   return (
     <div className="app-container">
