@@ -218,18 +218,24 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
               <h3 className="text-xs font-bold uppercase tracking-widest opacity-50 px-1">
                 {t.zmanim}
               </h3>
-              {selectedZmanim.map((zman: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 group hover:border-accent-amber/30 transition-all">
-                  <span className="text-xs font-medium text-text-secondary">
-                    {lang === "he" ? zman.zmanType.heb : zman.zmanType.eng}
-                  </span>
-                  <span className="text-sm font-bold font-mono text-accent-amber">
-                    {formatTime(zman.time)}
-                  </span>
-                </div>
-              ))}
+              {selectedZmanim.map((zman: any, idx: number) => {
+                const isSolarEvent = [5, 15].includes(Number(zman.zmanType.id));
+
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-center justify-between p-2.5 rounded-xl transition-all group hover:border-accent-amber/30 ${
+                      isSolarEvent ? "solar-zman-highlight" : "bg-white/5 border border-white/10"
+                    }`}>
+                    <span className="text-xs font-bold text-text-secondary">
+                      {lang === "he" ? zman.zmanType.heb : zman.zmanType.eng}
+                    </span>
+                    <span className="text-sm font-bold font-mono text-accent-amber">
+                      {formatTime(zman.time).toUpperCase()}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
         </div>

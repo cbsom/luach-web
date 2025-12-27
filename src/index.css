@@ -248,6 +248,17 @@ body,
   border-bottom-right-radius: 20px !important;
 }
 
+/* Solar Zmanim Highlighting */
+.solar-zman-highlight .font-mono {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.solar-zman-highlight span:first-child {
+  color: var(--accent-amber) !important;
+  font-weight: 800 !important;
+}
+
 /* Scroll Affordance Scrollbar Styles */
 .scroll-affordance::-webkit-scrollbar,
 .scroll-affordance *::-webkit-scrollbar {
@@ -321,6 +332,9 @@ body,
   gap: 12px;
   min-width: 0;
   min-height: 0;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Calendar Grid */
@@ -1057,14 +1071,18 @@ select {
     gap: 2px;
     width: 100%;
     max-width: 100%;
-    max-height: 65vh; /* Cap height to prevent extreme elongation */
+    /* Fill height but cap at 2x width per cell */
+    flex-grow: 1;
+    height: 100%;
+    max-height: calc(2 * (100vw / 7) * var(--weeks, 6));
     margin: 0 auto;
   }
 
   .calendar-wrapper {
+    height: 100%;
     justify-content: flex-start;
-    padding-top: 0; /* Remove padding top */
-    gap: 0; /* Remove gap inside wrapper */
+    padding-top: 0;
+    gap: 0;
   }
 
   /* Responsive date cells */

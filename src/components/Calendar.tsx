@@ -50,67 +50,112 @@ export const Calendar: React.FC<CalendarProps> = ({
   today,
   calendarView,
 }) => {
-  // Swipe detection for month navigation
-  const [touchStart, setTouchStart] = React.useState<{ x: number; y: number } | null>(null);
+  // Pointer detection for month navigation (Touch, Mouse, Stylus)
+  const [pointerStart, setPointerStart] = React.useState<{
+    x: number;
+    y: number;
+    time: number;
+    id: number;
+  } | null>(null);
+  const swipedRef = React.useRef(false);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    // Only handle swipes on mobile/tablet
-    if (window.innerWidth > 1200) return;
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Only handle primary button (left click) for swiping
+    if (e.button !== 0) return;
 
-    setTouchStart({
-      x: e.targetTouches[0].clientX,
-      y: e.targetTouches[0].clientY,
+    // Reset swipe flag on new interaction
+    swipedRef.current = false;
+
+    setPointerStart({
+      x: e.clientX,
+      y: e.clientY,
+      time: Date.now(),
+      id: e.pointerId,
     });
+
+    // Capture the pointer to continue receiving events even if moved outside the element
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStart || window.innerWidth > 1200) return;
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!pointerStart || pointerStart.id !== e.pointerId) return;
 
-    const touchEnd = {
-      x: e.changedTouches[0].clientX,
-      y: e.changedTouches[0].clientY,
+    const dx = Math.abs(e.clientX - pointerStart.x);
+    const dy = Math.abs(e.clientY - pointerStart.y);
+
+    // If movement is significant, prevent click behavior
+    if (dx > 10 || dy > 10) {
+      swipedRef.current = true;
+    }
+
+    // If we're moving horizontally more than vertically, prevent browser defaults
+    if (dx > dy && dx > 10) {
+      if (e.cancelable) e.preventDefault();
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!pointerStart || pointerStart.id !== e.pointerId) return;
+
+    const pointerEnd = {
+      x: e.clientX,
+      y: e.clientY,
+      time: Date.now(),
     };
 
-    const dx = touchEnd.x - touchStart.x;
-    const dy = touchEnd.y - touchStart.y;
+    const dx = pointerEnd.x - pointerStart.x;
+    const dy = pointerEnd.y - pointerStart.y;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
+    const duration = pointerEnd.time - pointerStart.time;
 
-    // Minimum swipe distance
-    const threshold = 50;
+    // Thresholds: at least 50px travel, relatively quick swipe (under 500ms)
+    const moveThreshold = 50;
+    const timeThreshold = 500;
 
-    if (Math.max(absDx, absDy) > threshold) {
-      if (absDx > absDy) {
-        // Horizontal swipe
-        // RTL adjustment: if lang is he, swipe right means next month, swipe left means prev
-        const isRTL = lang === "he";
-        if (dx > 0) {
-          // Swipe Right
-          navigateMonth(isRTL ? 1 : -1);
-        } else {
-          // Swipe Left
-          navigateMonth(isRTL ? -1 : 1);
-        }
+    if (absDx > moveThreshold && absDx > absDy && duration < timeThreshold) {
+      // Horizontal swipe
+      const isRTL = lang === "he";
+      if (dx > 0) {
+        // Swipe Right
+        navigateMonth(isRTL ? 1 : -1);
       } else {
-        // Vertical swipe
-        if (dy > 0) {
-          // Swipe Down -> Previous Month
-          navigateMonth(-1);
-        } else {
-          // Swipe Up -> Next Month
-          navigateMonth(1);
-        }
+        // Swipe Left
+        navigateMonth(isRTL ? -1 : 1);
+      }
+    } else if (absDy > moveThreshold && absDy > absDx && duration < timeThreshold) {
+      // Vertical swipe
+      if (dy > 0) {
+        // Swipe Down -> Previous Month
+        navigateMonth(-1);
+      } else {
+        // Swipe Up -> Next Month
+        navigateMonth(1);
+      }
+    } else {
+      // If we didn't meet the swipe threshold, consider it not a swipe
+      // but only if movement was very minimal.
+      if (absDx < 5 && absDy < 5) {
+        swipedRef.current = false;
       }
     }
-    setTouchStart(null);
+
+    setPointerStart(null);
+  };
+
+  const handlePointerCancel = () => {
+    setPointerStart(null);
+    swipedRef.current = false;
   };
 
   return (
     <main
       className="calendar-main fade-in"
       style={{ animationDelay: "0.1s" }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}>
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}>
       <section className="calendar-wrapper">
         <div className="calendar-header-days">
           {(lang === "he"
@@ -126,9 +171,12 @@ export const Calendar: React.FC<CalendarProps> = ({
         </div>
         <div
           className="calendar-grid"
-          style={{
-            gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
-          }}>
+          style={
+            {
+              gridTemplateRows: `repeat(${monthInfo.weeksNeeded}, 1fr)`,
+              "--weeks": monthInfo.weeksNeeded,
+            } as React.CSSProperties
+          }>
           {(() => {
             return monthInfo.days.map((date: jDate, i: number) => {
               const isToday = date.Abs === today.Abs;
@@ -158,7 +206,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                   className={`day-cell ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${
                     isOtherMonth ? "other-month" : ""
                   }`}
-                  onClick={() => setSelectedJDate(date)}
+                  onClick={() => {
+                    if (swipedRef.current) {
+                      swipedRef.current = false;
+                      return;
+                    }
+                    setSelectedJDate(date);
+                  }}
                   style={{
                     ...(isHolidayBg ? { backgroundColor: "rgba(61, 36, 24, 0.3)" } : {}),
                     ...(dayEvents.length > 0 && dayEvents[0].backColor

@@ -139,8 +139,28 @@ const App: React.FC = () => {
     let unsubscribe: (() => void) | undefined;
 
     const syncData = async () => {
+      // Always initialize local DB so it's ready for caching/background sync
+      try {
+        await initDB();
+        await migrateFromLocalStorage();
+      } catch (e) {
+        console.error("Failed to init local DB", e);
+      }
+
       if (user) {
         console.log("☁️ User logged in, setting up Firestore sync...");
+
+        // Load local events immediately for a "warm start" while waiting for cloud
+        try {
+          const localEvents = await getAllEvents();
+          if (localEvents.length > 0) {
+            console.log(`🔥 Warm start: Loaded ${localEvents.length} events from local cache`);
+            setEvents(localEvents);
+            setEventsLoaded(true);
+          }
+        } catch (e) {
+          console.error("Warm start failed", e);
+        }
 
         // 1. Sync Settings
         const settingsRef = doc(db, "users", user.uid, "settings", "general");
@@ -176,6 +196,9 @@ const App: React.FC = () => {
         unsubscribe = onSnapshot(q, async (snapshot) => {
           const cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
 
+          // Persist to local IndexedDB for offline access/backup
+          saveAllEvents(cloudEvents).catch((e) => console.error("Local sync failed", e));
+
           // Migration Logic: If cloud is empty but local has data
           if (cloudEvents.length === 0) {
             const localEvents = await getAllEvents();
@@ -201,8 +224,6 @@ const App: React.FC = () => {
       } else {
         console.log("🏠 No user, loading from local IndexedDB...");
         try {
-          await initDB();
-          await migrateFromLocalStorage();
           const localEvents = await getAllEvents();
           setEvents(localEvents);
           setEventsLoaded(true);
@@ -409,9 +430,11 @@ const App: React.FC = () => {
           batch.set(doc(db, "users", user.uid, "events", ev.id), ev);
         });
         await batch.commit();
-      } else {
-        await saveAllEvents(newEvents);
       }
+
+      // Always sync to local storage regardless of login state
+      // This provides a "warm" cache for faster starts and offline privacy
+      await saveAllEvents(newEvents);
     } catch (error) {
       console.error("❌ Storage Failed:", error);
     }
