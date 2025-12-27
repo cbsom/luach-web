@@ -1,19 +1,6 @@
 import React from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Printer,
-  Plus,
-  List,
-  Calendar as CalendarIcon,
-  Info,
-  Globe,
-  Palette,
-  LogOut,
-  Menu,
-} from "lucide-react";
-import { Utils, jDate, getNotifications, Dafyomi, Locations } from "jcal-zmanim";
+import { Plus } from "lucide-react";
+import { Utils, jDate, getNotifications } from "jcal-zmanim";
 import { UserEvent } from "../types";
 import { formatTime, getAnniversaryNumber } from "../utils";
 
@@ -214,7 +201,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                     setSelectedJDate(date);
                   }}
                   style={{
-                    ...(isHolidayBg ? { backgroundColor: "rgba(61, 36, 24, 0.3)" } : {}),
+                    ...(isHolidayBg ? { backgroundColor: "var(--holiday-bg)" } : {}),
                     ...(dayEvents.length > 0 && dayEvents[0].backColor
                       ? ({
                           backgroundColor: dayEvents[0].backColor,

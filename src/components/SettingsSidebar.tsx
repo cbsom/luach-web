@@ -7,8 +7,8 @@ import { NotificationService } from "../NotificationService";
 interface SettingsSidebarProps {
   lang: "en" | "he";
   setLang: (lang: "en" | "he") => void;
-  theme: "warm" | "dark" | "light";
-  setTheme: (theme: "warm" | "dark" | "light") => void;
+  theme: "warm" | "dark" | "light" | "tcheles";
+  setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
   t: any;
   locationName: string;
   setLocationName: (name: string) => void;
@@ -69,7 +69,12 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   }, [isOpen]);
 
   const cycleTheme = () => {
-    const themes: Array<"warm" | "dark" | "light"> = ["warm", "dark", "light"];
+    const themes: Array<"warm" | "dark" | "light" | "tcheles"> = [
+      "warm",
+      "dark",
+      "light",
+      "tcheles",
+    ];
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setTheme(themes[nextIndex]);
@@ -83,6 +88,8 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
         return "🌙";
       case "light":
         return "☀️";
+      case "tcheles":
+        return "💎";
     }
   };
 
@@ -135,9 +142,13 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                     ? lang === "he"
                       ? "כהה"
                       : "DARK"
+                    : theme === "light"
+                    ? lang === "he"
+                      ? "בהיר"
+                      : "LIGHT"
                     : lang === "he"
-                    ? "בהיר"
-                    : "LIGHT"}
+                    ? "תכלת"
+                    : "TCHELES"}
                 </span>
               </button>
             </div>

@@ -41,9 +41,11 @@ const App: React.FC = () => {
     return saved === "en" || saved === "he" ? saved : "en";
   });
 
-  const [theme, setTheme] = useState<"warm" | "dark" | "light">(() => {
+  const [theme, setTheme] = useState<"warm" | "dark" | "light" | "tcheles">(() => {
     const saved = localStorage.getItem("luach-theme");
-    return saved === "warm" || saved === "dark" || saved === "light" ? saved : "warm";
+    return saved === "warm" || saved === "dark" || saved === "light" || saved === "tcheles"
+      ? (saved as any)
+      : "warm";
   });
 
   const [user, setUser] = useState<User | null>(null);

@@ -1,19 +1,10 @@
 import React from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  List,
-  Calendar as CalendarIcon,
-  Menu,
-  Info,
-} from "lucide-react";
-import { Utils, jDate } from "jcal-zmanim";
+import { ChevronLeft, ChevronRight, List, Calendar as CalendarIcon, Menu } from "lucide-react";
+import { jDate } from "jcal-zmanim";
 
 interface HeaderProps {
   lang: "en" | "he";
   t: any;
-  currentJDate: jDate;
   currentMonthName: string;
   currentYearName: string;
   secondaryDateRange: string;
@@ -28,7 +19,6 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   lang,
   t,
-  currentJDate,
   currentMonthName,
   currentYearName,
   secondaryDateRange,
@@ -47,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
           className=""
           style={{
             border: "0",
-            color: "var(--glass-border-amber)",
+            color: "var(--accent-amber)",
             backgroundColor: "transparent",
           }}
           title={t.settings || "Settings"}>
@@ -68,10 +58,10 @@ export const Header: React.FC<HeaderProps> = ({
           }`}>
           <button
             onClick={() => setIsJumpModalOpen(true)}
+            className="btn-warm"
             style={{
               margin: "0 1rem",
               border: "0",
-              color: "var(--glass-border-amber)",
               backgroundColor: "transparent",
             }}
             title={t.goToDate}>
@@ -79,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={() => navigateYear(-1)}
-            className={`p-2 btn-warm-transparent rounded-xl ${
+            className={`p-2 btn-warm rounded-xl ${
               lang === "he" ? "border-l" : "border-r"
             } transition-all border-glass-border/50`}
             title={t.previousYear}>
@@ -90,24 +80,24 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={() => navigateMonth(-1)}
-            className="p-2 btn-warm-transparent rounded-xl transition-all border-glass-border/50"
+            className="p-2 btn-warm rounded-xl transition-all border-glass-border/50"
             title={t.previousMonth}>
             {lang === "he" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
           <button
             onClick={handleGoToToday}
-            className="px-6 py-2 text-sm font-bold btn-warm-transparent rounded-xl transition-all min-w-[100px]">
+            className="px-6 py-2 text-sm font-bold btn-warm rounded-xl transition-all min-w-[100px]">
             {t.today}
           </button>
           <button
             onClick={() => navigateMonth(1)}
-            className="p-2 btn-warm-transparent rounded-xl transition-all border-glass-border/50"
+            className="p-2 btn-warm rounded-xl transition-all border-glass-border/50"
             title={t.nextMonth}>
             {lang === "he" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
           <button
             onClick={() => navigateYear(1)}
-            className={`p-2 btn-warm-transparent rounded-xl ${
+            className={`p-2 btn-warm rounded-xl ${
               lang === "he" ? "border-r" : "border-l"
             } transition-all border-glass-border/50`}
             title={t.nextYear}>

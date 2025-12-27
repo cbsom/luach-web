@@ -342,7 +342,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
       subHeader={
         <div className="flex flex-col gap-4">
           {/* Export Buttons */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={exportToJSON}
               className="btn-warm border rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all">
@@ -370,7 +370,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           </div>
 
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative mt-4">
             <div
               className={`absolute inset-y-0 ${
                 lang === "he" ? "right-3" : "left-3"
@@ -382,9 +382,9 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={lang === "he" ? "חיפוש אירועים..." : "Search events..."}
-              className={`w-full bg-white/5 border border-glass-border rounded-xl py-2 ${
-                lang === "he" ? "pr-10 pl-4 text-right" : "pl-10 pr-4"
-              } text-sm focus:outline-none focus:border-accent-amber/50 transition-all`}
+              className={`w-full bg-white/5 border border-glass-border rounded-xl py-4 ${
+                lang === "he" ? "pr-12 pl-6 text-right" : "pl-12 pr-6"
+              } text-base focus:outline-none focus:border-accent-amber/50 transition-all`}
             />
           </div>
 
@@ -404,7 +404,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             {lang === "he" ? "אין אירועים" : "No events"}
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3 pb-4">
             {sortedEvents.map((event) => {
               const eventDate = new jDate(event.jYear, event.jMonth, event.jDay);
               const today = new jDate();
@@ -416,7 +416,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
                   className="rounded-lg border border-glass-border hover:brightness-110 transition-all cursor-pointer group"
                   style={{
                     backgroundColor: event.backColor || "var(--accent-amber)",
-                    padding: "8px 12px",
+                    padding: "12px 16px",
                   }}
                   onClick={() => {
                     navigateToDate(eventDate);
