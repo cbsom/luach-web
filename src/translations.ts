@@ -61,6 +61,9 @@ export const translations = {
         calendarView: "Calendar Layout",
         jewishMonth: "Jewish Month",
         secularMonth: "Secular Month",
+        desktopSidebar: "Side Panel (Zmanim)",
+        sidePanelVisible: "Visible",
+        sidePanelHidden: "Hidden",
     },
     he: {
         title: "לוח",
@@ -124,5 +127,8 @@ export const translations = {
         calendarView: "מבנה הלוח",
         jewishMonth: "חודש עברי",
         secularMonth: "חודש לועזי",
+        desktopSidebar: "חלון צדי (זמנים)",
+        sidePanelVisible: "גלוי",
+        sidePanelHidden: "נסתר",
     },
 };

@@ -66,10 +66,7 @@ export const Modal: React.FC<ModalProps> = ({
             {title && <h3 className="text-xl font-black">{title}</h3>}
             {subtitle && <div className="text-accent-amber font-bold text-sm">{subtitle}</div>}
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-white/10 transition-all text-text-secondary"
-            title="Close">
+          <button onClick={onClose} className="close-btn settings-close-btn" title="Close">
             <X size={20} />
           </button>
         </div>

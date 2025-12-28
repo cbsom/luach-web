@@ -107,6 +107,14 @@ const App: React.FC = () => {
     localStorage.setItem("luach-calendar-view", calendarView);
   }, [calendarView]);
 
+  const [desktopSidebarMode, setDesktopSidebarMode] = useState<"permanent" | "hidden">(() => {
+    return (localStorage.getItem("luach-desktop-sidebar") as "permanent" | "hidden") || "permanent";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("luach-desktop-sidebar", desktopSidebarMode);
+  }, [desktopSidebarMode]);
+
   useEffect(() => {
     localStorage.setItem("luach-email-reminders", emailRemindersEnabled.toString());
   }, [emailRemindersEnabled]);
@@ -179,6 +187,9 @@ const App: React.FC = () => {
             setBrowserNotificationsEnabled(generalSettings.browserNotificationsEnabled);
           }
           if (generalSettings.lang) setLang(generalSettings.lang);
+          if (generalSettings.calendarView) setCalendarView(generalSettings.calendarView);
+          if (generalSettings.desktopSidebarMode)
+            setDesktopSidebarMode(generalSettings.desktopSidebarMode);
         } else {
           // Initial sync of local settings to cloud
           await setDoc(settingsRef, {
@@ -187,6 +198,8 @@ const App: React.FC = () => {
             emailRemindersEnabled,
             browserNotificationsEnabled,
             lang,
+            calendarView,
+            desktopSidebarMode,
           });
         }
         setSettingsLoaded(true);
@@ -254,6 +267,8 @@ const App: React.FC = () => {
           emailRemindersEnabled,
           browserNotificationsEnabled,
           lang,
+          calendarView,
+          desktopSidebarMode,
           email: user.email, // Store email for the Cloud Function
           lastUpdated: new Date().toISOString(),
         },
@@ -267,6 +282,8 @@ const App: React.FC = () => {
     emailRemindersEnabled,
     browserNotificationsEnabled,
     lang,
+    calendarView,
+    desktopSidebarMode,
   ]);
 
   // Check for notifications when events are loaded
@@ -801,8 +818,8 @@ const App: React.FC = () => {
 
   const handleSelectDate = (date: jDate) => {
     setSelectedJDate(date);
-    // On mobile/tablet, also open the sidebar when a day is clicked
-    if (window.innerWidth <= 1200) {
+    // On mobile/tablet, OR on desktop if sidebar is in hidden mode, open the sidebar
+    if (window.innerWidth <= 1200 || desktopSidebarMode === "hidden") {
       setIsSidebarOpen(true);
     }
   };
@@ -964,6 +981,8 @@ const App: React.FC = () => {
           handleAddNewEventForDate={handleAddNewEventForDate}
           isMobileOpen={isSidebarOpen}
           onMobileClose={handleCloseSidebar}
+          isDesktopHidden={desktopSidebarMode === "hidden"}
+          onToggleDesktopMode={() => setDesktopSidebarMode("hidden")}
         />
 
         <Calendar
@@ -1015,6 +1034,8 @@ const App: React.FC = () => {
         setBrowserNotificationsEnabled={setBrowserNotificationsEnabled}
         calendarView={calendarView}
         setCalendarView={setCalendarView}
+        desktopSidebarMode={desktopSidebarMode}
+        setDesktopSidebarMode={setDesktopSidebarMode}
       />
 
       <EventModal

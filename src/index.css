@@ -228,6 +228,39 @@ body,
   flex-direction: column;
   min-height: 0;
   z-index: 100;
+  position: relative;
+}
+
+/* Desktop Hidden Mode for Sidebar */
+.sidebar.desktop-hidden {
+  position: fixed;
+  top: 20px;
+  bottom: 20px;
+  left: -420px;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  z-index: 1800;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 25px 0 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 30px !important;
+}
+
+[dir="rtl"] .sidebar.desktop-hidden {
+  left: auto;
+  right: -420px;
+}
+
+.sidebar.desktop-hidden.sidebar-mobile-open {
+  left: 20px;
+}
+
+[dir="rtl"] .sidebar.desktop-hidden.sidebar-mobile-open {
+  left: auto;
+  right: 20px;
+}
+
+.sidebar.desktop-hidden .sidebar-close-btn {
+  display: flex !important;
 }
 
 /* Settings Sidebar - Floating on all screens */
@@ -789,18 +822,25 @@ select {
 
 .settings-close-btn {
   position: absolute;
-  top: 5px;
-  right: 6px;
+  top: 16px;
+  right: 16px;
   z-index: 1001;
   background: transparent;
-  color: var(--accent-rose);
+  color: var(--text-primary);
   border: 0;
-  line-height: 6px;
   cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
 }
 
 .settings-close-btn:hover {
-  color: #f00;
+  opacity: 1;
+}
+
+[dir="rtl"] .sidebar-close-btn,
+[dir="rtl"] .settings-close-btn {
+  right: auto;
+  left: 16px;
 }
 
 /* Main Header Styling */
@@ -831,7 +871,12 @@ select {
 }
 
 .sidebar-close-btn {
-  display: none; /* Hide on desktop */
+  display: flex !important;
+  opacity: 0.5;
+}
+
+.sidebar-close-btn:hover {
+  opacity: 1;
 }
 
 @media (max-width: 1200px) {

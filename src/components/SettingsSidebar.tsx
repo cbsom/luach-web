@@ -25,6 +25,8 @@ interface SettingsSidebarProps {
   setBrowserNotificationsEnabled: (enabled: boolean) => void;
   calendarView: "jewish" | "secular";
   setCalendarView: (view: "jewish" | "secular") => void;
+  desktopSidebarMode: "permanent" | "hidden";
+  setDesktopSidebarMode: (mode: "permanent" | "hidden") => void;
 }
 
 export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
@@ -48,6 +50,8 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   setBrowserNotificationsEnabled,
   calendarView,
   setCalendarView,
+  desktopSidebarMode,
+  setDesktopSidebarMode,
 }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -107,7 +111,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
           <h2 className="text-xl font-black tracking-tight">
             {textInLanguage.settings || "Settings"}
           </h2>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn settings-close-btn" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
@@ -234,6 +238,18 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                 rightLabel={textInLanguage.secularMonth}
                 value={calendarView === "jewish" ? "left" : "right"}
                 onChange={(val) => setCalendarView(val === "left" ? "jewish" : "secular")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
+                {textInLanguage.desktopSidebar}
+              </label>
+              <ToggleSwitch
+                leftLabel={textInLanguage.sidePanelVisible}
+                rightLabel={textInLanguage.sidePanelHidden}
+                value={desktopSidebarMode === "permanent" ? "left" : "right"}
+                onChange={(val) => setDesktopSidebarMode(val === "left" ? "permanent" : "hidden")}
               />
             </div>
           </div>

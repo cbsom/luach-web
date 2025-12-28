@@ -17,6 +17,8 @@ interface DailyInfoSidebarProps {
   handleAddNewEventForDate: (e: React.MouseEvent, date: jDate) => void;
   isMobileOpen: boolean;
   onMobileClose: () => void;
+  isDesktopHidden?: boolean;
+  onToggleDesktopMode?: () => void;
 }
 
 export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
@@ -32,6 +34,8 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
   handleAddNewEventForDate,
   isMobileOpen,
   onMobileClose,
+  isDesktopHidden,
+  onToggleDesktopMode,
 }) => {
   const prakim = selectedJDate.getPirkeiAvos(location.Israel);
   const scrollRef = useRef<HTMLElement>(null);
@@ -52,20 +56,28 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Sidebar overlay - Show whenever in floating/open mode */}
       {isMobileOpen && <div className="sidebar-overlay" onClick={onMobileClose} />}
 
       <aside
         className={`sidebar daily-info-sidebar glass-panel scroll-affordance ${
           isAtBottom ? "at-bottom" : "has-more"
-        } ${isMobileOpen ? "sidebar-mobile-open" : ""}`}>
-        {/* Mobile close button */}
-        <button
-          className="close-btn sidebar-close-btn"
-          onClick={onMobileClose}
-          aria-label="Close sidebar">
-          <X size={24} />
-        </button>
+        } ${isMobileOpen ? "sidebar-mobile-open" : ""} ${isDesktopHidden ? "desktop-hidden" : ""}`}>
+        {/* Close button - Always show on permanent desktop now too */}
+        {(isMobileOpen || isDesktopHidden || !isDesktopHidden) && (
+          <button
+            className="close-btn sidebar-close-btn"
+            onClick={() => {
+              if (window.innerWidth > 1200 && !isDesktopHidden) {
+                onToggleDesktopMode?.();
+              } else {
+                onMobileClose();
+              }
+            }}
+            aria-label="Close sidebar">
+            <X size={24} />
+          </button>
+        )}
 
         <div className="p-6 flex flex-col gap-4 overflow-hidden h-full">
           {/* Header with selected date */}
