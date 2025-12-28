@@ -6,7 +6,7 @@ import { formatTime, getAnniversaryNumber } from "../utils";
 
 interface CalendarProps {
   lang: "en" | "he";
-  t: any;
+  textInLanguage: any;
   currentJDate: jDate;
   monthInfo: { days: jDate[]; year: number; month: number; weeksNeeded: number };
   selectedJDate: jDate;
@@ -23,7 +23,7 @@ interface CalendarProps {
 
 export const Calendar: React.FC<CalendarProps> = ({
   lang,
-  t,
+  textInLanguage,
   currentJDate,
   monthInfo,
   selectedJDate,
@@ -249,7 +249,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   <button
                     className="day-add-btn"
                     onClick={(e) => handleAddNewEventForDate(e, date)}
-                    title={t.addEvent}>
+                    title={textInLanguage.addEvent}>
                     <Plus size={14} />
                   </button>
 

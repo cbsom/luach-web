@@ -1,9 +1,10 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, List, Calendar as CalendarIcon } from "lucide-react";
+import { DateNavigation } from "./DateNavigation";
 
 interface MobileFooterProps {
   lang: "en" | "he";
-  t: any;
+  textInLanguage: any;
   navigateMonth: (direction: number) => void;
   navigateYear: (direction: number) => void;
   handleGoToToday: () => void;
@@ -13,7 +14,7 @@ interface MobileFooterProps {
 
 export const MobileFooter: React.FC<MobileFooterProps> = ({
   lang,
-  t,
+  textInLanguage,
   navigateMonth,
   navigateYear,
   handleGoToToday,
@@ -27,60 +28,27 @@ export const MobileFooter: React.FC<MobileFooterProps> = ({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsJumpModalOpen(true)}
-            className="p-2 btn-warm-transparent rounded-xl text-accent-amber"
-            title={t.goToDate}>
+            className="p-2 btn-warm rounded-xl text-accent-amber"
+            title={textInLanguage.goToDate}>
             <CalendarIcon size={22} />
           </button>
           <button
             onClick={() => setIsEventsListOpen(true)}
-            className="p-2 btn-warm-transparent rounded-xl text-accent-amber"
+            className="p-2 btn-warm rounded-xl text-accent-amber"
             title={lang === "he" ? "אירועים" : "Events"}>
             <List size={22} />
           </button>
         </div>
 
         {/* Navigation Group - Center */}
-        <div className="flex items-center gap-0.5">
-          <button
-            onClick={() => navigateYear(-1)}
-            className="p-1.5 btn-warm-transparent rounded-lg text-text-primary"
-            title={t.previousYear}>
-            <div className="flex -space-x-2">
-              {lang === "he" ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-              {lang === "he" ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            </div>
-          </button>
-
-          <button
-            onClick={() => navigateMonth(-1)}
-            className="p-2 btn-warm-transparent rounded-lg text-text-primary"
-            title={t.previousMonth}>
-            {lang === "he" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
-
-          <button
-            onClick={handleGoToToday}
-            className="px-3 py-2 text-xs font-bold btn-warm rounded-xl transition-all min-w-[60px]">
-            {t.today}
-          </button>
-
-          <button
-            onClick={() => navigateMonth(1)}
-            className="p-2 btn-warm-transparent rounded-lg text-text-primary"
-            title={t.nextMonth}>
-            {lang === "he" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
-
-          <button
-            onClick={() => navigateYear(1)}
-            className="p-1.5 btn-warm-transparent rounded-lg text-text-primary"
-            title={t.nextYear}>
-            <div className="flex -space-x-2">
-              {lang === "he" ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-              {lang === "he" ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-            </div>
-          </button>
-        </div>
+        <DateNavigation
+          lang={lang}
+          textInLanguage={textInLanguage}
+          navigateMonth={navigateMonth}
+          navigateYear={navigateYear}
+          handleGoToToday={handleGoToToday}
+          setIsJumpModalOpen={setIsJumpModalOpen}
+        />
       </div>
     </footer>
   );

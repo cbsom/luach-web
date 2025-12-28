@@ -5,7 +5,7 @@ import { Modal } from "./Modal";
 interface JumpDateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  t: any;
+  textInLanguage: any;
   lang: "en" | "he";
   jumpGregDate: string;
   setJumpGregDate: (val: string) => void;
@@ -22,7 +22,7 @@ interface JumpDateModalProps {
 export const JumpDateModal: React.FC<JumpDateModalProps> = ({
   isOpen,
   onClose,
-  t,
+  textInLanguage,
   lang,
   jumpGregDate,
   setJumpGregDate,
@@ -39,13 +39,13 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t.goToDate}
+      title={textInLanguage.goToDate}
       footer={
         <div className="flex items-center gap-3">
           <button
             onClick={handleJumpToJewish}
             className="px-6 py-3 btn-warm rounded-xl font-bold border transition-all flex-1">
-            {t.goToJewish}
+            {textInLanguage.goToJewish}
           </button>
         </div>
       }>
@@ -54,7 +54,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
         <div className="space-y-4">
           <h4 className="font-bold text-accent-amber uppercase tracking-wider text-sm flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent-amber"></span>
-            {t.gregDate}
+            {textInLanguage.gregDate}
           </h4>
           <div className="flex gap-2 py-3">
             <input
@@ -66,7 +66,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
             <button
               onClick={handleJumpToGregorian}
               className="px-6 btn-warm border rounded-xl font-bold transition-all">
-              {t.go}
+              {textInLanguage.go}
             </button>
           </div>
         </div>
@@ -77,11 +77,11 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
         <div className="space-y-4">
           <h4 className="font-bold text-accent-gold uppercase tracking-wider text-sm py-3">
             <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
-            {t.jewDate}
+            {textInLanguage.jewDate}
           </h4>
           <div className={`flex gap-2 flex-col ${lang === "he" ? "rtl" : "ltr"}`}>
             <div className="form-group flex flex-row items-center mb-3">
-              <label className="text-text-secondary">{t.day}</label>
+              <label className="text-text-secondary">{textInLanguage.day}</label>
               <select
                 className="form-input appearance-none cursor-pointer text-center flex-1"
                 value={jumpJDay}
@@ -94,7 +94,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
               </select>
             </div>
             <div className="form-group flex flex-row items-center mb-3">
-              <label className="text-text-secondary">{t.month}</label>
+              <label className="text-text-secondary">{textInLanguage.month}</label>
               <select
                 className="form-input appearance-none cursor-pointer text-center flex-1"
                 value={jumpJMonth}
@@ -109,7 +109,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
               </select>
             </div>
             <div className="form-group flex flex-row items-center mb-3">
-              <label className="text-text-secondary">{t.year}</label>
+              <label className="text-text-secondary">{textInLanguage.year}</label>
               <select
                 className="form-input appearance-none cursor-pointer text-center flex-1"
                 value={jumpJYear}

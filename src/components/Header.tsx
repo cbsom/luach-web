@@ -1,10 +1,10 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, List, Calendar as CalendarIcon, Menu } from "lucide-react";
-import { jDate } from "jcal-zmanim";
+import { List, Menu } from "lucide-react";
+import { DateNavigation } from "./DateNavigation";
 
 interface HeaderProps {
   lang: "en" | "he";
-  t: any;
+  textInLanguage: any;
   currentMonthName: string;
   currentYearName: string;
   secondaryDateRange: string;
@@ -18,7 +18,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   lang,
-  t,
+  textInLanguage,
   currentMonthName,
   currentYearName,
   secondaryDateRange,
@@ -40,78 +40,28 @@ export const Header: React.FC<HeaderProps> = ({
             color: "var(--accent-amber)",
             backgroundColor: "transparent",
           }}
-          title={t.settings || "Settings"}>
+          title={textInLanguage.settings || "Settings"}>
           <Menu size={20} />
         </button>
         <div className="flex items-center gap-3">
           <div className="p-1 bg-accent-amber/10 rounded-xl overflow-hidden shadow-inner">
             <img src="./icon.svg" width="32" height="32" alt="Luach Logo" />
           </div>
-          <h1 className="text-xl font-black tracking-tight">{t.title}</h1>
+          <h1 className="text-xl font-black tracking-tight">{textInLanguage.title}</h1>
         </div>
       </div>
-
-      <div className="flex items-center gap-6">
-        <div
-          className={`flex btn-warm rounded-2xl p-1 border nav-controls ${
-            lang === "he" ? "flex-row-reverse" : ""
-          }`}>
-          <button
-            onClick={() => setIsJumpModalOpen(true)}
-            className="btn-warm"
-            style={{
-              margin: "0 1rem",
-              border: "0",
-              backgroundColor: "transparent",
-            }}
-            title={t.goToDate}>
-            <CalendarIcon size={30} />
-          </button>
-          <button
-            onClick={() => navigateYear(-1)}
-            className={`p-2 btn-warm rounded-xl ${
-              lang === "he" ? "border-l" : "border-r"
-            } transition-all border-glass-border/50`}
-            title={t.previousYear}>
-            <div className="flex -space-x-2">
-              {lang === "he" ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-              {lang === "he" ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </div>
-          </button>
-          <button
-            onClick={() => navigateMonth(-1)}
-            className="p-2 btn-warm rounded-xl transition-all border-glass-border/50"
-            title={t.previousMonth}>
-            {lang === "he" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
-          <button
-            onClick={handleGoToToday}
-            className="px-6 py-2 text-sm font-bold btn-warm rounded-xl transition-all min-w-[100px]">
-            {t.today}
-          </button>
-          <button
-            onClick={() => navigateMonth(1)}
-            className="p-2 btn-warm rounded-xl transition-all border-glass-border/50"
-            title={t.nextMonth}>
-            {lang === "he" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
-          <button
-            onClick={() => navigateYear(1)}
-            className={`p-2 btn-warm rounded-xl ${
-              lang === "he" ? "border-r" : "border-l"
-            } transition-all border-glass-border/50`}
-            title={t.nextYear}>
-            <div className="flex -space-x-2">
-              {lang === "he" ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-              {lang === "he" ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-            </div>
-          </button>
-        </div>
-        <h2 className="text-3xl font-black flex items-baseline gap-4 calendar-month-year">
-          {currentMonthName} {currentYearName}
-          <span className="text-lg font-medium text-text-secondary">{secondaryDateRange}</span>
-        </h2>
-      </div>
+      <DateNavigation
+        lang={lang}
+        textInLanguage={textInLanguage}
+        navigateMonth={navigateMonth}
+        navigateYear={navigateYear}
+        handleGoToToday={handleGoToToday}
+        setIsJumpModalOpen={setIsJumpModalOpen}
+      />
+      <h2 className="text-3xl font-black flex items-baseline gap-4 calendar-month-year">
+        {currentMonthName} {currentYearName}
+        <span className="text-lg font-medium text-text-secondary">{secondaryDateRange}</span>
+      </h2>
       <div className="flex items-center gap-2">
         <button
           onClick={() => setIsEventsListOpen(true)}

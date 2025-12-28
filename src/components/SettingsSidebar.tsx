@@ -9,7 +9,7 @@ interface SettingsSidebarProps {
   setLang: (lang: "en" | "he") => void;
   theme: "warm" | "dark" | "light" | "tcheles";
   setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
-  t: any;
+  textInLanguage: any;
   locationName: string;
   setLocationName: (name: string) => void;
   isOpen: boolean;
@@ -32,7 +32,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
   setLang,
   theme,
   setTheme,
-  t,
+  textInLanguage,
   locationName,
   setLocationName,
   isOpen,
@@ -104,7 +104,9 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
         }`}
         style={{ zIndex: 1200 }}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-black tracking-tight">{t.settings || "Settings"}</h2>
+          <h2 className="text-xl font-black tracking-tight">
+            {textInLanguage.settings || "Settings"}
+          </h2>
           <button className="close-btn" onClick={onClose}>
             <X size={20} />
           </button>
@@ -157,7 +159,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
           {/* Location Selection */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
-              {t.location}
+              {textInLanguage.location}
             </label>
             <div className="relative w-full flex items-center gap-2">
               <MapPin
@@ -185,11 +187,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
-                {t.todayStart}
+                {textInLanguage.todayStart}
               </label>
               <ToggleSwitch
-                leftLabel={t.sunset}
-                rightLabel={t.midnight}
+                leftLabel={textInLanguage.sunset}
+                rightLabel={textInLanguage.midnight}
                 value={todayStartMode === "sunset" ? "left" : "right"}
                 onChange={(val) => setTodayStartMode(val === "left" ? "sunset" : "midnight")}
               />
@@ -197,11 +199,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
 
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
-                {t.emailReminders}
+                {textInLanguage.emailReminders}
               </label>
               <ToggleSwitch
-                leftLabel={t.on}
-                rightLabel={t.off}
+                leftLabel={textInLanguage.on}
+                rightLabel={textInLanguage.off}
                 value={emailEnabled ? "left" : "right"}
                 onChange={(val) => setEmailEnabled(val === "left")}
               />
@@ -209,11 +211,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
 
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
-                {t.browserNotifications}
+                {textInLanguage.browserNotifications}
               </label>
               <ToggleSwitch
-                leftLabel={t.on}
-                rightLabel={t.off}
+                leftLabel={textInLanguage.on}
+                rightLabel={textInLanguage.off}
                 value={browserNotificationsEnabled ? "left" : "right"}
                 onChange={async (val) => {
                   const enabled = val === "left";
@@ -225,11 +227,11 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
 
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-bold uppercase tracking-widest opacity-60 px-1">
-                {t.calendarView}
+                {textInLanguage.calendarView}
               </label>
               <ToggleSwitch
-                leftLabel={t.jewishMonth}
-                rightLabel={t.secularMonth}
+                leftLabel={textInLanguage.jewishMonth}
+                rightLabel={textInLanguage.secularMonth}
                 value={calendarView === "jewish" ? "left" : "right"}
                 onChange={(val) => setCalendarView(val === "left" ? "jewish" : "secular")}
               />
@@ -257,7 +259,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                       {user.displayName || user.email}
                     </span>
                     <span className="text-[9px] text-accent-gold font-bold uppercase tracking-widest opacity-70">
-                      {t.cloud}
+                      {textInLanguage.cloud}
                     </span>
                   </div>
                 </div>
@@ -276,7 +278,7 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                   alt=""
                   className="w-4 h-4"
                 />
-                <span>{t.signInWithGoogle}</span>
+                <span>{textInLanguage.signInWithGoogle}</span>
               </button>
             )}
           </div>

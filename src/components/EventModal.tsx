@@ -8,7 +8,7 @@ interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
   editingEvent: UserEvent | null;
-  t: any;
+  textInLanguage: any;
   lang: "en" | "he";
   selectedJDate: jDate;
   formName: string;
@@ -33,7 +33,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   isOpen,
   onClose,
   editingEvent,
-  t,
+  textInLanguage,
   lang,
   selectedJDate,
   formName,
@@ -57,7 +57,7 @@ export const EventModal: React.FC<EventModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editingEvent ? t.saveEvent : t.addNewEvent}
+      title={editingEvent ? textInLanguage.saveEvent : textInLanguage.addNewEvent}
       subtitle={lang === "he" ? selectedJDate.toStringHeb() : selectedJDate.toString()}
       footer={
         <div className="flex items-center gap-3">
@@ -66,7 +66,8 @@ export const EventModal: React.FC<EventModalProps> = ({
               onClick={() => {
                 if (
                   window.confirm(
-                    t.deleteConfirmation || "Are you sure you want to delete this event?"
+                    textInLanguage.deleteConfirmation ||
+                      "Are you sure you want to delete this event?"
                   )
                 ) {
                   onDelete(editingEvent.id);
@@ -74,7 +75,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                 }
               }}
               className="p-3 btn-warm rounded-xl border transition-all"
-              title={t.deleteEvent}>
+              title={textInLanguage.deleteEvent}>
               <Trash2 size={18} />
             </button>
           )}
@@ -82,16 +83,16 @@ export const EventModal: React.FC<EventModalProps> = ({
             onClick={onSave}
             className="flex-grow py-3 btn-warm rounded-xl hover:bg-accent-amber/90 transition-all shadow-lg hover:shadow-accent-amber/20"
             style={{ fontWeight: "bold" }}>
-            {t.saveEvent}
+            {textInLanguage.saveEvent}
           </button>
           <button onClick={onClose} className="px-6 py-3 btn-warm rounded-xl border transition-all">
-            {t.cancel}
+            {textInLanguage.cancel}
           </button>
         </div>
       }>
       <div className="flex flex-col gap-6">
         <div className="form-group">
-          <label className="form-label">{t.eventName}</label>
+          <label className="form-label">{textInLanguage.eventName}</label>
           <input
             autoFocus
             className="form-input"
@@ -104,7 +105,7 @@ export const EventModal: React.FC<EventModalProps> = ({
         </div>
 
         <div className="form-group">
-          <label className="form-label">{t.repeatPattern}</label>
+          <label className="form-label">{textInLanguage.repeatPattern}</label>
           <select
             className="form-input appearance-none cursor-pointer"
             value={formType}
@@ -126,7 +127,7 @@ export const EventModal: React.FC<EventModalProps> = ({
         </div>
 
         <div className="form-group">
-          <label className="form-label">{t.notes}</label>
+          <label className="form-label">{textInLanguage.notes}</label>
           <textarea
             className="form-input min-h-[80px]"
             value={formNotes}
@@ -136,7 +137,7 @@ export const EventModal: React.FC<EventModalProps> = ({
 
         <div className="grid grid-cols-2 gap-4">
           <div className="form-group">
-            <label className="form-label">{t.colorTheme}</label>
+            <label className="form-label">{textInLanguage.colorTheme}</label>
             <div className="flex gap-2 items-center">
               <input
                 type="color"
@@ -148,7 +149,7 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">{t.textColor}</label>
+            <label className="form-label">{textInLanguage.textColor}</label>
             <div className="flex gap-2 items-center">
               <input
                 type="color"
@@ -162,7 +163,7 @@ export const EventModal: React.FC<EventModalProps> = ({
         </div>
 
         <div className="form-group">
-          <label className="form-label">{t.reminders}</label>
+          <label className="form-label">{textInLanguage.reminders}</label>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
@@ -172,7 +173,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                 className="w-4 h-4 rounded border-glass-border btn-warm checked:bg-accent-amber focus:ring-1 focus:ring-accent-amber transition-all"
               />
               <span className="text-sm font-medium group-hover:text-accent-amber transition-colors">
-                {t.dayBefore}
+                {textInLanguage.dayBefore}
               </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer group">
@@ -183,7 +184,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                 className="w-4 h-4 rounded border-glass-border btn-warm checked:bg-accent-amber focus:ring-1 focus:ring-accent-amber transition-all"
               />
               <span className="text-sm font-medium group-hover:text-accent-amber transition-colors">
-                {t.dayOf}
+                {textInLanguage.dayOf}
               </span>
             </label>
           </div>

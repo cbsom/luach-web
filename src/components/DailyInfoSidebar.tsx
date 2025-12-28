@@ -6,7 +6,7 @@ import { formatTime, getAnniversaryNumber, getRelativeDescription } from "../uti
 
 interface DailyInfoSidebarProps {
   lang: "en" | "he";
-  t: any;
+  textInLanguage: any;
   selectedJDate: jDate;
   selectedEvents: UserEvent[];
   selectedNotes: any;
@@ -21,7 +21,7 @@ interface DailyInfoSidebarProps {
 
 export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
   lang,
-  t,
+  textInLanguage,
   selectedJDate,
   selectedEvents,
   selectedNotes,
@@ -92,7 +92,7 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
             onClick={(e) => handleAddNewEventForDate(e, selectedJDate)}
             className="btn-warm border rounded-xl py-3 flex items-center justify-center gap-2 font-bold text-sm transition-all hover:scale-[1.02] shadow-sm mb-2">
             <Plus size={18} />
-            <span>{t.addEvent}</span>
+            <span>{textInLanguage.addEvent}</span>
           </button>
 
           <section
@@ -128,7 +128,7 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
                         <button
                           onClick={() => deleteEvent(event.id)}
                           className="p-1 hover:bg-black/10 rounded-md transition-all"
-                          title={t.deleteEvent}>
+                          title={textInLanguage.deleteEvent}>
                           <Trash size={14} />
                         </button>
                       </div>
@@ -206,7 +206,7 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
                   <div className="p-3 rounded-xl bg-accent-amber/10 border border-accent-amber/30 flex items-center gap-3">
                     <HandHelping size={20} className="text-accent-amber flex-shrink-0" />
                     <span className="font-black text-sm">
-                      {t.candleLighting}: {formatTime(candles)}
+                      {textInLanguage.candleLighting}: {formatTime(candles)}
                     </span>
                   </div>
                 );
@@ -216,7 +216,7 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
             {/* ZMANIM */}
             <div className="mt-2 flex flex-col gap-2">
               <h3 className="text-xs font-bold uppercase tracking-widest opacity-50 px-1">
-                {t.zmanim}
+                {textInLanguage.zmanim}
               </h3>
               {selectedZmanim.map((zman: any, idx: number) => {
                 const isSolarEvent = [5, 15].includes(Number(zman.zmanType.id));
