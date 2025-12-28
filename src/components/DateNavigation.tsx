@@ -8,6 +8,8 @@ interface DateNavigationProps {
   navigateYear: (direction: number) => void;
   handleGoToToday: () => void;
   setIsJumpModalOpen: (isOpen: boolean) => void;
+  showJump?: boolean;
+  className?: string;
 }
 
 export const DateNavigation: React.FC<DateNavigationProps> = ({
@@ -17,11 +19,12 @@ export const DateNavigation: React.FC<DateNavigationProps> = ({
   navigateYear,
   handleGoToToday,
   setIsJumpModalOpen,
+  className,
 }) => {
   return (
-    <div className="flex items-center gap-6">
+    <div className={`flex items-center gap-6 ${className}`}>
       <div
-        className={`flex btn-warm rounded-2xl p-1 border nav-controls ${
+        className={`flex btn-warm rounded-2xl p-1 border ${
           lang === "he" ? "flex-row-reverse" : ""
         }`}>
         <button
@@ -30,6 +33,7 @@ export const DateNavigation: React.FC<DateNavigationProps> = ({
           style={{
             margin: "0 1rem",
             border: "0",
+            color: "var(--accent-amber)",
             backgroundColor: "transparent",
           }}
           title={textInLanguage.goToDate}>

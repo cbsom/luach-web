@@ -51,6 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
       <DateNavigation
+        className="nav-controls"
         lang={lang}
         textInLanguage={textInLanguage}
         navigateMonth={navigateMonth}

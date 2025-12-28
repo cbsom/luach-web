@@ -953,7 +953,7 @@ const App: React.FC = () => {
       <div className="main-layout">
         <DailyInfoSidebar
           lang={lang}
-          t={textInLanguage}
+          textInLanguage={textInLanguage}
           selectedJDate={selectedJDate}
           selectedEvents={selectedEvents}
           selectedNotes={selectedNotes}
@@ -968,7 +968,7 @@ const App: React.FC = () => {
 
         <Calendar
           lang={lang}
-          t={textInLanguage}
+          textInLanguage={textInLanguage}
           currentJDate={currentJDate}
           monthInfo={monthInfo}
           selectedJDate={selectedJDate}
@@ -986,7 +986,7 @@ const App: React.FC = () => {
 
       <MobileFooter
         lang={lang}
-        t={textInLanguage}
+        textInLanguage={textInLanguage}
         navigateMonth={navigateMonth}
         navigateYear={navigateYear}
         handleGoToToday={handleGoToToday}
@@ -999,7 +999,7 @@ const App: React.FC = () => {
         setLang={setLang}
         theme={theme}
         setTheme={setTheme}
-        t={textInLanguage}
+        textInLanguage={textInLanguage}
         locationName={locationName}
         setLocationName={setLocationName}
         isOpen={isSettingsOpen}
@@ -1021,7 +1021,7 @@ const App: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         editingEvent={editingEvent}
-        t={textInLanguage}
+        textInLanguage={textInLanguage}
         lang={lang}
         selectedJDate={selectedJDate}
         formName={formName}
@@ -1045,7 +1045,7 @@ const App: React.FC = () => {
       <JumpDateModal
         isOpen={isJumpModalOpen}
         onClose={() => setIsJumpModalOpen(false)}
-        t={textInLanguage}
+        textInLanguage={textInLanguage}
         lang={lang}
         jumpGregDate={jumpGregDate}
         setJumpGregDate={setJumpGregDate}
@@ -1064,7 +1064,7 @@ const App: React.FC = () => {
         onClose={() => setIsEventsListOpen(false)}
         events={events}
         lang={lang}
-        t={textInLanguage}
+        textInLanguage={textInLanguage}
         handleEditEvent={handleEditEvent}
         deleteEvent={deleteEvent}
         saveEvents={saveEvents}

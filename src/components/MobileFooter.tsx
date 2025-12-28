@@ -27,20 +27,12 @@ export const MobileFooter: React.FC<MobileFooterProps> = ({
         {/* Actions Group - Left */}
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setIsJumpModalOpen(true)}
-            className="p-2 btn-warm rounded-xl text-accent-amber"
-            title={textInLanguage.goToDate}>
-            <CalendarIcon size={22} />
-          </button>
-          <button
             onClick={() => setIsEventsListOpen(true)}
             className="p-2 btn-warm rounded-xl text-accent-amber"
             title={lang === "he" ? "אירועים" : "Events"}>
             <List size={22} />
           </button>
         </div>
-
-        {/* Navigation Group - Center */}
         <DateNavigation
           lang={lang}
           textInLanguage={textInLanguage}
