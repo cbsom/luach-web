@@ -259,6 +259,18 @@ const App: React.FC = () => {
   useEffect(() => {
     if (user && settingsLoaded) {
       const settingsRef = doc(db, "users", user.uid, "settings", "general");
+      const userRef = doc(db, "users", user.uid);
+
+      // Ensure the user document exists so the Cloud Function sweep can find it
+      setDoc(
+        userRef,
+        {
+          email: user.email,
+          lastSeen: new Date().toISOString(),
+        },
+        { merge: true }
+      ).catch((err) => console.error("Failed to sync user doc:", err));
+
       setDoc(
         settingsRef,
         {
