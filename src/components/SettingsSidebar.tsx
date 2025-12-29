@@ -3,6 +3,7 @@ import { MapPin, X, Palette, Bell, Check, Globe } from "lucide-react";
 import { Locations, jDate } from "jcal-zmanim";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { NotificationService } from "../NotificationService";
+import { cycleTheme, getThemeIcon } from "../utils";
 
 interface SettingsSidebarProps {
   lang: "en" | "he";
@@ -72,31 +73,6 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
     }
   }, [isOpen]);
 
-  const cycleTheme = () => {
-    const themes: Array<"warm" | "dark" | "light" | "tcheles"> = [
-      "warm",
-      "dark",
-      "light",
-      "tcheles",
-    ];
-    const currentIndex = themes.indexOf(theme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex]);
-  };
-
-  const getThemeIcon = () => {
-    switch (theme) {
-      case "warm":
-        return "🔥";
-      case "dark":
-        return "🌙";
-      case "light":
-        return "☀️";
-      case "tcheles":
-        return "💎";
-    }
-  };
-
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} style={{ zIndex: 1100 }} />}
@@ -136,9 +112,9 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                 {lang === "he" ? "ערכת נושא" : "Appearance Theme"}
               </label>
               <button
-                onClick={cycleTheme}
+                onClick={() => cycleTheme(theme, setTheme)}
                 className="w-full py-4 rounded-xl btn-warm border flex items-center justify-center gap-3 font-bold text-sm shadow-md transition-all hover:scale-[1.01]">
-                <div className="p-2 text-xl leading-none">{getThemeIcon()}</div>
+                <div className="p-2 text-xl leading-none">{getThemeIcon(theme)}</div>
                 <span className="uppercase tracking-wider">
                   {theme === "warm"
                     ? lang === "he"

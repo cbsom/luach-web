@@ -1,84 +1,122 @@
-# <img src="public/icon.svg" width="48" height="48" valign="middle"> Luach – Jewish Calendar
+# Luach – Jewish Calendar Application
 
-A **beautiful**, modern Jewish calendar application that blends **rich visual design** with **powerful functionality**. Designed as a successor to legacy desktop calendar apps, Luach brings Zmanim, Hebrew dates, and cloud-synced events to your browser, desktop, and mobile devices.
+Luach is a modern, cross-platform Jewish calendar application that blends traditional Hebrew date logic with a premium digital experience. It provides high-accuracy Zmanim, recurring event management, and cloud synchronization.
 
-## ✨ Core Features
+## ✨ Main Features
 
-- **PWA Experience** – Install it directly to your taskbar or home screen for a fast, native-like experience.
-- **Zmanim & Calculations** – High-accuracy prayer times and Hebrew dates for any location worldwide.
-- **Cloud Sync** – Optional Google Login to sync your events and settings across all your devices.
-- **Email Reminders** – Receive automated email notifications for Yahrzeits, Anniversaries, and more.
-- **Browser Alerts** – Native desktop notifications to keep you informed of upcoming events.
-- **Bilingual Support** – Complete localization for both **English** and **Hebrew**.
-- **Theming** – Choose between **Warm 🔥**, **Dark 🌙**, and **Light ☀️** modes to suit your workspace.
+- **Hebrew & Secular Calendar**: Switch between a traditional Jewish month view and a standard secular month view.
+- **Event Management**:
+  - Support for birthdays, Yahrzeits, and any other one-time or recurring occasions.
+  - Monthly and yearly recurring events and occasions.
+  - Color the date on the calendar. You can set the calendar to show this recurring occasion in any color of your choice, to easily see which occasions or events are coming up.
+- **Automated Notifications**:
+  - **Email Reminders**: Receive daily email reminding you of upcoming occasions.
+  - **Browser Alerts**: You can also receive native system notifications for your occasions.
+- **High-Accuracy Zmanim**: Daily _Halachic Zmanim_, with the time calculated via the precise `jcal-zmanim` library for any location worldwide.
+- **Bilingual Interface**: Seamlessly switch between English and Hebrew layouts, including full RTL (Right-to-Left) support.
+- **Cloud Sync**: Optional Google Authentication to back up and sync your occasions and selected settings across all devices.
+- **PWA (Progressive Web App)**: Install Luach directly to your desktop or mobile home screen for a native application experience.
+
+---
 
 ## 📖 User Guide
 
 ### 📍 Setting Your Location
 
-Luach automatically calculates Zmanim based on your chosen location.
+Daily Zmanim are calculated based on your location:
 
-1. Open the **Sidebar Menu** (top-left menu icon).
-2. Select your city from the dropdown list.
-3. Zmanim and calendar events (like Parasha and Candle Lighting) will update instantly.
+1. Open the **Settings Sidebar** (menu icon on the top).
+2. Use the **Location** dropdown to select your city. There are hundreds of locations available.
+3. The calendar and Zmanim will update immediately to reflect the new location's times.
 
-### 📅 Dynamic Calendar Grid
+### 📅 Navigation & Grid
 
-The calendar is designed to be highly visual and informative:
+- **Switching Views**: Use the toggle in the settings or header to flip between **Jewish Month** and **Secular Month** layouts.
+- **Today**: Click the "Today" button (or press `T`) to return to the current date instantly.
+- **Day Details**: Selecting any day on the grid will update the **Daily Info Sidebar** with that day's Zmanim, Parasha, and scheduled events.
 
-- **Event Highlights**: If a day has a custom event, the entire calendar cell will change color to match that event's category.
-- **Selection Highlight**: Selecting a day draws a classic **Astroid** (four-pointed star) overlay—a nod to the legacy Luach software this app replaces.
-- **Holiday Indicators**: Candle lighting, Parasha, and Yom Tov indicators are shown directly on the grid.
+### ✍️ Adding & Managing Events
 
-### ✍️ Managing Events
+1. Select a date on the calendar grid.
+2. Click the **(+) Add** button that appears on the cell, or press `Enter`.
+3. Provide an event name and choose a **Repeat Pattern** (e.g., "Hebrew Date Recurring Yearly" for a Yahrzeit).
+4. Select a background color to highlight the day on your calendar.
+5. Set **Reminders** (Day Of / Day Before) to receive notifications.
 
-Luach supports several types of recurring events:
+### ☁️ Syncing Your Data
 
-- **Hebrew Date Recurring**: Perfect for Yahrzeits and Hebrew birthdays.
-- **Secular Date Recurring**: Standard annual or monthly reminders.
-- **One-Time Events**: Simple notes for a specific day.
+By default, Luach stores your data **locally** in your browser's IndexedDB. To enable cloud backup:
 
-**To add an event**:
-
-1. Select a date on the grid.
-2. Click the **(+) Add** button that appears on the cell (or press `Enter`).
-3. Set your labels, colors, and reminder preferences.
-
-### ☁️ Sync & Notifications
-
-Luach prioritizes your data. By default, everything is stored **Locally** in your browser's IndexedDB.
-
-- **Cloud Sync**: Sign in with Google to back up your events and sync them across your phone and computer.
-- **Email Reminders**: Once signed in, you can toggle "Email Reminders" to receive automated alerts even when the app is closed.
-- **Browser Alerts**: Toggle this to see native system notifications while you are using your computer.
-
-## 🚀 Installation
-
-### 💻 Desktop & Mobile (PWA)
-
-This is the recommended way to use Luach:
-
-1. Visit **[luach-web.web.app](https://luach-web.web.app)** in a modern browser (Chrome or Edge recommended).
-2. Look for the **Install** button in the address bar (or select "Add to Home Screen" on mobile).
-3. Once installed, Luach will open in its own window without browser toolbars.
-
-## ⌨️ Keyboard Shortcuts
-
-Speed up your workflow with these shortcuts:
-
-- **Arrow Keys (← → ↑ ↓)** – Navigate between dates.
-- **T** – Reset view to Today.
-- **Enter** – Open the "Add Event" dialog for the selected date.
-- **Esc** – Close any open dialog or the sidebar.
-
-## 🛠️ Technology Stack
-
-- **React 19** – Modern, responsive UI.
-- **TypeScript** – Robust, type-safe logic.
-- **Vite & PWA** – Lightning-fast builds and offline capabilities.
-- **Firebase** – Secure authentication, Cloud Firestore, and Cloud Functions.
-- **jcal-zmanim** – The industry-standard library for Jewish calendar calculations.
+1. Click **Sign in with Google** in the Sidebar.
+2. Once signed in, your events will automatically sync whenever you make a change.
+3. You can then access the same events on your phone or another computer.
 
 ---
 
-_Built with ❤️ for the Jewish community. May it help you stay connected to our heritage through time._
+## 🛠 Developer Setup
+
+### Prerequisites
+
+- **Node.js** (Version 22 or higher)
+- **Firebase CLI** (`npm install -g firebase-tools`)
+- A Firebase project with Firestore, Auth, and Functions enabled.
+
+### Local Environment Configuration
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd luach-web
+   ```
+2. **Setup Frontend**:
+   ```bash
+   npm install
+   ```
+3. **Setup Backend (Functions)**:
+   ```bash
+   cd functions
+   npm install
+   cd ..
+   ```
+4. **Connect to Firebase**:
+   ```bash
+   firebase login
+   firebase use [your-project-id]
+   ```
+
+### Running Locally
+
+- **Frontend Development**: `npm run dev` starts the Vite server at `localhost:5173`.
+- **Functions Emulator**: `npm --prefix functions run serve` allows you to test Cloud Function logic locally.
+
+---
+
+## 🏗 Deployment
+
+### Hosting
+
+To deploy the web application:
+
+```bash
+npm run build
+npm run deploy:hosting
+```
+
+### Cloud Functions
+
+To deploy the background reminder service:
+
+```bash
+npm run deploy:functions
+```
+
+## ⌨️ Keyboard Shortcuts
+
+- **Arrow Keys** – Navigate between dates on the grid.
+- **T** – Jump to Today.
+- **Enter** – Open the "Add Event" dialog for the selected date.
+- **Esc** – Close any open modal or sidebar.
+
+## 🛡 License
+
+Private / Proprietary to the Luach-Web project.

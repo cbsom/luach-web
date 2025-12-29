@@ -1,6 +1,7 @@
 import React from "react";
-import { List, Menu } from "lucide-react";
+import { List, Menu, Sun, Moon, Flame, Droplets, CalendarDays } from "lucide-react";
 import { DateNavigation } from "./DateNavigation";
+import { getThemeIcon, cycleTheme } from "../utils";
 
 interface HeaderProps {
   lang: "en" | "he";
@@ -14,6 +15,10 @@ interface HeaderProps {
   setIsJumpModalOpen: (isOpen: boolean) => void;
   setIsEventsListOpen: (isOpen: boolean) => void;
   onSettingsOpen: () => void;
+  theme: "warm" | "dark" | "light" | "tcheles";
+  setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
+  calendarView: "jewish" | "secular";
+  setCalendarView: (view: "jewish" | "secular") => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,6 +33,10 @@ export const Header: React.FC<HeaderProps> = ({
   setIsJumpModalOpen,
   setIsEventsListOpen,
   onSettingsOpen,
+  theme,
+  setTheme,
+  calendarView,
+  setCalendarView,
 }) => {
   return (
     <header className="glass-panel p-4 px-6 flex items-center justify-between main-header">
@@ -64,6 +73,23 @@ export const Header: React.FC<HeaderProps> = ({
         <span className="text-lg font-medium text-text-secondary">{secondaryDateRange}</span>
       </h2>
       <div className="flex items-center gap-2">
+        <button
+          onClick={() => cycleTheme(theme, setTheme)}
+          className="no-border no-background cursor-pointer"
+          style={{
+            paddingBottom: "3px",
+          }}
+          title={textInLanguage.colorTheme}>
+          {getThemeIcon(theme)}
+        </button>
+        <button
+          onClick={() => setCalendarView(calendarView === "jewish" ? "secular" : "jewish")}
+          className="no-border no-background cursor-pointer btn-warm"
+          title={
+            calendarView === "jewish" ? textInLanguage.secularMonth : textInLanguage.jewishMonth
+          }>
+          <CalendarDays size={14} />
+        </button>
         <button
           onClick={() => setIsEventsListOpen(true)}
           className="p-3 btn-warm rounded-2xl border transition-all flex items-center gap-2 font-bold text-sm h-[42px] px-4"

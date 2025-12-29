@@ -132,7 +132,7 @@ export const dailyReminders = onSchedule({
                         greeting: "Good morning!",
                         intro: "You have the following events coming up:",
                         footer: "Sent by Luach-Web. You can disable these in your settings.",
-                        anniversary: "Anniversary"
+                        anniversary: "Year number"
                     },
                     he: {
                         today: "היום",

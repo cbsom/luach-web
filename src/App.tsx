@@ -966,6 +966,10 @@ const App: React.FC = () => {
         setIsJumpModalOpen={setIsJumpModalOpen}
         setIsEventsListOpen={setIsEventsListOpen}
         onSettingsOpen={() => setIsSettingsOpen(true)}
+        theme={theme}
+        setTheme={setTheme}
+        calendarView={calendarView}
+        setCalendarView={setCalendarView}
       />
 
       {showReminders && (todayReminders.length > 0 || tomorrowReminders.length > 0) && (
@@ -1023,6 +1027,10 @@ const App: React.FC = () => {
         handleGoToToday={handleGoToToday}
         setIsJumpModalOpen={setIsJumpModalOpen}
         setIsEventsListOpen={setIsEventsListOpen}
+        theme={theme}
+        setTheme={setTheme}
+        calendarView={calendarView}
+        setCalendarView={setCalendarView}
       />
 
       <SettingsSidebar

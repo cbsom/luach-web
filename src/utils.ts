@@ -109,3 +109,21 @@ export const getRelativeDescription = (targetJDate: jDate, lang: "en" | "he"): s
         return isFuture ? `בעוד ${result}` : `לפני ${result}`;
     }
 };
+export const getThemeIcon = (theme: "light" | "dark" | "warm" | "tcheles") => {
+    switch (theme) {
+        case "warm":
+            return "🔥";
+        case "dark":
+            return "🌙";
+        case "light":
+            return "☀️";
+        case "tcheles":
+            return "💎";
+    }
+};
+export const cycleTheme = (theme: "light" | "dark" | "warm" | "tcheles", setTheme: (theme: "light" | "dark" | "warm" | "tcheles") => void) => {
+    const themes: ("warm" | "dark" | "light" | "tcheles")[] = ["warm", "dark", "light", "tcheles"];
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
+};
