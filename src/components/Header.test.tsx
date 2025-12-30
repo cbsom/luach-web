@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Header } from "./Header";
+import { Themes } from "../types";
 
 describe("Header", () => {
   const defaultProps = {
@@ -21,7 +22,7 @@ describe("Header", () => {
     setIsJumpModalOpen: vi.fn(),
     setIsEventsListOpen: vi.fn(),
     onSettingsOpen: vi.fn(),
-    theme: "light" as const,
+    theme: Themes.Light,
     setTheme: vi.fn(),
     calendarView: "jewish" as const,
     setCalendarView: vi.fn(),

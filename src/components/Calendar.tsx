@@ -1,7 +1,7 @@
 import React from "react";
 import { Plus } from "lucide-react";
 import { Utils, jDate, getNotifications } from "jcal-zmanim";
-import { UserEvent } from "../types";
+import { UserEvent, Themes } from "../types";
 import { formatTime, getAnniversaryNumber } from "../utils";
 
 interface CalendarProps {
@@ -19,6 +19,7 @@ interface CalendarProps {
   navigateMonth: (direction: number) => void;
   today: jDate;
   calendarView: "jewish" | "secular";
+  theme: Themes;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -36,6 +37,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   navigateMonth,
   today,
   calendarView,
+  theme,
 }) => {
   // Pointer detection for month navigation (Touch, Mouse, Stylus)
   const [pointerStart, setPointerStart] = React.useState<{
@@ -222,7 +224,11 @@ export const Calendar: React.FC<CalendarProps> = ({
                         style={{ width: "200%", height: "120%" }}>
                         <path
                           d="M 50 0 Q 50 50 100 50 Q 50 50 50 100 Q 50 50 0 50 Q 50 50 50 0"
-                          fill="rgba(0, 0, 100, 0.25)"
+                          fill={
+                            theme === Themes.Dark || theme === Themes.Warm
+                              ? "rgba(200, 200, 255, 0.25)"
+                              : "rgba(0, 0, 100, 0.25)"
+                          }
                         />
                       </svg>
                     </div>

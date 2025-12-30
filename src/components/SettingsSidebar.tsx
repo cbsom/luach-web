@@ -4,12 +4,13 @@ import { Locations, jDate } from "jcal-zmanim";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { NotificationService } from "../NotificationService";
 import { cycleTheme, getThemeIcon } from "../utils";
+import { Themes } from "../types";
 
 interface SettingsSidebarProps {
   lang: "en" | "he";
   setLang: (lang: "en" | "he") => void;
-  theme: "warm" | "dark" | "light" | "tcheles";
-  setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
+  theme: Themes;
+  setTheme: (theme: Themes) => void;
   textInLanguage: any;
   locationName: string;
   setLocationName: (name: string) => void;
@@ -116,15 +117,15 @@ export const SettingsSidebar: React.FC<SettingsSidebarProps> = ({
                 className="w-full py-4 rounded-xl btn-warm border flex items-center justify-center gap-3 font-bold text-sm shadow-md transition-all hover:scale-[1.01]">
                 <div className="p-2 text-xl leading-none">{getThemeIcon(theme)}</div>
                 <span className="uppercase tracking-wider">
-                  {theme === "warm"
+                  {theme === Themes.Warm
                     ? lang === "he"
                       ? "חמים"
                       : "WARM"
-                    : theme === "dark"
+                    : theme === Themes.Dark
                     ? lang === "he"
                       ? "כהה"
                       : "DARK"
-                    : theme === "light"
+                    : theme === Themes.Light
                     ? lang === "he"
                       ? "בהיר"
                       : "LIGHT"

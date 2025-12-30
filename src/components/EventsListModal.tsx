@@ -1,14 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  Download,
-  Upload,
-  Calendar,
-  Edit2,
-  Trash2,
-  ChevronDown,
-  ChevronUp,
-  Search,
-} from "lucide-react";
+import { Download, Upload, Edit2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { jDate } from "jcal-zmanim";
 import { UserEvent, UserEventTypes } from "../types";
 import { getAnniversaryNumber } from "../utils";
@@ -323,8 +314,12 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
   const SortButton = ({ field, label }: { field: SortField; label: string }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-1 font-bold text-xs uppercase tracking-wider transition-colors"
-      style={{ color: sortField === field ? "var(--accent-amber)" : "var(--text-secondary)" }}>
+      className="no-border no-outline no-background"
+      style={{
+        fontSize: "1em",
+        padding: "0.5em",
+        color: sortField === field ? "var(--accent-amber)" : "var(--text-secondary)",
+      }}>
       {label}
       {sortField === field &&
         (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
@@ -370,26 +365,22 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           </div>
 
           {/* Search Bar */}
-          <div className="relative mt-4">
-            <div
-              className={`absolute inset-y-0 ${
-                lang === "he" ? "right-3" : "left-3"
-              } flex items-center pointer-events-none`}>
-              <Search size={16} className="text-text-secondary opacity-50" />
-            </div>
+          <div className="mt-4 flex items-center gap-2">
+            <span style={{ fontSize: "1.5em" }}>&#128270;</span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "he" ? "חיפוש אירועים..." : "Search events..."}
+              placeholder={lang === "he" ? "סינון אירועים..." : "Filter your events..."}
               className={`w-full bg-white/5 border border-glass-border rounded-xl py-4 ${
                 lang === "he" ? "pr-12 pl-6 text-right" : "pl-12 pr-6"
               } text-base focus:outline-none focus:border-accent-amber/50 transition-all`}
+              style={{ paddingRight: "16px", fontSize: "1.3em" }}
             />
           </div>
 
           {/* Sort Controls */}
-          <div className="flex gap-3 pb-2 border-b border-glass-border text-xs">
+          <div className="flex items-center gap-3 pb-2 border-glass-border">
             <span className="text-text-secondary">{lang === "he" ? "מיין:" : "Sort:"}</span>
             <SortButton field="name" label={lang === "he" ? "שם" : "Name"} />
             <SortButton field="date" label={lang === "he" ? "תאריך" : "Date"} />
@@ -404,7 +395,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             {lang === "he" ? "אין אירועים" : "No events"}
           </div>
         ) : (
-          <div className="flex flex-col gap-3 pb-4">
+          <div className="flex flex-col gap-2 pb-4">
             {sortedEvents.map((event) => {
               const eventDate = new jDate(event.jYear, event.jMonth, event.jDay);
               const today = new jDate();
@@ -429,16 +420,21 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
                         style={{ color: event.textColor || "#ffffff" }}>
                         {event.name}
                       </h3>
-                      {anniv > 0 && (
-                        <span
-                          className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-bold"
-                          style={{ color: event.textColor }}>
-                          {anniv}
-                        </span>
-                      )}
                       <span className="text-[10px] opacity-70" style={{ color: event.textColor }}>
                         {lang === "he" ? eventDate.toStringHeb() : eventDate.toString()}
                       </span>
+                      {anniv > 0 && (
+                        <div
+                          style={{
+                            color: event.backColor || "var(--accent-amber)",
+                            backgroundColor: event.textColor || "#ffffff",
+                            padding: "2px 4px",
+                            borderRadius: "4px",
+                            fontSize: "11px",
+                          }}>
+                          {anniv}
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button

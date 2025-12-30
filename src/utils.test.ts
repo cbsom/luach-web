@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { formatTime, getThemeIcon, cycleTheme } from './utils';
+import { Themes } from './types';
 
 describe('utils', () => {
     describe('formatTime', () => {
@@ -16,29 +17,29 @@ describe('utils', () => {
 
     describe('getThemeIcon', () => {
         it('should return correct icon for themes', () => {
-            expect(getThemeIcon('light')).toBe('☀️');
-            expect(getThemeIcon('dark')).toBe('🌙');
-            expect(getThemeIcon('warm')).toBe('🔥');
-            expect(getThemeIcon('tcheles')).toBe('💎');
+            expect(getThemeIcon(Themes.Light)).toBe('☀️');
+            expect(getThemeIcon(Themes.Dark)).toBe('🌙');
+            expect(getThemeIcon(Themes.Warm)).toBe('🔥');
+            expect(getThemeIcon(Themes.Tcheles)).toBe('💎');
         });
     });
 
     describe('cycleTheme', () => {
         it('should cycle to the next theme', () => {
-            let currentTheme: "light" | "dark" | "warm" | "tcheles" = 'warm';
-            const setTheme = (t: "light" | "dark" | "warm" | "tcheles") => { currentTheme = t };
+            let currentTheme: Themes = Themes.Warm;
+            const setTheme = (t: Themes) => { currentTheme = t };
 
-            cycleTheme('warm', setTheme);
-            expect(currentTheme).toBe('dark');
+            cycleTheme(Themes.Warm, setTheme);
+            expect(currentTheme).toBe(Themes.Dark);
 
-            cycleTheme('dark', setTheme);
-            expect(currentTheme).toBe('light');
+            cycleTheme(Themes.Dark, setTheme);
+            expect(currentTheme).toBe(Themes.Light);
 
-            cycleTheme('light', setTheme);
-            expect(currentTheme).toBe('tcheles');
+            cycleTheme(Themes.Light, setTheme);
+            expect(currentTheme).toBe(Themes.Tcheles);
 
-            cycleTheme('tcheles', setTheme);
-            expect(currentTheme).toBe('warm');
+            cycleTheme(Themes.Tcheles, setTheme);
+            expect(currentTheme).toBe(Themes.Warm);
         });
     });
 });

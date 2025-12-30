@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Calendar } from "./Calendar";
 import { jDate, Utils } from "jcal-zmanim";
+import { Themes } from "../types";
 
 describe("Calendar", () => {
   // Basic setup for a month
@@ -42,6 +43,7 @@ describe("Calendar", () => {
     navigateMonth: vi.fn(),
     today: today,
     calendarView: "jewish" as const,
+    theme: Themes.Warm,
   };
 
   it("renders the days correctly", () => {

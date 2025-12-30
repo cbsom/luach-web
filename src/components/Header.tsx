@@ -2,6 +2,7 @@ import React from "react";
 import { List, Menu, Sun, Moon, Flame, Droplets, CalendarDays } from "lucide-react";
 import { DateNavigation } from "./DateNavigation";
 import { getThemeIcon, cycleTheme } from "../utils";
+import { Themes } from "../types";
 
 interface HeaderProps {
   lang: "en" | "he";
@@ -15,8 +16,8 @@ interface HeaderProps {
   setIsJumpModalOpen: (isOpen: boolean) => void;
   setIsEventsListOpen: (isOpen: boolean) => void;
   onSettingsOpen: () => void;
-  theme: "warm" | "dark" | "light" | "tcheles";
-  setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
+  theme: Themes;
+  setTheme: (theme: Themes) => void;
   calendarView: "jewish" | "secular";
   setCalendarView: (view: "jewish" | "secular") => void;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { CalendarDays, List } from "lucide-react";
 import { DateNavigation } from "./DateNavigation";
 import { cycleTheme, getThemeIcon } from "../utils";
+import { Themes } from "../types";
 
 interface MobileFooterProps {
   lang: "en" | "he";
@@ -11,8 +12,8 @@ interface MobileFooterProps {
   handleGoToToday: () => void;
   setIsJumpModalOpen: (isOpen: boolean) => void;
   setIsEventsListOpen: (isOpen: boolean) => void;
-  theme: "warm" | "dark" | "light" | "tcheles";
-  setTheme: (theme: "warm" | "dark" | "light" | "tcheles") => void;
+  theme: Themes;
+  setTheme: (theme: Themes) => void;
   calendarView: "jewish" | "secular";
   setCalendarView: (view: "jewish" | "secular") => void;
 }

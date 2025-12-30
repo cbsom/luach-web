@@ -1,5 +1,5 @@
 import { jDate, type Time } from "jcal-zmanim";
-import { UserEvent, UserEventTypes } from "./types";
+import { UserEvent, UserEventTypes, Themes } from "./types";
 
 export const formatTime = (time: Time | undefined) => {
     if (!time) return "--:--";
@@ -109,20 +109,20 @@ export const getRelativeDescription = (targetJDate: jDate, lang: "en" | "he"): s
         return isFuture ? `בעוד ${result}` : `לפני ${result}`;
     }
 };
-export const getThemeIcon = (theme: "light" | "dark" | "warm" | "tcheles") => {
+export const getThemeIcon = (theme: Themes) => {
     switch (theme) {
-        case "warm":
+        case Themes.Warm:
             return "🔥";
-        case "dark":
+        case Themes.Dark:
             return "🌙";
-        case "light":
+        case Themes.Light:
             return "☀️";
-        case "tcheles":
+        case Themes.Tcheles:
             return "💎";
     }
 };
-export const cycleTheme = (theme: "light" | "dark" | "warm" | "tcheles", setTheme: (theme: "light" | "dark" | "warm" | "tcheles") => void) => {
-    const themes: ("warm" | "dark" | "light" | "tcheles")[] = ["warm", "dark", "light", "tcheles"];
+export const cycleTheme = (theme: Themes, setTheme: (theme: Themes) => void) => {
+    const themes: Themes[] = [Themes.Warm, Themes.Dark, Themes.Light, Themes.Tcheles];
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setTheme(themes[nextIndex]);

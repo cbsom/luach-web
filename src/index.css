@@ -610,10 +610,6 @@ body,
   transform: scale(1.1) !important;
 }
 
-.event-title-small:hover {
-  filter: brightness(1.1);
-}
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -693,24 +689,6 @@ select.form-input option {
   background-color: var(--bg-primary);
 }
 
-.event-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-coral);
-  box-shadow: 0 0 8px var(--accent-coral);
-}
-
-.event-title-small {
-  font-size: 0.65rem;
-  color: var(--text-primary);
-  opacity: 0.8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
 /* Animations */
 @keyframes fadeIn {
   from {
@@ -732,9 +710,6 @@ select.form-input option {
   }
 }
 
-.animate-slideDown {
-  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -776,17 +751,6 @@ select {
 .btn-warm:hover {
   background: var(--btn-bg-hover);
   border-color: var(--btn-border-hover);
-}
-
-.btn-warm-transparent {
-  background: transparent;
-  color: var(--text-primary); /* Lighter text for visibility */
-  transition: all 0.3s ease;
-  border: 1px solid var(--glass-border);
-}
-
-.btn-warm-transparent:hover {
-  background: var(--btn-bg-hover);
 }
 
 /* Mobile Sidebar Styles */
@@ -866,10 +830,6 @@ select {
   }
 }
 
-.mobile-only-info-btn {
-  display: none;
-}
-
 .mobile-footer {
   display: flex;
   height: 60px;
@@ -888,25 +848,10 @@ select {
   opacity: 1;
 }
 
-@media (max-width: 1200px) {
-  .desktop-settings-controls {
-    display: none !important;
-  }
-}
-
 @media (min-width: 1201px) {
   .mobile-footer {
     display: none !important;
   }
-}
-
-/* Toggle buttons visibility */
-.settings-toggle-btn {
-  display: flex !important;
-}
-
-.mobile-info-toggle-btn {
-  display: none !important; /* Only on mobile */
 }
 
 /* Settings sidebar specific styles */
@@ -917,11 +862,6 @@ select {
 
 .settings-sidebar label {
   color: var(--text-secondary);
-}
-
-/* Hide mobile controls on desktop */
-.mobile-add-event-btn {
-  display: none;
 }
 
 /* Mobile Responsive Styles */
@@ -1066,42 +1006,6 @@ select {
     font-size: 10px !important;
   }
 
-  .jewish-day {
-    font-size: 14px !important;
-  }
-
-  .mobile-control-text {
-    font-size: 0.65rem;
-    letter-spacing: 0.05em;
-  }
-
-  .mobile-control-select {
-    padding: 4px 24px 4px 8px;
-    background: var(--btn-bg);
-    border: 1px solid var(--btn-border);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 0.65rem;
-    font-weight: 600;
-    cursor: pointer;
-    outline: none;
-    max-width: 120px;
-  }
-
-  .mobile-control-select:focus {
-    border-color: var(--accent-amber);
-  }
-
-  /* Show mobile Add Event button */
-  .mobile-add-event-btn {
-    display: flex !important;
-  }
-
-  /* Adjust main content to full width on mobile */
-  .app-container {
-    flex-direction: column;
-  }
-
   .main-content {
     width: 100%;
     max-width: 100%;
@@ -1231,70 +1135,20 @@ select {
   .day-add-btn {
     display: none !important;
   }
-
-  /* Adjust info button position */
-  .day-info-btn {
-    bottom: 4px;
-    left: 4px;
-    width: 20px;
-    height: 20px;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  [dir="rtl"] .day-info-btn {
-    left: auto;
-    right: 4px;
-  }
-
-  .day-info-btn svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  /* Shabbos indicator */
-  .shabbos-indicator {
-    font-size: 0.5rem;
-    padding: 2px 4px;
-  }
-
-  /* Holiday indicator */
-  .holiday-indicator {
-    font-size: 0.45rem;
-  }
-
-  .candle-lighting-text {
-    font-size: 0.45rem;
-  }
-
-  /* Event badges in cells */
-  .day-cell button[style*="backgroundColor"] {
-    font-size: 0.5rem !important;
-    padding: 1px 3px !important;
-    border-radius: 3px !important;
-  }
-
-  .day-cell button[style*="backgroundColor"] span {
-    font-size: 0.5rem !important;
-  }
 }
 
 /* Extra small screens (phones in portrait) */
 @media (max-width: 480px) {
-  .main-content {
-    gap: 8px;
-  }
-
   .glass-panel {
     padding: 4px !important;
   }
 
-  .main-content > header > div:first-child h1 {
-    font-size: 1.1rem !important;
+  .hebrew-day {
+    font-size: 0.65rem;
   }
 
-  .main-content > header > div:first-child h1 span {
-    font-size: 0.7rem !important;
+  .secular-day {
+    font-size: 0.6rem;
   }
 
   .calendar-header-days {
@@ -1304,14 +1158,6 @@ select {
   .day-cell {
     min-height: 48px;
     padding: 2px;
-  }
-
-  .hebrew-day {
-    font-size: 0.65rem;
-  }
-
-  .secular-day {
-    font-size: 0.6rem;
   }
 
   .shabbos-indicator {
@@ -1417,10 +1263,7 @@ select {
   padding-left: 4px;
   padding-right: 4px;
 }
-.px-2 {
-  padding-left: 8px;
-  padding-right: 8px;
-}
+
 .px-4 {
   padding-left: 16px;
   padding-right: 16px;
@@ -1433,10 +1276,7 @@ select {
   padding-left: 32px;
   padding-right: 32px;
 }
-.py-1 {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
+
 .py-2 {
   padding-top: 8px;
   padding-bottom: 8px;
@@ -1464,18 +1304,14 @@ select {
 .mt-2 {
   margin-top: 8px;
 }
-.mb-1 {
-  margin-bottom: 4px;
-}
+
 .overflow-hidden {
   overflow: hidden;
 }
 .overflow-y-auto {
   overflow-y: auto;
 }
-.min-h-0 {
-  min-height: 0;
-}
+
 .w-full {
   width: 100%;
 }
@@ -1483,44 +1319,4 @@ select {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.electron-quit-btn {
-  position: absolute;
-  top: 7px;
-  z-index: 1000;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(239, 68, 68, 0.1);
-  color: #863333;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
-}
-
-.electron-quit-btn:hover {
-  background: #9e2525;
-  color: white;
-  transform: scale(1.1);
-}
-
-/* Position based on document direction */
-[dir="ltr"] .electron-quit-btn {
-  right: 10px;
-}
-
-[dir="rtl"] .electron-quit-btn {
-  left: 10px;
-}
-
-/* Hide on mobile where sidebar is overlay */
-@media (max-width: 1024px) {
-  .electron-quit-btn {
-    display: none;
-  }
 }

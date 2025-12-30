@@ -57,8 +57,7 @@ export const dailyReminders = onSchedule({
                 continue;
             }
 
-            const lang = settings.lang === "he" ? "he" : "en";
-            const isHe = lang === "he";
+            const isHe = settings.lang === "he";
 
             const locationName = settings.locationName || "Jerusalem";
             const location =

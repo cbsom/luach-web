@@ -32,7 +32,7 @@ import {
 } from "firebase/firestore";
 
 import { translations } from "./translations";
-import { UserEvent, UserEventTypes } from "./types";
+import { UserEvent, UserEventTypes, Themes } from "./types";
 import { initDB, getAllEvents, saveAllEvents, migrateFromLocalStorage } from "./db";
 
 const App: React.FC = () => {
@@ -41,11 +41,21 @@ const App: React.FC = () => {
     return saved === "en" || saved === "he" ? saved : "en";
   });
 
-  const [theme, setTheme] = useState<"warm" | "dark" | "light" | "tcheles">(() => {
+  const [theme, setTheme] = useState<Themes>(() => {
     const saved = localStorage.getItem("luach-theme");
-    return saved === "warm" || saved === "dark" || saved === "light" || saved === "tcheles"
-      ? (saved as any)
-      : "warm";
+    // Map string names back to enum values
+    switch (saved?.toLowerCase()) {
+      case "warm":
+        return Themes.Warm;
+      case "dark":
+        return Themes.Dark;
+      case "light":
+        return Themes.Light;
+      case "tcheles":
+        return Themes.Tcheles;
+      default:
+        return Themes.Warm;
+    }
   });
 
   const [user, setUser] = useState<User | null>(null);
@@ -81,8 +91,9 @@ const App: React.FC = () => {
   }, [lang]);
 
   React.useEffect(() => {
-    document.body.setAttribute("data-theme", theme);
-    localStorage.setItem("luach-theme", theme);
+    const themeName = Themes[theme].toLowerCase();
+    document.body.setAttribute("data-theme", themeName);
+    localStorage.setItem("luach-theme", themeName);
   }, [theme]);
 
   const [locationName, setLocationName] = useState("Jerusalem");
@@ -1016,6 +1027,7 @@ const App: React.FC = () => {
           navigateMonth={navigateMonth}
           today={today}
           calendarView={calendarView}
+          theme={theme}
         />
       </div>
 

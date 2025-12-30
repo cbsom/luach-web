@@ -6,6 +6,9 @@ export enum UserEventTypes {
     SecularDateRecurringMonthly,
 }
 
+export enum Themes { Warm, Dark, Light, Tcheles };
+
+
 export interface UserEvent {
     id: string;
     name: string;
