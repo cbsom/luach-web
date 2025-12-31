@@ -787,10 +787,6 @@ select {
 
 .sidebar-close-btn {
   display: none; /* Hidden by default on desktop */
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1001;
 }
 
 .settings-close-btn {

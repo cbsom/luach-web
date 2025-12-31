@@ -2,7 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import { BookOpen, HandHelping, Plus, Trash, X } from "lucide-react";
 import { Dafyomi, Utils, jDate } from "jcal-zmanim";
 import { UserEvent } from "../types";
-import { formatTime, getAnniversaryNumber, getRelativeDescription } from "../utils";
+import {
+  formatTime,
+  getAnniversaryNumber,
+  getRelativeDescription,
+  injectLineBreak,
+} from "../utils";
 
 interface DailyInfoSidebarProps {
   lang: "en" | "he";
@@ -63,30 +68,31 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
         className={`sidebar daily-info-sidebar glass-panel scroll-affordance ${
           isAtBottom ? "at-bottom" : "has-more"
         } ${isMobileOpen ? "sidebar-mobile-open" : ""} ${isDesktopHidden ? "desktop-hidden" : ""}`}>
-        {/* Close button - Always show on permanent desktop now too */}
-        {(isMobileOpen || isDesktopHidden || !isDesktopHidden) && (
-          <button
-            className="close-btn sidebar-close-btn"
-            onClick={() => {
-              if (window.innerWidth > 1200 && !isDesktopHidden) {
-                onToggleDesktopMode?.();
-              } else {
-                onMobileClose();
-              }
-            }}
-            aria-label="Close sidebar">
-            <X size={24} />
-          </button>
-        )}
-
         <div className="p-6 flex flex-col gap-4 overflow-hidden h-full">
           {/* Header with selected date */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-black">
-              {lang === "he"
-                ? selectedJDate.toStringHeb(false, true, location.Israel)
-                : selectedJDate.toString(false, false, true, location.Israel)}
-            </h2>
+            <div className="flex flex-row justify-between items-start">
+              <h2 className="text-xl font-black">
+                {injectLineBreak(
+                  lang === "he"
+                    ? selectedJDate.toStringHeb(false, true, location.Israel)
+                    : selectedJDate.toString(false, false, true, location.Israel),
+                  ","
+                )}
+              </h2>
+              <button
+                className="close-btn sidebar-close-btn"
+                onClick={() => {
+                  if (window.innerWidth > 1200 && !isDesktopHidden) {
+                    onToggleDesktopMode?.();
+                  } else {
+                    onMobileClose();
+                  }
+                }}
+                aria-label="Close Zmanim sidebar">
+                <X size={24} />
+              </button>
+            </div>
             <p className="text-accent-amber font-bold tracking-wide text-sm">
               {selectedJDate
                 .getDate()
