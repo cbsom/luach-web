@@ -69,10 +69,12 @@ export const Header: React.FC<HeaderProps> = ({
         handleGoToToday={handleGoToToday}
         setIsJumpModalOpen={setIsJumpModalOpen}
       />
-      <h2 className="text-3xl font-black flex items-baseline gap-4 calendar-month-year">
-        {currentMonthName} {currentYearName}
-        <span className="text-lg font-medium text-text-secondary">{secondaryDateRange}</span>
-      </h2>
+      <h1 className="flex gap-4 flex-row justify-between items-center calendar-month-year">
+        <div>
+          {currentMonthName} {currentYearName}
+        </div>
+        <div className="secondary-month-year">{secondaryDateRange}</div>
+      </h1>
       <div className="flex items-center gap-2">
         <button
           onClick={() => cycleTheme(theme, setTheme)}

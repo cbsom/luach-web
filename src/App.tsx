@@ -1003,11 +1003,11 @@ const App: React.FC = () => {
 
   const currentYearName = useMemo(() => {
     if (calendarView === "jewish") {
-      return currentJDate.Year.toString();
+      return lang === "he" ? Utils.toJewishNumber(currentJDate.Year) : currentJDate.Year.toString();
     } else {
       return currentJDate.getDate().getFullYear().toString();
     }
-  }, [currentJDate, calendarView]);
+  }, [currentJDate, calendarView, lang]);
 
   return (
     <div className="app-container">
