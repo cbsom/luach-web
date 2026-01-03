@@ -220,7 +220,31 @@ const App: React.FC = () => {
         const q = query(eventsRef);
 
         unsubscribe = onSnapshot(q, async (snapshot) => {
-          const cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
+          let cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
+
+          // Migrate: Ensure all cloud events have jAbs populated
+          let needsCloudMigration = false;
+          cloudEvents = cloudEvents.map((event) => {
+            if (event.jAbs === undefined) {
+              needsCloudMigration = true;
+              return {
+                ...event,
+                jAbs: jDate.absJd(event.jYear, event.jMonth, event.jDay),
+              };
+            }
+            return event;
+          });
+
+          // If cloud events need migration, update them in Firestore
+          if (needsCloudMigration) {
+            console.log(`📦 Migrating ${cloudEvents.length} cloud events to include jAbs...`);
+            const batch = writeBatch(db);
+            cloudEvents.forEach((event) => {
+              const docRef = doc(db, "users", user.uid, "events", event.id);
+              batch.set(docRef, event);
+            });
+            await batch.commit();
+          }
 
           // Persist to local IndexedDB for offline access/backup
           saveAllEvents(cloudEvents).catch((e) => console.error("Local sync failed", e));
@@ -251,7 +275,29 @@ const App: React.FC = () => {
         console.log("🏠 No user, loading from local IndexedDB...");
         try {
           const localEvents = await getAllEvents();
-          setEvents(localEvents);
+
+          // Migrate: Ensure all events have jAbs populated
+          let needsMigration = false;
+          const migratedEvents = localEvents.map((event) => {
+            if (event.jAbs === undefined) {
+              needsMigration = true;
+              return {
+                ...event,
+                jAbs: jDate.absJd(event.jYear, event.jMonth, event.jDay),
+              };
+            }
+            return event;
+          });
+
+          // Save migrated events back to IndexedDB
+          if (needsMigration) {
+            console.log(`📦 Migrating ${migratedEvents.length} local events to include jAbs...`);
+            await saveAllEvents(migratedEvents);
+            setEvents(migratedEvents);
+          } else {
+            setEvents(localEvents);
+          }
+
           setEventsLoaded(true);
           setSettingsLoaded(true); // Treat local load as "settings loaded" too
         } catch (error) {
