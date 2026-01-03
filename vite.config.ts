@@ -33,7 +33,7 @@ export default defineConfig({
       }
     })
   ],
-  base: './',
+  base: process.env.GITHUB_PAGES ? '/luach-web/' : './',
   test: {
     globals: true,
     environment: 'jsdom',
