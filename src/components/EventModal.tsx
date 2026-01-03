@@ -27,6 +27,7 @@ interface EventModalProps {
   setFormRemindDayBefore: (val: boolean) => void;
   onSave: () => void;
   onDelete: (id: string) => void;
+  onChangeDate?: () => void; // Optional callback to open date change modal
 }
 
 export const EventModal: React.FC<EventModalProps> = ({
@@ -52,13 +53,25 @@ export const EventModal: React.FC<EventModalProps> = ({
   setFormRemindDayBefore,
   onSave,
   onDelete,
+  onChangeDate,
 }) => {
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={editingEvent ? textInLanguage.saveEvent : textInLanguage.addNewEvent}
-      subtitle={lang === "he" ? selectedJDate.toStringHeb() : selectedJDate.toString()}
+      subtitle={
+        <div className="flex items-center gap-2 justify-between">
+          <span>{lang === "he" ? selectedJDate.toStringHeb() : selectedJDate.toString()}</span>
+          {editingEvent && onChangeDate && (
+            <button
+              onClick={onChangeDate}
+              className="p-2 btn-warm border rounded-lg hover:bg-accent-amber/20 transition-all">
+              {lang === "he" ? "שנה תאריך" : "Change Date"}
+            </button>
+          )}
+        </div>
+      }
       footer={
         <div className="flex items-center gap-3">
           {editingEvent && (

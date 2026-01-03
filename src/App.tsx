@@ -385,6 +385,7 @@ const App: React.FC = () => {
   const [formRemindDayBefore, setFormRemindDayBefore] = useState(false);
 
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false);
+  const [isChangingEventDate, setIsChangingEventDate] = useState(false); // Track if we're changing event date
   const [isEventsListOpen, setIsEventsListOpen] = useState(false);
   const [showReminders, setShowReminders] = useState(true);
 
@@ -925,8 +926,15 @@ const App: React.FC = () => {
     const d = new Date(jumpGregDate);
     if (!isNaN(d.getTime())) {
       const jd = new jDate(d);
-      setCurrentJDate(jd);
-      setSelectedJDate(jd);
+      if (isChangingEventDate) {
+        // When changing event date, only update selectedJDate
+        setSelectedJDate(jd);
+        setIsChangingEventDate(false);
+      } else {
+        // When jumping, update both current and selected
+        setCurrentJDate(jd);
+        setSelectedJDate(jd);
+      }
       setIsJumpModalOpen(false);
     }
   };
@@ -934,8 +942,15 @@ const App: React.FC = () => {
   const handleJumpToJewish = () => {
     try {
       const jd = new jDate(jumpJYear, jumpJMonth, jumpJDay);
-      setCurrentJDate(jd);
-      setSelectedJDate(jd);
+      if (isChangingEventDate) {
+        // When changing event date, only update selectedJDate
+        setSelectedJDate(jd);
+        setIsChangingEventDate(false);
+      } else {
+        // When jumping, update both current and selected
+        setCurrentJDate(jd);
+        setSelectedJDate(jd);
+      }
       setIsJumpModalOpen(false);
     } catch (e) {
       alert("Invalid Jewish Date");
@@ -1139,6 +1154,15 @@ const App: React.FC = () => {
         setFormRemindDayBefore={setFormRemindDayBefore}
         onSave={handleAddEvent}
         onDelete={deleteEvent}
+        onChangeDate={() => {
+          // Initialize jump modal with current selected date
+          setJumpGregDate(selectedJDate.getDate().toISOString().split("T")[0]);
+          setJumpJDay(selectedJDate.Day);
+          setJumpJMonth(selectedJDate.Month);
+          setJumpJYear(selectedJDate.Year);
+          setIsChangingEventDate(true);
+          setIsJumpModalOpen(true);
+        }}
       />
 
       <JumpDateModal
@@ -1156,6 +1180,7 @@ const App: React.FC = () => {
         setJumpJYear={setJumpJYear}
         handleJumpToGregorian={handleJumpToGregorian}
         handleJumpToJewish={handleJumpToJewish}
+        mode={isChangingEventDate ? "change" : "jump"}
       />
 
       <EventsListModal

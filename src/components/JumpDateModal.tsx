@@ -17,6 +17,7 @@ interface JumpDateModalProps {
   setJumpJYear: (val: number) => void;
   handleJumpToGregorian: () => void;
   handleJumpToJewish: () => void;
+  mode?: "jump" | "change"; // "jump" for navigation, "change" for event date
 }
 
 export const JumpDateModal: React.FC<JumpDateModalProps> = ({
@@ -34,18 +35,35 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
   setJumpJYear,
   handleJumpToGregorian,
   handleJumpToJewish,
+  mode = "jump",
 }) => {
+  const isChangeMode = mode === "change";
+
+  const title = isChangeMode
+    ? lang === "he"
+      ? "שנה תאריך"
+      : "Change Date"
+    : textInLanguage.goToDate;
+
+  const jewishButtonText = isChangeMode
+    ? lang === "he"
+      ? "שנה תאריך העברי"
+      : "Change Hebrew Date"
+    : textInLanguage.goToJewish;
+
+  const gregorianButtonText = isChangeMode ? (lang === "he" ? "שנה" : "Change") : textInLanguage.go;
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={textInLanguage.goToDate}
+      title={title}
       footer={
         <div className="flex items-center gap-3">
           <button
             onClick={handleJumpToJewish}
             className="px-6 py-3 btn-warm rounded-xl font-bold border transition-all flex-1">
-            {textInLanguage.goToJewish}
+            {jewishButtonText}
           </button>
         </div>
       }>
@@ -66,7 +84,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
             <button
               onClick={handleJumpToGregorian}
               className="px-6 btn-warm border rounded-xl font-bold transition-all">
-              {textInLanguage.go}
+              {gregorianButtonText}
             </button>
           </div>
         </div>
@@ -88,7 +106,7 @@ export const JumpDateModal: React.FC<JumpDateModalProps> = ({
                 onChange={(e) => setJumpJDay(parseInt(e.target.value))}>
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((d) => (
                   <option key={d} value={d} className="bg-bg-primary">
-                    {d}
+                    {lang === "he" ? Utils.toJewishNumber(d) : d}
                   </option>
                 ))}
               </select>
