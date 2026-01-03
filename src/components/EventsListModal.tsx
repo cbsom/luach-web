@@ -105,6 +105,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
       "Name",
       "Notes",
       "Type",
+      "jAbs",
       "Hebrew Date",
       "Gregorian Date",
       "Background Color",
@@ -113,11 +114,12 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
       "Remind Day Before",
     ];
     const rows = events.map((e) => {
-      const jd = new jDate(e.jYear, e.jMonth, e.jDay);
+      const jd = new jDate(e.jAbs || jDate.absJd(e.jYear, e.jMonth, e.jDay));
       return [
         `"${e.name.replace(/"/g, '""')}"`,
         `"${(e.notes || "").replace(/"/g, '""')}"`,
         getEventTypeLabel(e.type),
+        e.jAbs || jDate.absJd(e.jYear, e.jMonth, e.jDay),
         `"${lang === "he" ? jd.toStringHeb() : jd.toString()}"`,
         `"${jd.getDate().toLocaleDateString()}"`,
         e.backColor,
@@ -146,12 +148,43 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
         // Import JSON
         const text = await file.text();
         const parsed = JSON.parse(text);
-        importedEvents = Array.isArray(parsed) ? parsed : [parsed];
+        const rawEvents = Array.isArray(parsed) ? parsed : [parsed];
+
+        // Ensure jAbs is populated and date components are consistent
+        importedEvents = rawEvents.map((e: any) => {
+          let jAbs = e.jAbs;
+          let jd: jDate;
+
+          if (!jAbs && e.jYear && e.jMonth && e.jDay) {
+            // Calculate jAbs from date components if missing
+            jAbs = jDate.absJd(e.jYear, e.jMonth, e.jDay);
+            jd = new jDate(e.jYear, e.jMonth, e.jDay);
+          } else if (jAbs) {
+            // Use jAbs as source of truth and derive date components
+            jd = new jDate(jAbs);
+          } else {
+            // Fallback to placeholder
+            jd = new jDate(5784, 1, 1);
+            jAbs = jd.Abs;
+          }
+
+          return {
+            ...e,
+            jYear: jd.Year,
+            jMonth: jd.Month,
+            jDay: jd.Day,
+            jAbs,
+            sDate: e.sDate || jd.getDate().toISOString(),
+          };
+        });
       } else if (fileName.endsWith(".csv")) {
         // Import CSV
         const text = await file.text();
         const lines = text.split("\n").filter((line) => line.trim());
         const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
+
+        // Find the index of jAbs column if it exists
+        const jAbsIndex = headers.findIndex((h) => h.toLowerCase() === "jabs");
 
         for (let i = 1; i < lines.length; i++) {
           const values =
@@ -163,8 +196,23 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           const name = values[0] || "";
           const notes = values[1] || "";
           const typeStr = values[2] || "";
-          const backColor = values[5] || "#fde047";
-          const textColor = values[6] || "#1e293b";
+
+          // Try to get jAbs from CSV if available
+          let jAbs: number | undefined;
+          let jd: jDate;
+
+          if (jAbsIndex >= 0 && values[jAbsIndex]) {
+            // Use jAbs from CSV and derive date components from it
+            jAbs = parseInt(values[jAbsIndex]);
+            jd = new jDate(jAbs);
+          } else {
+            // Fallback: use placeholder date
+            jd = new jDate(5784, 1, 1);
+            jAbs = jd.Abs;
+          }
+
+          const backColor = values[jAbsIndex >= 0 ? 6 : 5] || "#fde047";
+          const textColor = values[jAbsIndex >= 0 ? 7 : 6] || "#1e293b";
 
           // Parse type
           let type = UserEventTypes.HebrewDateRecurringYearly;
@@ -175,22 +223,22 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             type = UserEventTypes.SecularDateRecurringMonthly;
           else if (typeStr.includes("One Time")) type = UserEventTypes.OneTime;
 
-          // Create event with placeholder date (will be skipped if invalid)
+          // Create event with date derived from jAbs
           if (name) {
             importedEvents.push({
               id: `imported-${Date.now()}-${i}`,
               name,
               notes,
               type,
-              jYear: 5784,
-              jMonth: 1,
-              jDay: 1,
-              jAbs: jDate.absJd(5784, 1, 1),
-              sDate: new Date().toISOString(),
+              jYear: jd.Year,
+              jMonth: jd.Month,
+              jDay: jd.Day,
+              jAbs,
+              sDate: jd.getDate().toISOString(),
               backColor,
               textColor,
-              remindDayOf: values[7] === "Yes",
-              remindDayBefore: values[8] === "Yes",
+              remindDayOf: values[jAbsIndex >= 0 ? 8 : 7] === "Yes",
+              remindDayBefore: values[jAbsIndex >= 0 ? 9 : 8] === "Yes",
             });
           }
         }
