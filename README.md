@@ -2,6 +2,14 @@
 
 Luach is a modern, cross-platform Jewish calendar application that blends traditional Hebrew date logic with a premium digital experience. It provides high-accuracy Zmanim, recurring event management, and cloud synchronization.
 
+## 🌐 Live Demo
+
+**Primary URL**: [https://luach-web.web.app/](https://luach-web.web.app/) (Recommended - works on all browsers)
+
+**Alternative URL**: [https://cbsom.github.io/luach-web/](https://cbsom.github.io/luach-web/) (GitHub Pages - authentication works in Firefox only)
+
+> **Note**: For the best experience with Google sign-in and cloud sync, please use the Firebase Hosting URL above.
+
 ## ✨ Main Features
 
 - **Hebrew & Secular Calendar**: Switch between a traditional Jewish month view and a standard secular month view.
