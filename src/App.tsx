@@ -19,13 +19,7 @@ import { EventsListModal } from "./components/EventsListModal";
 import { ReminderBanner } from "./components/ReminderBanner";
 import { NotificationService } from "./NotificationService";
 import { auth, googleProvider, db } from "./firebase";
-import {
-  onAuthStateChanged,
-  signInWithRedirect,
-  getRedirectResult,
-  signOut,
-  User,
-} from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
 import {
   collection,
   onSnapshot,
@@ -69,31 +63,15 @@ const App: React.FC = () => {
   const textInLanguage = translations[lang];
 
   useEffect(() => {
-    // Set up auth state listener first (non-blocking)
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-
-    // Handle redirect result asynchronously (don't block rendering)
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("✅ Successfully signed in via redirect:", result.user.displayName);
-        }
-      })
-      .catch((error) => {
-        // Only log actual errors, not "no redirect result" cases
-        if (error.code !== "auth/invalid-api-key" && error.code !== "auth/network-request-failed") {
-          console.error("❌ Redirect sign-in failed:", error);
-        }
-      });
-
     return () => unsubscribe();
   }, []);
 
   const handleLogin = async () => {
     try {
-      await signInWithRedirect(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Login failed:", error);
     }
