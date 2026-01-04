@@ -19,7 +19,13 @@ import { EventsListModal } from "./components/EventsListModal";
 import { ReminderBanner } from "./components/ReminderBanner";
 import { NotificationService } from "./NotificationService";
 import { auth, googleProvider, db } from "./firebase";
-import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  User,
+} from "firebase/auth";
 import {
   collection,
   onSnapshot,
@@ -63,6 +69,17 @@ const App: React.FC = () => {
   const textInLanguage = translations[lang];
 
   useEffect(() => {
+    // Handle redirect result when user returns from Google login
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          console.log("✅ Successfully signed in via redirect:", result.user.displayName);
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Redirect sign-in failed:", error);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
@@ -71,7 +88,7 @@ const App: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error("Login failed:", error);
     }
