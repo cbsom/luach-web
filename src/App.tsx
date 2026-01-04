@@ -69,7 +69,12 @@ const App: React.FC = () => {
   const textInLanguage = translations[lang];
 
   useEffect(() => {
-    // Handle redirect result when user returns from Google login
+    // Set up auth state listener first (non-blocking)
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Handle redirect result asynchronously (don't block rendering)
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
@@ -77,12 +82,12 @@ const App: React.FC = () => {
         }
       })
       .catch((error) => {
-        console.error("❌ Redirect sign-in failed:", error);
+        // Only log actual errors, not "no redirect result" cases
+        if (error.code !== "auth/invalid-api-key" && error.code !== "auth/network-request-failed") {
+          console.error("❌ Redirect sign-in failed:", error);
+        }
       });
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
     return () => unsubscribe();
   }, []);
 
