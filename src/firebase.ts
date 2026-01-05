@@ -12,7 +12,7 @@ import { getAuth, GoogleAuthProvider, browserLocalPersistence, setPersistence } 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyDa7LHhl6ncVqLdIJEokyeq3JCQwihL-aA",
-    authDomain: "luach-web.web.app",
+    authDomain: "luach-web.firebaseapp.com",
     projectId: "luach-web",
     storageBucket: "luach-web.firebasestorage.app",
     messagingSenderId: "265711408278",
