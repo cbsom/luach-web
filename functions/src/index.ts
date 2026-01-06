@@ -13,6 +13,19 @@ enum UserEventTypes {
     SecularDateRecurringMonthly = 4,
 }
 
+interface UserEvent {
+    type: UserEventTypes | string | number;
+    jYear?: number;
+    jMonth?: number;
+    jDay?: number;
+    sDate?: string;
+    remindDayOf?: boolean;
+    remindDayBefore?: boolean;
+    name?: string;
+    notes?: string;
+    anniversary?: number;
+}
+
 const isMonthMatch = (occMonth: number, occYear: number, currMonth: number, currYear: number) => {
     if (currMonth >= 12 && occMonth >= 12) {
         const isOccLeap = jDate.isJdLeapY(occYear);
@@ -24,6 +37,13 @@ const isMonthMatch = (occMonth: number, occYear: number, currMonth: number, curr
         }
     }
     return occMonth === currMonth;
+};
+const addAnniversary = (match: any, targetDate: jDate) => {
+    const anniversary = targetDate.Year - (match.jYear || 0);
+    return {
+        ...match,
+        anniversary: anniversary
+    };
 };
 
 export const dailyReminders = onSchedule({
@@ -117,8 +137,8 @@ export const dailyReminders = onSchedule({
             };
 
             const tomorrow = today.addDays(1);
-            const todayMatches = events.filter(e => e.remindDayOf && isEventOnDate(e, today));
-            const tomorrowMatches = events.filter(e => e.remindDayBefore && isEventOnDate(e, tomorrow));
+            const todayMatches: UserEvent[] = events.filter(e => e.remindDayOf && isEventOnDate(e, today)).map(e => addAnniversary(e, today));
+            const tomorrowMatches: UserEvent[] = events.filter(e => e.remindDayBefore && isEventOnDate(e, tomorrow)).map(e => addAnniversary(e, tomorrow));
 
             if (todayMatches.length > 0 || tomorrowMatches.length > 0) {
                 console.log(`📧 Sending reminders to ${settings.email} (User: ${userId}, Today: ${todayMatches.length}, Tomorrow: ${tomorrowMatches.length})`);
@@ -145,10 +165,10 @@ export const dailyReminders = onSchedule({
                 };
                 const t = isHe ? labels.he : labels.en;
 
-                const buildMatchList = (matches: any[], label: string, targetDate: jDate) => {
+                const buildMatchList = (matches: UserEvent[], label: string, targetDate: jDate) => {
                     if (matches.length === 0) return "";
                     const list = matches.map(m => {
-                        const anniversary = targetDate.Year - (m.jYear || 0);
+                        const anniversary = m.anniversary || 0;
                         let anniversaryText = "";
                         if (anniversary > 0 && (m.type === 1 || m.type === 3 || m.type === "hebrew-yearly" || m.type === "secular-yearly")) {
                             if (isHe) {
@@ -169,12 +189,25 @@ export const dailyReminders = onSchedule({
                     ${buildMatchList(tomorrowMatches, t.tomorrow, tomorrow)}
                 `;
 
-                const allNames = [...todayMatches, ...tomorrowMatches].map(m => m.name);
-                const namesSummary = allNames.length > 3
-                    ? allNames.slice(0, 3).join(", ") + "..."
-                    : allNames.join(", ");
+                let subject = "";
+                const connector = isHe ? ": " : " is ";
 
-                const subject = `${t.subject}: ${namesSummary}`;
+                const formatEventsList = (events: UserEvent[]) => {
+                    return events.map(m => {
+                        const anniversary = m.anniversary || 0;
+                        const showAnniversary = anniversary > 0 && (m.type === 1 || m.type === 3 || m.type === "hebrew-yearly" || m.type === "secular-yearly");
+                        return `${m.name}${showAnniversary ? ` (${anniversary})` : ''}`;
+                    }).join(", ");
+                };
+
+                const parts = [];
+                if (todayMatches.length > 0) {
+                    parts.push(`${t.today}${connector}${formatEventsList(todayMatches)}`);
+                }
+                if (tomorrowMatches.length > 0) {
+                    parts.push(`${t.tomorrow}${connector}${formatEventsList(tomorrowMatches)}`);
+                }
+                subject = parts.join(", ");
 
                 const mailId = `digest_${userId}_${today.Abs}`;
                 await db.collection("mail").doc(mailId).set({

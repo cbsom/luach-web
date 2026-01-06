@@ -47,6 +47,13 @@ const isMonthMatch = (occMonth, occYear, currMonth, currYear) => {
     }
     return occMonth === currMonth;
 };
+const addAnniversary = (match, targetDate) => {
+    const anniversary = targetDate.Year - (match.jYear || 0);
+    return {
+        ...match,
+        anniversary: anniversary
+    };
+};
 exports.dailyReminders = (0, scheduler_1.onSchedule)({
     schedule: "every 1 hours",
     region: "us-central1"
@@ -75,8 +82,7 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
                 console.log(`⚠️ No email found for user ${userId}`);
                 continue;
             }
-            const lang = settings.lang === "he" ? "he" : "en";
-            const isHe = lang === "he";
+            const isHe = settings.lang === "he";
             const locationName = settings.locationName || "Jerusalem";
             const location = jcal_zmanim_1.Locations.find((l) => l.Name === locationName) ||
                 jcal_zmanim_1.Locations.find((l) => l.Name === "Jerusalem");
@@ -123,8 +129,8 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
                 return false;
             };
             const tomorrow = today.addDays(1);
-            const todayMatches = events.filter(e => e.remindDayOf && isEventOnDate(e, today));
-            const tomorrowMatches = events.filter(e => e.remindDayBefore && isEventOnDate(e, tomorrow));
+            const todayMatches = events.filter(e => e.remindDayOf && isEventOnDate(e, today)).map(e => addAnniversary(e, today));
+            const tomorrowMatches = events.filter(e => e.remindDayBefore && isEventOnDate(e, tomorrow)).map(e => addAnniversary(e, tomorrow));
             if (todayMatches.length > 0 || tomorrowMatches.length > 0) {
                 console.log(`📧 Sending reminders to ${settings.email} (User: ${userId}, Today: ${todayMatches.length}, Tomorrow: ${tomorrowMatches.length})`);
                 const labels = {
@@ -152,7 +158,7 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
                     if (matches.length === 0)
                         return "";
                     const list = matches.map(m => {
-                        const anniversary = targetDate.Year - (m.jYear || 0);
+                        const anniversary = m.anniversary || 0;
                         let anniversaryText = "";
                         if (anniversary > 0 && (m.type === 1 || m.type === 3 || m.type === "hebrew-yearly" || m.type === "secular-yearly")) {
                             if (isHe) {
@@ -171,11 +177,23 @@ exports.dailyReminders = (0, scheduler_1.onSchedule)({
                     ${buildMatchList(todayMatches, t.today, today)}
                     ${buildMatchList(tomorrowMatches, t.tomorrow, tomorrow)}
                 `;
-                const allNames = [...todayMatches, ...tomorrowMatches].map(m => m.name);
-                const namesSummary = allNames.length > 3
-                    ? allNames.slice(0, 3).join(", ") + "..."
-                    : allNames.join(", ");
-                const subject = `${t.subject}: ${namesSummary}`;
+                let subject = "";
+                const connector = isHe ? ": " : " is ";
+                const formatEventsList = (events) => {
+                    return events.map(m => {
+                        const anniversary = m.anniversary || 0;
+                        const showAnniversary = anniversary > 0 && (m.type === 1 || m.type === 3 || m.type === "hebrew-yearly" || m.type === "secular-yearly");
+                        return `${m.name}${showAnniversary ? ` (${anniversary})` : ''}`;
+                    }).join(", ");
+                };
+                const parts = [];
+                if (todayMatches.length > 0) {
+                    parts.push(`${t.today}${connector}${formatEventsList(todayMatches)}`);
+                }
+                if (tomorrowMatches.length > 0) {
+                    parts.push(`${t.tomorrow}${connector}${formatEventsList(tomorrowMatches)}`);
+                }
+                subject = parts.join(", ");
                 const mailId = `digest_${userId}_${today.Abs}`;
                 await db.collection("mail").doc(mailId).set({
                     to: settings.email,
