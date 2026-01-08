@@ -1137,7 +1137,7 @@ const App: React.FC = () => {
         editingEvent={editingEvent}
         textInLanguage={textInLanguage}
         lang={lang}
-        selectedJDate={selectedJDate}
+        selectedJDate={editingEvent?.jAbs ? new jDate(editingEvent.jAbs) : selectedJDate}
         formName={formName}
         setFormName={setFormName}
         formNotes={formNotes}
@@ -1155,13 +1155,20 @@ const App: React.FC = () => {
         onSave={handleAddEvent}
         onDelete={deleteEvent}
         onChangeDate={() => {
-          // Initialize jump modal with current selected date
-          setJumpGregDate(selectedJDate.getDate().toISOString().split("T")[0]);
-          setJumpJDay(selectedJDate.Day);
-          setJumpJMonth(selectedJDate.Month);
-          setJumpJYear(selectedJDate.Year);
-          setIsChangingEventDate(true);
-          setIsJumpModalOpen(true);
+          // Initialize jump modal with the original event's date
+          if (editingEvent) {
+            const eventDate = !!editingEvent
+              ? !!editingEvent.jAbs
+                ? new jDate(editingEvent.jAbs)
+                : new jDate(editingEvent.jYear, editingEvent.jMonth, editingEvent.jDay)
+              : selectedJDate;
+            setJumpGregDate(eventDate.getDate().toISOString().split("T")[0]);
+            setJumpJDay(eventDate.Day);
+            setJumpJMonth(eventDate.Month);
+            setJumpJYear(eventDate.Year);
+            setIsChangingEventDate(true);
+            setIsJumpModalOpen(true);
+          }
         }}
       />
 
