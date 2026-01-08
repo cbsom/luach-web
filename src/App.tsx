@@ -1170,6 +1170,11 @@ const App: React.FC = () => {
             setIsJumpModalOpen(true);
           }
         }}
+        onNavigateToDate={() => {
+          const dateToNavigate = editingEvent?.jAbs ? new jDate(editingEvent.jAbs) : selectedJDate;
+          navigateToDate(dateToNavigate);
+          setIsModalOpen(false);
+        }}
       />
 
       <JumpDateModal

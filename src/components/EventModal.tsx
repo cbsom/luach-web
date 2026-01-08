@@ -28,6 +28,7 @@ interface EventModalProps {
   onSave: () => void;
   onDelete: (id: string) => void;
   onChangeDate?: () => void; // Optional callback to open date change modal
+  onNavigateToDate?: () => void; // Optional callback to navigate calendar to this date
 }
 
 export const EventModal: React.FC<EventModalProps> = ({
@@ -54,6 +55,7 @@ export const EventModal: React.FC<EventModalProps> = ({
   onSave,
   onDelete,
   onChangeDate,
+  onNavigateToDate,
 }) => {
   return (
     <Modal
@@ -62,7 +64,17 @@ export const EventModal: React.FC<EventModalProps> = ({
       title={editingEvent ? textInLanguage.saveEvent : textInLanguage.addNewEvent}
       subtitle={
         <div className="flex items-center gap-2 justify-between">
-          <span>{lang === "he" ? selectedJDate.toStringHeb() : selectedJDate.toString()}</span>
+          <span
+            onClick={onNavigateToDate}
+            className={
+              onNavigateToDate ? "cursor-pointer hover:text-accent-amber transition-colors" : ""
+            }
+            style={{ color: "var(--accent-coral)", fontWeight: "bold", fontSize: "1.4rem" }}
+            title={
+              onNavigateToDate ? (lang === "he" ? "נווט לתאריך זה" : "Navigate to this date") : ""
+            }>
+            {lang === "he" ? selectedJDate.toStringHeb() : selectedJDate.toString()}
+          </span>
           {editingEvent && onChangeDate && (
             <button
               onClick={onChangeDate}
