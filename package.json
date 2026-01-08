@@ -9,7 +9,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "deploy:functions": "firebase deploy --only functions --project luach-web",
-    "deploy:hosting": "firebase deploy --only hosting --project luach-web",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting --project luach-web",
+    "deploy:all": "npm run build && firebase deploy --project luach-web",
     "test": "vitest"
   },
   "dependencies": {

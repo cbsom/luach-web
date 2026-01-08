@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {    
+    
+    // Everything related to a specific user
+    match /users/{userId} {
+      // Allow user to manage their own base document
+      // Requires both authentication AND App Check
+      allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+
+      // Access to their personal events
+      match /events/{eventId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
+      
+      // Access to their app settings
+      match /settings/{docId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
+    }
+
+    // Allow any logged-in user to queue a reminder email
+    // Also require App Check to prevent spam
+    match /mail/{docId} {
+      allow create: if request.auth != null && request.app.check.valid;
+      allow read: if false; 
+    }
+    
+    // Explicitly deny anything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }   
+  }
+}
