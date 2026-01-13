@@ -1,7 +1,5 @@
 import { initializeApp } from "firebase/app";
-
 import {
-    getFirestore,
     initializeFirestore,
     persistentLocalCache,
     persistentMultipleTabManager
@@ -10,7 +8,6 @@ import { getAuth, GoogleAuthProvider, browserLocalPersistence, setPersistence } 
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyDa7LHhl6ncVqLdIJEokyeq3JCQwihL-aA",
     authDomain: "luach-web.firebaseapp.com",
@@ -21,75 +18,63 @@ const firebaseConfig = {
     measurementId: "G-BWPEBF9H8S"
 };
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize App Check with reCAPTCHA v3
-// IMPORTANT: Replace 'YOUR_RECAPTCHA_V3_SITE_KEY' with your actual reCAPTCHA v3 site key
-// To get a site key:
-// 1. Go to Firebase Console > App Check
-// 2. Register your app with reCAPTCHA v3
-// 3. Copy the site key and replace it below
-const initAppCheck = async () => {
+// Initialize Auth immediately
+const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence);
+const googleProvider = new GoogleAuthProvider();
+
+// Initialize App Check
+const initAppCheck = () => {
     try {
-        // Enable debug token in development
-        if (import.meta.env.DEV && !!import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN) {
+        if (import.meta.env.DEV) {
             // @ts-ignore
             self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN;
-            console.log('🔧 App Check debug mode enabled for local development');
+            if (import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN) {
+                console.log('🔧 App Check debug mode enabled');
+            }
         }
 
-        // Only initialize in production or if you have a valid reCAPTCHA key
         const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
         if (recaptchaSiteKey) {
             const appCheckInstance = initializeAppCheck(app, {
                 provider: new ReCaptchaV3Provider(recaptchaSiteKey),
-                isTokenAutoRefreshEnabled: true // Automatically refresh tokens
+                isTokenAutoRefreshEnabled: true
             });
             console.log('✅ Firebase App Check initialized');
-        } else {
-            console.warn('⚠️ App Check not initialized: Missing reCAPTCHA site key');
-            console.warn('Set VITE_RECAPTCHA_SITE_KEY in your .env file');
+
+            // Diagnostics
+            import('firebase/app-check').then(({ onTokenChanged }) => {
+                onTokenChanged(appCheckInstance, (tokenResult) => {
+                    if (tokenResult.token) {
+                        console.log('🔄 App Check token refreshed:', tokenResult.token.substring(0, 10) + '...');
+                    }
+                });
+            });
         }
-    } catch (error: any) {
-        console.error('❌ App Check initialization failed:', error);
-        console.error('Error code:', error.code);
-        console.error('Error message:', error.message);
+    } catch (e) {
+        console.error('❌ App Check init failed:', e);
     }
 };
 
 initAppCheck();
 
-// Initialize Analytics conditionally
-// It often fails in local dev, private modes, or if the library fails to load
-const initAnalytics = async () => {
-    try {
-        const { isSupported, getAnalytics } = await import("firebase/analytics");
-        const supported = await isSupported();
-        if (supported) {
-            return getAnalytics(app);
-        }
-    } catch (e) {
-        // Silently fail - analytics isn't critical
-    }
-};
-
-initAnalytics();
-
-// Initialize Firestore with persistent cache enabled (Offline Support)
-// This replacement for getFirestore() sets up IndexedDB persistence automatically
+// Initialize Firestore
 const db = initializeFirestore(app, {
     localCache: persistentLocalCache({
         tabManager: persistentMultipleTabManager()
     })
 });
 
-// Initialize Auth with persistence
-const auth = getAuth(app);
-setPersistence(auth, browserLocalPersistence);
-
-const googleProvider = new GoogleAuthProvider();
+// Analytics (Safe Init)
+const initAnalytics = async () => {
+    try {
+        const { isSupported, getAnalytics } = await import("firebase/analytics");
+        if (await isSupported()) getAnalytics(app);
+    } catch (e) { }
+};
+initAnalytics();
 
 export { db, auth, googleProvider };

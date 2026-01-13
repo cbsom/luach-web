@@ -235,7 +235,11 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
             {/* ZMANIM */}
             <div className="mt-2 flex flex-col gap-2">
               <h3 className="text-xs font-bold uppercase tracking-widest opacity-50 px-1">
-                {textInLanguage.zmanim}
+                {`${textInLanguage.zmanim} ${
+                  lang === "he"
+                    ? "ב" + (location.NameHebrew ?? location.Name)
+                    : "in " + location.Name
+                }`}
               </h3>
               {selectedZmanim.map((zman: any, idx: number) => {
                 const isSolarEvent = [5, 15].includes(Number(zman.zmanType.id));
