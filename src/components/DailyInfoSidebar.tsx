@@ -116,7 +116,8 @@ export const DailyInfoSidebar: React.FC<DailyInfoSidebarProps> = ({
           <section
             ref={scrollRef}
             onScroll={checkScroll}
-            className="flex-grow overflow-y-auto pr-1 flex flex-col gap-4">
+            className="flex-grow overflow-y-auto pr-1 flex flex-col gap-4"
+            style={{ scrollbarWidth: "none" }}>
             {/* EVENTS */}
             {selectedEvents.length > 0 && (
               <div className="flex flex-col gap-2">
