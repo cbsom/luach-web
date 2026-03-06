@@ -325,7 +325,7 @@ const App: React.FC = () => {
           email: user.email,
           lastSeen: new Date().toISOString(),
         },
-        { merge: true }
+        { merge: true },
       ).catch((err) => console.error("Failed to sync user doc:", err));
 
       setDoc(
@@ -341,7 +341,7 @@ const App: React.FC = () => {
           email: user.email, // Store email for the Cloud Function
           lastUpdated: new Date().toISOString(),
         },
-        { merge: true }
+        { merge: true },
       ).catch((err) => console.error("Failed to sync settings:", err));
     }
   }, [
@@ -366,7 +366,7 @@ const App: React.FC = () => {
           db,
           currentJDate,
           emailRemindersEnabled,
-          browserNotificationsEnabled
+          browserNotificationsEnabled,
         );
       }, 5000);
       return () => clearTimeout(timer);
@@ -377,10 +377,10 @@ const App: React.FC = () => {
   const [formName, setFormName] = useState("");
   const [formNotes, setFormNotes] = useState("");
   const [formType, setFormType] = useState<UserEventTypes>(
-    UserEventTypes.HebrewDateRecurringYearly
+    UserEventTypes.HebrewDateRecurringYearly,
   );
-  const [formColor, setFormColor] = useState("#fde047");
-  const [formTextColor, setFormTextColor] = useState("#1e293b");
+  const [formColor, setFormColor] = useState("#ff0");
+  const [formTextColor, setFormTextColor] = useState("#00f");
   const [formRemindDayOf, setFormRemindDayOf] = useState(false);
   const [formRemindDayBefore, setFormRemindDayBefore] = useState(false);
 
@@ -456,7 +456,7 @@ const App: React.FC = () => {
       console.log(
         `🕒 Next auto-refresh in ${Math.round(msToNextRefresh / 60000)}m (at ${
           msToMidnight < msToSunset ? "Midnight" : "Sunset"
-        })`
+        })`,
       );
 
       timeoutId = setTimeout(() => {
@@ -821,7 +821,7 @@ const App: React.FC = () => {
       location,
       lang === "en",
       true,
-      false
+      false,
     );
     // Note: Filtering of Daf Yomi is handled in Calendar for grid,
     // but in Sidebar we currently show everything.
@@ -862,7 +862,7 @@ const App: React.FC = () => {
     const hasHebrewRecurringEvent = selectedEvents.some(
       (e) =>
         e.type === UserEventTypes.HebrewDateRecurringYearly ||
-        e.type === UserEventTypes.HebrewDateRecurringMonthly
+        e.type === UserEventTypes.HebrewDateRecurringMonthly,
     );
     const useJewish = hasHebrewRecurringEvent || calendarView === "jewish";
 
@@ -874,7 +874,7 @@ const App: React.FC = () => {
       const nextSDate = new Date(
         sDate.getFullYear(),
         sDate.getMonth() + direction,
-        sDate.getDate()
+        sDate.getDate(),
       );
       // Handle day overflow (e.g., Jan 31 -> Feb 31 -> Mar 3)
       if (nextSDate.getMonth() !== (sDate.getMonth() + direction + 12) % 12) {
@@ -898,7 +898,7 @@ const App: React.FC = () => {
     const hasHebrewRecurringEvent = selectedEvents.some(
       (e) =>
         e.type === UserEventTypes.HebrewDateRecurringYearly ||
-        e.type === UserEventTypes.HebrewDateRecurringMonthly
+        e.type === UserEventTypes.HebrewDateRecurringMonthly,
     );
     const useJewish = hasHebrewRecurringEvent || calendarView === "jewish";
 
@@ -910,7 +910,7 @@ const App: React.FC = () => {
       const nextSDate = new Date(
         sDate.getFullYear() + direction,
         sDate.getMonth(),
-        sDate.getDate()
+        sDate.getDate(),
       );
       // Handle Feb 29 leap year overflow
       if (nextSDate.getMonth() !== sDate.getMonth()) {
