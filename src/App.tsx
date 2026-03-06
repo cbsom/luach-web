@@ -379,8 +379,8 @@ const App: React.FC = () => {
   const [formType, setFormType] = useState<UserEventTypes>(
     UserEventTypes.HebrewDateRecurringYearly,
   );
-  const [formColor, setFormColor] = useState("#ff0");
-  const [formTextColor, setFormTextColor] = useState("#00f");
+  const [formColor, setFormColor] = useState("#FFFF00");
+  const [formTextColor, setFormTextColor] = useState("#0000FF");
   const [formRemindDayOf, setFormRemindDayOf] = useState(false);
   const [formRemindDayBefore, setFormRemindDayBefore] = useState(false);
 
@@ -568,8 +568,8 @@ const App: React.FC = () => {
     setFormName("");
     setFormNotes("");
     setFormType(UserEventTypes.HebrewDateRecurringYearly);
-    setFormColor("#fde047");
-    setFormTextColor("#1e293b");
+    setFormColor("#FFFF00");
+    setFormTextColor("#0000FF");
     setFormRemindDayOf(false);
     setFormRemindDayBefore(false);
     setEditingEvent(null);

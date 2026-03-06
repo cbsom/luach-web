@@ -41,7 +41,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
     const query = searchQuery.toLowerCase();
     const filtered = events.filter(
       (e) =>
-        e.name.toLowerCase().includes(query) || (e.notes && e.notes.toLowerCase().includes(query))
+        e.name.toLowerCase().includes(query) || (e.notes && e.notes.toLowerCase().includes(query)),
     );
 
     const sorted = [...filtered].sort((a, b) => {
@@ -211,8 +211,8 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             jAbs = jd.Abs;
           }
 
-          const backColor = values[jAbsIndex >= 0 ? 6 : 5] || "#fde047";
-          const textColor = values[jAbsIndex >= 0 ? 7 : 6] || "#1e293b";
+          const backColor = values[jAbsIndex >= 0 ? 6 : 5] || "#FFFF00";
+          const textColor = values[jAbsIndex >= 0 ? 7 : 6] || "#0000FF";
 
           // Parse type
           let type = UserEventTypes.HebrewDateRecurringYearly;
@@ -253,13 +253,13 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
           const name = occasion.querySelector("Name")?.textContent || "";
           const notes = occasion.querySelector("Notes")?.textContent || "";
           const absDate = parseInt(
-            occasion.querySelector("JewishDate AbsoluteDate")?.textContent || "0"
+            occasion.querySelector("JewishDate AbsoluteDate")?.textContent || "0",
           );
           const occasionType = occasion.querySelector("UserOccasionType")?.textContent || "";
 
           let backColor =
-            occasion.querySelector("BackColor")?.getAttribute("ColorHtml") || "#fde047";
-          let textColor = occasion.querySelector("Color")?.getAttribute("ColorHtml") || "#1e293b";
+            occasion.querySelector("BackColor")?.getAttribute("ColorHtml") || "#FFFF00";
+          let textColor = occasion.querySelector("Color")?.getAttribute("ColorHtml") || "#0000FF";
 
           // Convert color names to hex
           const colorMap: Record<string, string> = {
@@ -322,7 +322,9 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
 
       if (newEvents.length === 0) {
         alert(
-          lang === "he" ? "כל האירועים כבר קיימים" : "All events already exist (duplicates ignored)"
+          lang === "he"
+            ? "כל האירועים כבר קיימים"
+            : "All events already exist (duplicates ignored)",
         );
         return;
       }
@@ -338,7 +340,7 @@ export const EventsListModal: React.FC<EventsListModalProps> = ({
             } כפולים התעלמו)`
           : `Imported ${newEvents.length} new events (${
               importedEvents.length - newEvents.length
-            } duplicates ignored)`
+            } duplicates ignored)`,
       );
     } catch (error) {
       console.error("Import error:", error);

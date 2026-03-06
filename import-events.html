@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -200,7 +200,7 @@
                 existing.name === newEvent.name &&
                 existing.jYear === newEvent.jYear &&
                 existing.jMonth === newEvent.jMonth &&
-                existing.jDay === newEvent.jDay
+                existing.jDay === newEvent.jDay,
             );
 
             if (!isDuplicate) {
@@ -211,7 +211,7 @@
 
           log(
             `Adding ${addedCount} new events (${events.length - addedCount} duplicates skipped)`,
-            "info"
+            "info",
           );
 
           // Save to database
@@ -298,14 +298,14 @@
 
       function getColorAttribute(element, tagName) {
         const colorElement = element.querySelector(tagName);
-        if (!colorElement) return "#fde047"; // Default yellow
+        if (!colorElement) return "#FFFF00"; // Default yellow
 
         const colorHtml = colorElement.getAttribute("ColorHtml");
-        return colorHtml || "#fde047";
+        return colorHtml || "#FFFF00";
       }
 
       function convertColorToHex(color) {
-        if (!color || color === "") return "#fde047";
+        if (!color || color === "") return "#FFFF00";
         if (color.startsWith("#")) return color;
 
         // Color name to hex mapping
