@@ -177,14 +177,21 @@ const App: React.FC = () => {
             `📡 Snapshot received [source=${source}, pendingWrites=${hasPending}, docs=${snapshot.docs.length}]`,
           );
 
-          // Skip cache-only snapshots if we already have events loaded from server
-          // (avoid replacing server data with stale cache)
-          if (snapshot.metadata.fromCache && snapshot.metadata.hasPendingWrites) {
-            console.log("⏳ Skipping snapshot with pending writes (local echo)");
+          // If this is an EMPTY snapshot from the cache WITHOUT pending writes,
+          // it likely means the Firebase cache hasn't synced with the server yet.
+          // We must ignore it so it doesn't wipe our warm-started local IndexedDB data.
+          if (source === "cache" && !hasPending && snapshot.docs.length === 0) {
+            console.log("⏳ Skipping empty cache snapshot to prevent wiping local data");
             return;
           }
 
-          let cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
+          let cloudEvents = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+            } as UserEvent;
+          });
 
           // Migrate: Ensure all cloud events have jAbs populated
           let needsCloudMigration = false;
@@ -655,8 +662,12 @@ const App: React.FC = () => {
   };
 
   const deleteEvent = async (id: string) => {
-    const newEvents = events.filter((e) => e.id !== id);
-    setEvents(newEvents); // Optimistic UI Update
+    // Capture the existing state tightly in the callback to prevent closure bugs
+    let backupEvents: UserEvent[] = events;
+    setEvents((prev) => {
+      backupEvents = prev;
+      return prev.filter((e) => e.id !== id);
+    }); // Optimistic UI Update
 
     if (user) {
       try {
@@ -664,6 +675,9 @@ const App: React.FC = () => {
         console.log(`☁️ Event deleted from Cloud: ${id}`);
       } catch (error) {
         console.error("❌ Cloud Delete Failed:", error);
+        // Revert the optimistic UI update if it fails!
+        setEvents(backupEvents);
+        alert("Failed to delete the event from the cloud. Please check your connection.");
       }
     } else {
       const newEvents = events.filter((e) => e.id !== id);
