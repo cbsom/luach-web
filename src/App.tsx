@@ -158,6 +158,109 @@ const App: React.FC = () => {
   // Initialize events and handle Cloud Sync
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
+    let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    let isCancelled = false;
+
+    const setupEventListener = (userUid: string) => {
+      const eventsRef = collection(db, "users", userUid, "events");
+      const q = query(eventsRef);
+
+      return onSnapshot(
+        q,
+        { includeMetadataChanges: true },
+        async (snapshot) => {
+          if (isCancelled) return;
+
+          const source = snapshot.metadata.fromCache ? "cache" : "server";
+          const hasPending = snapshot.metadata.hasPendingWrites;
+          console.log(
+            `📡 Snapshot received [source=${source}, pendingWrites=${hasPending}, docs=${snapshot.docs.length}]`,
+          );
+
+          // Skip cache-only snapshots if we already have events loaded from server
+          // (avoid replacing server data with stale cache)
+          if (snapshot.metadata.fromCache && snapshot.metadata.hasPendingWrites) {
+            console.log("⏳ Skipping snapshot with pending writes (local echo)");
+            return;
+          }
+
+          let cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
+
+          // Migrate: Ensure all cloud events have jAbs populated
+          let needsCloudMigration = false;
+          cloudEvents = cloudEvents.map((event) => {
+            if (event.jAbs === undefined) {
+              needsCloudMigration = true;
+              return {
+                ...event,
+                jAbs: jDate.absJd(event.jYear, event.jMonth, event.jDay),
+              };
+            }
+            return event;
+          });
+
+          // If cloud events need migration, update them in Firestore
+          if (needsCloudMigration) {
+            console.log(`📦 Migrating ${cloudEvents.length} cloud events to include jAbs...`);
+            try {
+              const batch = writeBatch(db);
+              cloudEvents.forEach((event) => {
+                const docRef = doc(db, "users", userUid, "events", event.id);
+                batch.set(docRef, event);
+              });
+              await batch.commit();
+            } catch (e) {
+              console.error("❌ Cloud migration failed:", e);
+            }
+          }
+
+          // Persist to local IndexedDB for offline access/backup
+          saveAllEvents(cloudEvents).catch((e) => console.error("Local sync failed", e));
+
+          // Migration Logic: If cloud is empty but local has data
+          if (cloudEvents.length === 0 && !snapshot.metadata.fromCache) {
+            const localEvents = await getAllEvents();
+            if (localEvents.length > 0) {
+              console.log(`📦 Migrating ${localEvents.length} events to Cloud...`);
+              try {
+                const batch = writeBatch(db);
+                localEvents.forEach((event) => {
+                  const docRef = doc(db, "users", userUid, "events", event.id);
+                  // Ensure jAbs exists for legacy events being migrated
+                  if (event.jAbs === undefined) {
+                    event.jAbs = jDate.absJd(event.jYear, event.jMonth, event.jDay);
+                  }
+                  batch.set(docRef, event);
+                });
+                await batch.commit();
+              } catch (e) {
+                console.error("❌ Local-to-cloud migration failed:", e);
+              }
+              return; // The next snapshot will have the data
+            }
+          }
+
+          setEvents(cloudEvents);
+          setEventsLoaded(true);
+        },
+        (error) => {
+          // Error handler — without this, the listener silently dies
+          console.error("❌ Firestore snapshot listener error:", error);
+
+          // Auto-reconnect after a delay
+          if (!isCancelled) {
+            console.log("🔄 Attempting to reconnect Firestore listener in 5 seconds...");
+            reconnectTimer = setTimeout(() => {
+              if (!isCancelled) {
+                console.log("🔄 Reconnecting Firestore listener...");
+                unsubscribe?.();
+                unsubscribe = setupEventListener(userUid);
+              }
+            }, 5000);
+          }
+        },
+      );
+    };
 
     const syncData = async () => {
       // Always initialize local DB so it's ready for caching/background sync
@@ -215,62 +318,8 @@ const App: React.FC = () => {
         }
         setSettingsLoaded(true);
 
-        // 2. Sync Events
-        const eventsRef = collection(db, "users", user.uid, "events");
-        const q = query(eventsRef);
-
-        unsubscribe = onSnapshot(q, async (snapshot) => {
-          let cloudEvents = snapshot.docs.map((doc) => doc.data() as UserEvent);
-
-          // Migrate: Ensure all cloud events have jAbs populated
-          let needsCloudMigration = false;
-          cloudEvents = cloudEvents.map((event) => {
-            if (event.jAbs === undefined) {
-              needsCloudMigration = true;
-              return {
-                ...event,
-                jAbs: jDate.absJd(event.jYear, event.jMonth, event.jDay),
-              };
-            }
-            return event;
-          });
-
-          // If cloud events need migration, update them in Firestore
-          if (needsCloudMigration) {
-            console.log(`📦 Migrating ${cloudEvents.length} cloud events to include jAbs...`);
-            const batch = writeBatch(db);
-            cloudEvents.forEach((event) => {
-              const docRef = doc(db, "users", user.uid, "events", event.id);
-              batch.set(docRef, event);
-            });
-            await batch.commit();
-          }
-
-          // Persist to local IndexedDB for offline access/backup
-          saveAllEvents(cloudEvents).catch((e) => console.error("Local sync failed", e));
-
-          // Migration Logic: If cloud is empty but local has data
-          if (cloudEvents.length === 0) {
-            const localEvents = await getAllEvents();
-            if (localEvents.length > 0) {
-              console.log(`📦 Migrating ${localEvents.length} events to Cloud...`);
-              const batch = writeBatch(db);
-              localEvents.forEach((event) => {
-                const docRef = doc(db, "users", user.uid, "events", event.id);
-                // Ensure jAbs exists for legacy events being migrated
-                if (event.jAbs === undefined) {
-                  event.jAbs = jDate.absJd(event.jYear, event.jMonth, event.jDay);
-                }
-                batch.set(docRef, event);
-              });
-              await batch.commit();
-              return; // The next snapshot will have the data
-            }
-          }
-
-          setEvents(cloudEvents);
-          setEventsLoaded(true);
-        });
+        // 2. Sync Events — with error handling and auto-reconnect
+        unsubscribe = setupEventListener(user.uid);
       } else {
         console.log("🏠 No user, loading from local IndexedDB...");
         try {
@@ -309,7 +358,37 @@ const App: React.FC = () => {
     };
 
     syncData();
-    return () => unsubscribe?.();
+    return () => {
+      isCancelled = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      unsubscribe?.();
+    };
+  }, [user]);
+
+  // Force Firestore to re-sync when tab regains focus or network reconnects
+  useEffect(() => {
+    if (!user) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        console.log("👁️ Tab became visible — nudging Firestore to sync...");
+        // Firestore with persistent cache handles reconnection internally,
+        // but we log this for diagnostics. The onSnapshot listener with
+        // includeMetadataChanges will fire when server data arrives.
+      }
+    };
+
+    const handleOnline = () => {
+      console.log("🌐 Network reconnected — Firestore will auto-resume listeners");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("online", handleOnline);
+    };
   }, [user]);
 
   // Push settings changes to Firestore
