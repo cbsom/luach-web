@@ -23,6 +23,34 @@ service cloud.firestore {
                           && request.auth.uid == userId
                           && request.app.check.valid;
       }
+
+      // Access to luach-tahara settings
+      match /luach-tahara-settings/{docId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
+
+      // Access to luach-tahara entries
+      match /entries/{docId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
+
+      // Access to luach-tahara kavuahs
+      match /kavuahs/{docId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
+
+      // Access to luach-tahara tahara events
+      match /tahara-events/{docId} {
+        allow read, write: if request.auth != null 
+                          && request.auth.uid == userId
+                          && request.app.check.valid;
+      }
     }
 
     // Allow any logged-in user to queue a reminder email

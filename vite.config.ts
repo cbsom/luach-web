@@ -17,6 +17,8 @@ export default defineConfig({
         theme_color: '#1a0f0a',
         background_color: '#1a0f0a',
         display: 'standalone',
+        start_url: './',
+        scope: './',
         icons: [
           {
             src: 'icon.png',
@@ -32,6 +34,8 @@ export default defineConfig({
         ]
       },
       workbox: {
+        navigateFallback: 'index.html',
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,wasm}'],
         navigateFallbackDenylist: [/^\/__\//, /recaptcha/, /api2/],
         // Exclude Firebase App Check and reCAPTCHA from service worker caching
         runtimeCaching: [
