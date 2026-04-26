@@ -17,8 +17,8 @@ export default defineConfig({
         theme_color: '#1a0f0a',
         background_color: '#1a0f0a',
         display: 'standalone',
-        start_url: './',
-        scope: './',
+        start_url: process.env.GITHUB_PAGES ? '/luach-web/' : '/',
+        scope: process.env.GITHUB_PAGES ? '/luach-web/' : '/',
         icons: [
           {
             src: 'icon.png',
@@ -75,7 +75,7 @@ export default defineConfig({
       }
     })
   ],
-  base: process.env.GITHUB_PAGES ? '/luach-web/' : './',
+  base: process.env.GITHUB_PAGES ? '/luach-web/' : '/',
   test: {
     globals: true,
     environment: 'jsdom',
