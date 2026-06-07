@@ -13,30 +13,41 @@
 /* Warm Theme (Default) */
 :root,
 [data-theme="warm"] {
-  --bg-primary: #1a0f0a; /* Warm dark brown-black */
+  --bg-primary: #1a0f0a;
+  /* Warm dark brown-black */
   --bg-secondary: #2d1810;
   --bg-accent: #3d2418;
-  --text-primary: #ead5bd; /* Warm brownish-cream */
+  --text-primary: #ead5bd;
+  /* Warm brownish-cream */
   --text-secondary: #d4a574;
-  --accent-amber: #fbbf24; /* Warm amber */
-  --accent-coral: #fb923c; /* Warm coral/orange */
+  --accent-amber: #fbbf24;
+  /* Warm amber */
+  --accent-coral: #fb923c;
+  /* Warm coral/orange */
   --accent-gold: #fde047;
-  --accent-rose: #fca5a5; /* Warm rose */
+  --accent-rose: #fca5a5;
+  /* Warm rose */
   --glass-bg: rgba(45, 24, 16, 0.7);
-  --glass-border: rgba(251, 191, 36, 0.08); /* Warm golden border */
+  --glass-border: rgba(251, 191, 36, 0.08);
+  /* Warm golden border */
   --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  --body-bg: #0f0604; /* Warm very dark background */
-  --glow-1: rgba(251, 191, 36, 0.12); /* Warm amber glow */
-  --glow-2: rgba(251, 146, 60, 0.12); /* Warm coral glow */
+  --body-bg: #0f0604;
+  /* Warm very dark background */
+  --glow-1: rgba(251, 191, 36, 0.12);
+  /* Warm amber glow */
+  --glow-2: rgba(251, 146, 60, 0.12);
+  /* Warm coral glow */
   --holiday-bg: rgba(61, 36, 24, 0.3);
   --selected-bg: rgba(251, 191, 36, 0.15);
 
   /* Warm theme button colors */
-  --btn-bg: rgba(61, 36, 24, 0.4); /* Warm brown tint */
+  --btn-bg: rgba(61, 36, 24, 0.4);
+  /* Warm brown tint */
   --btn-bg-hover: rgba(61, 36, 24, 0.6);
   --btn-border: rgba(251, 191, 36, 0.15);
   --btn-border-hover: rgba(251, 191, 36, 0.25);
-  --btn-accent-text: #1a0f0a; /* Dark text for amber buttons */
+  --btn-accent-text: #1a0f0a;
+  /* Dark text for amber buttons */
 
   /* Warm theme form inputs */
   --input-bg: rgba(255, 255, 255, 0.05);
@@ -45,21 +56,28 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --bg-primary: #0a0a0a; /* Pure dark */
+  --bg-primary: #0a0a0a;
+  /* Pure dark */
   --bg-secondary: #1a1a1a;
   --bg-accent: #2a2a2a;
-  --text-primary: #e5e5e5; /* Light gray */
+  --text-primary: #e5e5e5;
+  /* Light gray */
   --text-secondary: #a3a3a3;
-  --accent-amber: #fbbf24; /* Bright amber */
-  --accent-coral: #fb923c; /* Bright coral */
+  --accent-amber: #fbbf24;
+  /* Bright amber */
+  --accent-coral: #fb923c;
+  /* Bright coral */
   --accent-gold: #fde047;
   --accent-rose: #fca5a5;
   --glass-bg: rgba(26, 26, 26, 0.7);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  --body-bg: #000000; /* Pure black background */
-  --glow-1: rgba(251, 191, 36, 0.08); /* Subtle amber glow */
-  --glow-2: rgba(139, 92, 246, 0.08); /* Subtle purple glow */
+  --body-bg: #000000;
+  /* Pure black background */
+  --glow-1: rgba(251, 191, 36, 0.08);
+  /* Subtle amber glow */
+  --glow-2: rgba(139, 92, 246, 0.08);
+  /* Subtle purple glow */
   --holiday-bg: rgba(255, 255, 255, 0.05);
   --selected-bg: rgba(251, 191, 36, 0.1);
 
@@ -68,7 +86,8 @@
   --btn-bg-hover: rgba(42, 42, 42, 0.6);
   --btn-border: rgba(255, 255, 255, 0.1);
   --btn-border-hover: rgba(255, 255, 255, 0.2);
-  --btn-accent-text: #0a0a0a; /* Dark text for amber buttons */
+  --btn-accent-text: #0a0a0a;
+  /* Dark text for amber buttons */
 
   /* Dark theme form inputs */
   --input-bg: rgba(255, 255, 255, 0.05);
@@ -77,21 +96,28 @@
 
 /* Light Theme */
 [data-theme="light"] {
-  --bg-primary: #ffffff; /* Pure white */
+  --bg-primary: #ffffff;
+  /* Pure white */
   --bg-secondary: #f5f5f5;
   --bg-accent: #e5e5e5;
-  --text-primary: #1a1a1a; /* Dark text */
+  --text-primary: #1a1a1a;
+  /* Dark text */
   --text-secondary: #525252;
-  --accent-amber: #f59e0b; /* Darker amber for contrast */
-  --accent-coral: #f97316; /* Darker coral */
+  --accent-amber: #f59e0b;
+  /* Darker amber for contrast */
+  --accent-coral: #f97316;
+  /* Darker coral */
   --accent-gold: #eab308;
   --accent-rose: #f87171;
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(0, 0, 0, 0.08);
   --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --body-bg: #fafafa; /* Light gray background */
-  --glow-1: rgba(251, 191, 36, 0.15); /* Warm amber glow */
-  --glow-2: rgba(139, 92, 246, 0.15); /* Purple glow */
+  --body-bg: #fafafa;
+  /* Light gray background */
+  --glow-1: rgba(251, 191, 36, 0.15);
+  /* Warm amber glow */
+  --glow-2: rgba(139, 92, 246, 0.15);
+  /* Purple glow */
   --holiday-bg: rgba(0, 0, 0, 0.05);
   --selected-bg: rgba(0, 0, 0, 0.12);
 
@@ -100,7 +126,8 @@
   --btn-bg-hover: rgba(229, 229, 229, 0.8);
   --btn-border: rgba(0, 0, 0, 0.1);
   --btn-border-hover: rgba(0, 0, 0, 0.2);
-  --btn-accent-text: #1a1a1a; /* Dark text for amber buttons in light theme */
+  --btn-accent-text: #1a1a1a;
+  /* Dark text for amber buttons in light theme */
 
   /* Light theme form inputs */
   --input-bg: rgba(0, 0, 0, 0.03);
@@ -112,12 +139,15 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-accent: #f1f5f9;
-  --text-primary: #1e3a8a; /* Deepest blue */
-  --text-secondary: #2563eb; /* Strong primary blue */
+  --text-primary: #1e3a8a;
+  /* Deepest blue */
+  --text-secondary: #2563eb;
+  /* Strong primary blue */
   --accent-amber: #1d4ed8;
   --accent-coral: #3b82f6;
   --accent-gold: #2563eb;
-  --accent-rose: #1e40af; /* Deeper blue for holidays */
+  --accent-rose: #1e40af;
+  /* Deeper blue for holidays */
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(30, 64, 175, 0.15);
   --glass-shadow: 0 10px 30px rgba(30, 64, 175, 0.1);
@@ -225,12 +255,15 @@ body,
   box-shadow: var(--glass-shadow);
   border-radius: 24px;
 }
+
 .no-border {
   border: none !important;
 }
+
 .no-background {
   background-color: transparent !important;
 }
+
 .cursor-pointer {
   cursor: pointer !important;
 }
@@ -238,10 +271,14 @@ body,
 .calendar-month-year {
   color: var(--accent-coral) !important;
   font-size: 25pt;
+  text-align: center;
+
 }
+
 .calendar-month-year .secondary-month-year {
   font-size: 20pt;
 }
+
 .sidebar {
   width: 360px;
   height: 100%;
@@ -290,7 +327,8 @@ body,
   position: fixed;
   top: 20px;
   bottom: 20px;
-  left: -420px; /* Start off-screen on left */
+  left: -420px;
+  /* Start off-screen on left */
   width: 380px;
   max-width: calc(100vw - 40px);
   z-index: 2000;
@@ -358,10 +396,12 @@ body,
 .scroll-affordance *::-webkit-scrollbar {
   width: 4px;
 }
+
 .scroll-affordance::-webkit-scrollbar-track,
 .scroll-affordance *::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .scroll-affordance::-webkit-scrollbar-thumb,
 .scroll-affordance *::-webkit-scrollbar-thumb {
   background: rgba(251, 191, 36, 0.3);
@@ -377,9 +417,11 @@ body,
 .settings-sidebar::-webkit-scrollbar {
   width: 4px;
 }
+
 .settings-sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .settings-sidebar::-webkit-scrollbar-thumb {
   background: rgba(251, 191, 36, 0.3);
   border-radius: 10px;
@@ -473,7 +515,8 @@ body,
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
-  overflow: visible; /* Changed from hidden to allow wrapping */
+  overflow: visible;
+  /* Changed from hidden to allow wrapping */
   min-height: 0;
 }
 
@@ -493,7 +536,8 @@ body,
   z-index: 20;
   transform: scale(1.02);
   background-color: rgba(255, 255, 255, 0.02);
-  border-color: transparent; /* Hide default border to let box-shadow shine */
+  border-color: transparent;
+  /* Hide default border to let box-shadow shine */
 }
 
 .astroid-overlay {
@@ -579,7 +623,8 @@ body,
 .shabbos-indicator {
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--text-primary); /* Use theme text color for visibility */
+  color: var(--text-primary);
+  /* Use theme text color for visibility */
   text-transform: uppercase;
   margin-top: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -627,13 +672,16 @@ body,
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--glass-border);
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
@@ -707,6 +755,7 @@ select.form-input option {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -717,6 +766,7 @@ select.form-input option {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -728,6 +778,7 @@ select.form-input option {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -757,7 +808,8 @@ select {
 .btn-warm {
   background: var(--btn-bg);
   border-color: var(--btn-border);
-  color: var(--text-primary); /* Lighter text for visibility */
+  color: var(--text-primary);
+  /* Lighter text for visibility */
   transition: all 0.3s ease;
 }
 
@@ -799,7 +851,8 @@ select {
 }
 
 .sidebar-close-btn {
-  display: none; /* Hidden by default on desktop */
+  display: none;
+  /* Hidden by default on desktop */
 }
 
 .settings-close-btn {
@@ -834,6 +887,7 @@ select {
   .main-header h1 {
     display: none;
   }
+
   .main-header .p-1.bg-accent-amber\/10 {
     display: none;
   }
@@ -875,6 +929,7 @@ select {
 
 /* Mobile Responsive Styles */
 @media (max-width: 1200px) {
+
   /* Prevent horizontal and vertical scroll */
   html,
   body,
@@ -946,6 +1001,7 @@ select {
     border: none !important;
     background: transparent !important;
   }
+
   .mobile-footer .nav-controls button:nth-child(4) {
     min-width: 60px !important;
     background: var(--btn-bg) !important;
@@ -957,7 +1013,7 @@ select {
     gap: 0 !important;
   }
 
-  .main-header > div:last-child {
+  .main-header>div:last-child {
     display: none !important;
   }
 
@@ -970,7 +1026,9 @@ select {
     align-items: center !important;
     justify-content: center !important;
     flex: 1;
+    text-align: center;
   }
+
   .calendar-month-year .secondary-month-year {
     font-size: 1rem !important;
   }
@@ -1024,7 +1082,8 @@ select {
   .main-content {
     width: 100%;
     max-width: 100%;
-    gap: 0; /* Remove gap entirely between header and wrapper */
+    gap: 0;
+    /* Remove gap entirely between header and wrapper */
     padding: 0;
   }
 
@@ -1037,12 +1096,14 @@ select {
     padding: 8px 12px !important;
   }
 
-  .main-content > header {
+  .main-content>header {
     flex-direction: row !important;
-    gap: 4px; /* Even smaller gap */
+    gap: 4px;
+    /* Even smaller gap */
     align-items: center !important;
     position: relative;
-    padding: 6px !important; /* Smaller padding */
+    padding: 6px !important;
+    /* Smaller padding */
     min-height: auto !important;
   }
 
@@ -1053,48 +1114,51 @@ select {
     justify-content: center;
     flex: 1;
     font-size: 1.5rem !important;
+    text-align: center;
   }
+
   .calendar-month-year .secondary-month-year {
     font-size: 1rem !important;
   }
 
-  .main-content > header > div:first-child h1 {
-    font-size: 1rem !important; /* Smaller title */
+  .main-content>header>div:first-child h1 {
+    font-size: 1rem !important;
+    /* Smaller title */
     display: flex;
     flex-direction: row !important;
     align-items: center !important;
     gap: 4px !important;
   }
 
-  .main-content > header > div:first-child h1 span {
+  .main-content>header>div:first-child h1 span {
     font-size: 0.75rem !important;
   }
 
   /* Compact navigation buttons */
-  .main-content > header > div:last-child {
+  .main-content>header>div:last-child {
     display: flex;
     flex-direction: row !important;
     gap: 4px !important;
     align-items: center !important;
   }
 
-  .main-content > header button {
+  .main-content>header button {
     padding: 6px 8px !important;
     font-size: 0.75rem !important;
     min-width: auto !important;
   }
 
-  .main-content > header button svg {
+  .main-content>header button svg {
     width: 14px !important;
     height: 14px !important;
   }
 
   /* Make navigation controls more compact */
-  .main-content > header > div:last-child > div:first-child {
+  .main-content>header>div:last-child>div:first-child {
     padding: 4px !important;
   }
 
-  .main-content > header > div:last-child > div:first-child button {
+  .main-content>header>div:last-child>div:first-child button {
     padding: 4px !important;
   }
 
@@ -1131,7 +1195,8 @@ select {
     min-width: 0;
     padding: 3px;
     gap: 1px;
-    border-radius: 8px; /* Slightly smaller radius for small cells */
+    border-radius: 8px;
+    /* Slightly smaller radius for small cells */
   }
 
   .day-number-container {
@@ -1217,66 +1282,87 @@ select {
 .flex {
   display: flex;
 }
+
 .flex-col {
   flex-direction: column;
 }
+
 .flex-row {
   flex-direction: row;
 }
+
 .flex-wrap {
   flex-wrap: wrap;
 }
+
 .flex-grow {
   flex-grow: 1;
 }
+
 .flex-shrink-0 {
   flex-shrink: 0;
 }
+
 .flex-1 {
   flex: 1 1 0%;
 }
+
 .items-center {
   align-items: center;
 }
+
 .items-start {
   align-items: flex-start;
 }
+
 .justify-between {
   justify-content: space-between;
 }
+
 .justify-center {
   justify-content: center;
 }
+
 .gap-1 {
   gap: 4px;
 }
+
 .gap-2 {
   gap: 8px;
 }
+
 .gap-3 {
   gap: 12px;
 }
+
 .gap-4 {
   gap: 16px;
 }
+
 .gap-6 {
   gap: 24px;
 }
+
 .p-2 {
   padding: 8px;
 }
+
 .p-3 {
   padding: 12px;
 }
+
 .p-4 {
   padding: 16px;
 }
+
 .p-6 {
   padding: 24px;
 }
+
 .p-8 {
   padding: 32px;
 }
+
 .px-1 {
   padding-left: 4px;
   padding-right: 4px;
@@ -1286,10 +1372,12 @@ select {
   padding-left: 16px;
   padding-right: 16px;
 }
+
 .px-6 {
   padding-left: 24px;
   padding-right: 24px;
 }
+
 .px-8 {
   padding-left: 32px;
   padding-right: 32px;
@@ -1299,26 +1387,33 @@ select {
   padding-top: 8px;
   padding-bottom: 8px;
 }
+
 .py-3 {
   padding-top: 12px;
   padding-bottom: 12px;
 }
+
 .py-4 {
   padding-top: 16px;
   padding-bottom: 16px;
 }
+
 .pb-4 {
   padding-bottom: 16px;
 }
+
 .pb-8 {
   padding-bottom: 32px;
 }
+
 .pb-10 {
   padding-bottom: 40px;
 }
+
 .mt-4 {
   margin-top: 16px;
 }
+
 .mt-2 {
   margin-top: 8px;
 }
@@ -1326,6 +1421,7 @@ select {
 .overflow-hidden {
   overflow: hidden;
 }
+
 .overflow-y-auto {
   overflow-y: auto;
 }
@@ -1333,6 +1429,7 @@ select {
 .w-full {
   width: 100%;
 }
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
