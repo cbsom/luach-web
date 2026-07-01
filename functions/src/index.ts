@@ -1,5 +1,7 @@
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import * as https from "https";
 import { jDate, Locations, Utils } from "jcal-zmanim";
 
 admin.initializeApp();
@@ -25,6 +27,247 @@ interface UserEvent {
     notes?: string;
     anniversary?: number;
 }
+
+interface AuthenticatedLuachUser {
+    uid: string;
+    email: string | null;
+    name: string | null;
+    authSource: "firebase" | "google";
+}
+
+interface GoogleTokenInfo {
+    aud?: string;
+    sub?: string;
+    email?: string;
+    email_verified?: string | boolean;
+    name?: string;
+    error?: string;
+    error_description?: string;
+}
+
+class ApiError extends Error {
+    constructor(
+        readonly status: number,
+        message: string
+    ) {
+        super(message);
+    }
+}
+
+const getBearerToken = (authorization: string | undefined) => {
+    const match = authorization?.match(/^Bearer\s+(.+)$/i);
+    return match?.[1];
+};
+
+const sendApiError = (res: any, error: unknown) => {
+    if (error instanceof ApiError) {
+        res.status(error.status).json({ error: error.message });
+        return;
+    }
+
+    console.error("Unhandled Luach API error", error);
+    res.status(500).json({ error: "Internal server error" });
+};
+
+const getJson = <T>(url: string): Promise<T> => {
+    return new Promise((resolve, reject) => {
+        https
+            .get(url, (response) => {
+                let body = "";
+                response.setEncoding("utf8");
+                response.on("data", (chunk: string) => {
+                    body += chunk;
+                });
+                response.on("end", () => {
+                    if ((response.statusCode || 500) >= 400) {
+                        reject(new Error(`HTTP ${response.statusCode}: ${body}`));
+                        return;
+                    }
+
+                    try {
+                        resolve(JSON.parse(body) as T);
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            })
+            .on("error", reject);
+    });
+};
+
+const resolveUidForGoogleAccount = async (tokenInfo: GoogleTokenInfo) => {
+    const usersRef = db.collection("users");
+
+    if (tokenInfo.sub) {
+        const directUidSnap = await usersRef.doc(tokenInfo.sub).get();
+        if (directUidSnap.exists) {
+            return tokenInfo.sub;
+        }
+
+        const googleUidSnap = await usersRef
+            .where("googleProviderUid", "==", tokenInfo.sub)
+            .limit(1)
+            .get();
+        if (!googleUidSnap.empty) {
+            return googleUidSnap.docs[0].id;
+        }
+    }
+
+    if (tokenInfo.email) {
+        const emailSnap = await usersRef
+            .where("email", "==", tokenInfo.email)
+            .limit(2)
+            .get();
+
+        if (emailSnap.size === 1) {
+            return emailSnap.docs[0].id;
+        }
+
+        if (emailSnap.size > 1) {
+            throw new ApiError(409, "Multiple Luach users match this Google email");
+        }
+    }
+
+    throw new ApiError(403, "No Luach user is linked to this Google account");
+};
+
+const verifyGoogleAccessToken = async (token: string): Promise<AuthenticatedLuachUser> => {
+    const tokenInfo = await getJson<GoogleTokenInfo>(
+        `https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(token)}`
+    );
+
+    if (tokenInfo.error || !tokenInfo.sub) {
+        throw new ApiError(401, tokenInfo.error_description || "Invalid Google OAuth token");
+    }
+
+    const expectedAudience = process.env.GOOGLE_OAUTH_CLIENT_ID;
+    if (expectedAudience && tokenInfo.aud !== expectedAudience) {
+        throw new ApiError(401, "Google OAuth token audience is not allowed");
+    }
+
+    if (tokenInfo.email_verified === false || tokenInfo.email_verified === "false") {
+        throw new ApiError(403, "Google account email is not verified");
+    }
+
+    return {
+        uid: await resolveUidForGoogleAccount(tokenInfo),
+        email: tokenInfo.email || null,
+        name: tokenInfo.name || null,
+        authSource: "google"
+    };
+};
+
+const verifyLuachBearerToken = async (authorization: string | undefined): Promise<AuthenticatedLuachUser> => {
+    const token = getBearerToken(authorization);
+    if (!token) {
+        throw new ApiError(401, "Missing Authorization bearer token");
+    }
+
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        return {
+            uid: decodedToken.uid,
+            email: decodedToken.email || null,
+            name: decodedToken.name || null,
+            authSource: "firebase"
+        };
+    } catch (error) {
+        console.warn("Bearer token is not a Firebase ID token; trying Google OAuth", error);
+    }
+
+    return verifyGoogleAccessToken(token);
+};
+
+const getUserSettings = async (uid: string) => {
+    const settingsSnap = await db
+        .collection("users")
+        .doc(uid)
+        .collection("settings")
+        .doc("general")
+        .get();
+
+    return settingsSnap.exists ? settingsSnap.data() : null;
+};
+
+const getUserEvents = async (uid: string) => {
+    const eventsSnap = await db
+        .collection("users")
+        .doc(uid)
+        .collection("events")
+        .get();
+
+    return eventsSnap.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data()
+    }));
+};
+
+export const luachApi = onRequest({
+    region: "us-central1",
+    cors: true
+}, async (req, res) => {
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+
+    if (req.method !== "GET") {
+        res.set("Allow", "GET, OPTIONS");
+        res.status(405).json({ error: "Method not allowed" });
+        return;
+    }
+
+    const route = req.path.replace(/^\/+|\/+$/g, "") || "context";
+
+    try {
+        if (route === "health") {
+            res.json({ ok: true, service: "luach-api" });
+            return;
+        }
+
+        const luachUser = await verifyLuachBearerToken(req.header("authorization"));
+        const uid = luachUser.uid;
+
+        if (route === "events") {
+            res.json({
+                uid,
+                events: await getUserEvents(uid)
+            });
+            return;
+        }
+
+        if (route === "settings") {
+            res.json({
+                uid,
+                settings: await getUserSettings(uid)
+            });
+            return;
+        }
+
+        if (route === "context") {
+            const [settings, events] = await Promise.all([
+                getUserSettings(uid),
+                getUserEvents(uid)
+            ]);
+
+            res.json({
+                user: {
+                    uid,
+                    email: luachUser.email,
+                    name: luachUser.name,
+                    authSource: luachUser.authSource
+                },
+                settings,
+                events
+            });
+            return;
+        }
+
+        throw new ApiError(404, "Unknown Luach API route");
+    } catch (error) {
+        sendApiError(res, error);
+    }
+});
 
 const isMonthMatch = (occMonth: number, occYear: number, currMonth: number, currYear: number) => {
     if (currMonth >= 12 && occMonth >= 12) {

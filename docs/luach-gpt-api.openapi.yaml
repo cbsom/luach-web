@@ -1,0 +1,198 @@
+openapi: 3.1.0
+info:
+  title: Luach Web GPT API
+  version: 0.1.0
+  description: Read-only access to the authenticated user's Luach Web events and settings.
+servers:
+  - url: https://us-central1-luach-web.cloudfunctions.net/luachApi
+security:
+  - luachBearerAuth: []
+paths:
+  /context:
+    get:
+      operationId: getLuachContext
+      summary: Get the user's Luach context
+      description: Returns the signed-in user's settings and all saved events.
+      responses:
+        "200":
+          description: Luach settings and events.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LuachContext"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /events:
+    get:
+      operationId: listLuachEvents
+      summary: List the user's Luach events
+      responses:
+        "200":
+          description: Saved Luach events.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  uid:
+                    type: string
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserEvent"
+                required:
+                  - uid
+                  - events
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /settings:
+    get:
+      operationId: getLuachSettings
+      summary: Get the user's Luach settings
+      responses:
+        "200":
+          description: Saved Luach settings.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  uid:
+                    type: string
+                  settings:
+                    anyOf:
+                      - $ref: "#/components/schemas/LuachSettings"
+                      - type: "null"
+                required:
+                  - uid
+                  - settings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    luachBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Firebase ID token or Google OAuth access token
+      description: Accepts Firebase Auth ID tokens for Luach Web clients and Google OAuth access tokens for GPT Actions. In production, set GOOGLE_OAUTH_CLIENT_ID on the Cloud Function to restrict accepted Google tokens to the configured OAuth client.
+  responses:
+    Unauthorized:
+      description: Missing or invalid bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    LuachContext:
+      type: object
+      additionalProperties: false
+      properties:
+        user:
+          type: object
+          additionalProperties: false
+          properties:
+            uid:
+              type: string
+            email:
+              type:
+                - string
+                - "null"
+            name:
+              type:
+                - string
+                - "null"
+            authSource:
+              type: string
+              enum:
+                - firebase
+                - google
+          required:
+            - uid
+            - email
+            - name
+            - authSource
+        settings:
+          anyOf:
+            - $ref: "#/components/schemas/LuachSettings"
+            - type: "null"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserEvent"
+      required:
+        - user
+        - settings
+        - events
+    LuachSettings:
+      type: object
+      additionalProperties: true
+      properties:
+        locationName:
+          type: string
+        todayStartMode:
+          type: string
+          enum:
+            - sunset
+            - midnight
+        emailRemindersEnabled:
+          type: boolean
+        browserNotificationsEnabled:
+          type: boolean
+        lang:
+          type: string
+          enum:
+            - en
+            - he
+        calendarView:
+          type: string
+          enum:
+            - jewish
+            - secular
+        desktopSidebarMode:
+          type: string
+          enum:
+            - permanent
+            - hidden
+    UserEvent:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        type:
+          oneOf:
+            - type: integer
+            - type: string
+        jYear:
+          type: integer
+        jMonth:
+          type: integer
+        jDay:
+          type: integer
+        jAbs:
+          type: integer
+        sDate:
+          type: string
+          format: date-time
+        backColor:
+          type: string
+        textColor:
+          type: string
+        remindDayOf:
+          type: boolean
+        remindDayBefore:
+          type: boolean

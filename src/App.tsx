@@ -403,12 +403,15 @@ const App: React.FC = () => {
     if (user && settingsLoaded) {
       const settingsRef = doc(db, "users", user.uid, "settings", "general");
       const userRef = doc(db, "users", user.uid);
+      const googleProviderUid =
+        user.providerData.find((provider) => provider.providerId === "google.com")?.uid || null;
 
       // Ensure the user document exists so the Cloud Function sweep can find it
       setDoc(
         userRef,
         {
           email: user.email,
+          googleProviderUid,
           lastSeen: new Date().toISOString(),
         },
         { merge: true },
