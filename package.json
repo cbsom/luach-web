@@ -1,6 +1,6 @@
 {
   "name": "luach-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "^6.0.3",
     "firebase": "^12.7.0",
-    "jcal-zmanim": "^1.5.15",
+    "jcal-zmanim": "^1.5.16",
     "lucide-react": "^1.22.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
