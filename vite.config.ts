@@ -9,7 +9,6 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg', 'icon.png', 'Luach.ico'],
       manifest: {
         name: 'Luach - Jewish Calendar',
         short_name: 'Luach',
@@ -70,8 +69,8 @@ export default defineConfig({
             }
           }
         ],
-        // Don't cache reCAPTCHA or App Check related files
-        globIgnores: ['**/recaptcha**', '**/firebaseappcheck**']
+        // Don't cache reCAPTCHA, App Check, or GitHub Pages 404 redirect files
+        globIgnores: ['**/recaptcha**', '**/firebaseappcheck**', '**/404.html']
       }
     })
   ],

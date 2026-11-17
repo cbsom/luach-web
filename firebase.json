@@ -17,9 +17,18 @@
             "value": "same-origin-allow-popups"
           }
         ]
+      },
+      {
+        "source": "/sw.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ],
-    "cleanUrls": true,
+    "cleanUrls": false,
     "trailingSlash": false
   },
   "functions": {

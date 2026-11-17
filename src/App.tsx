@@ -96,7 +96,13 @@ const App: React.FC = () => {
     localStorage.setItem("luach-theme", themeName);
   }, [theme]);
 
-  const [locationName, setLocationName] = useState("Jerusalem");
+  const [locationName, setLocationName] = useState(() => {
+    return localStorage.getItem("luach-location") || "Jerusalem";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("luach-location", locationName);
+  }, [locationName]);
 
   const [todayStartMode, setTodayStartMode] = useState<"sunset" | "midnight">(() => {
     return (localStorage.getItem("luach-today-start") as "sunset" | "midnight") || "sunset";
@@ -293,40 +299,48 @@ const App: React.FC = () => {
           console.error("Warm start failed", e);
         }
 
-        // 1. Sync Settings
-        const settingsRef = doc(db, "users", user.uid, "settings", "general");
-        const settingsSnap = await getDocs(query(collection(db, "users", user.uid, "settings")));
-        const generalSettings = settingsSnap.docs.find((d) => d.id === "general")?.data();
+        if (isCancelled) return;
 
-        if (generalSettings) {
-          if (generalSettings.locationName) setLocationName(generalSettings.locationName);
-          if (generalSettings.todayStartMode) setTodayStartMode(generalSettings.todayStartMode);
-          if (generalSettings.emailRemindersEnabled !== undefined) {
-            setEmailRemindersEnabled(generalSettings.emailRemindersEnabled);
-          }
-          if (generalSettings.browserNotificationsEnabled !== undefined) {
-            setBrowserNotificationsEnabled(generalSettings.browserNotificationsEnabled);
-          }
-          if (generalSettings.lang) setLang(generalSettings.lang);
-          if (generalSettings.calendarView) setCalendarView(generalSettings.calendarView);
-          if (generalSettings.desktopSidebarMode)
-            setDesktopSidebarMode(generalSettings.desktopSidebarMode);
-        } else {
-          // Initial sync of local settings to cloud
-          await setDoc(settingsRef, {
-            locationName,
-            todayStartMode,
-            emailRemindersEnabled,
-            browserNotificationsEnabled,
-            lang,
-            calendarView,
-            desktopSidebarMode,
-          });
-        }
-        setSettingsLoaded(true);
-
-        // 2. Sync Events — with error handling and auto-reconnect
+        // 1. Sync Events — register before settings so offline settings delays never block events
         unsubscribe = setupEventListener(user.uid);
+
+        // 2. Sync Settings (non-blocking if offline)
+        try {
+          const settingsRef = doc(db, "users", user.uid, "settings", "general");
+          const settingsSnap = await getDocs(query(collection(db, "users", user.uid, "settings")));
+          if (isCancelled) return;
+          const generalSettings = settingsSnap.docs.find((d) => d.id === "general")?.data();
+
+          if (generalSettings) {
+            if (generalSettings.locationName) setLocationName(generalSettings.locationName);
+            if (generalSettings.todayStartMode) setTodayStartMode(generalSettings.todayStartMode);
+            if (generalSettings.emailRemindersEnabled !== undefined) {
+              setEmailRemindersEnabled(generalSettings.emailRemindersEnabled);
+            }
+            if (generalSettings.browserNotificationsEnabled !== undefined) {
+              setBrowserNotificationsEnabled(generalSettings.browserNotificationsEnabled);
+            }
+            if (generalSettings.lang) setLang(generalSettings.lang);
+            if (generalSettings.calendarView) setCalendarView(generalSettings.calendarView);
+            if (generalSettings.desktopSidebarMode)
+              setDesktopSidebarMode(generalSettings.desktopSidebarMode);
+          } else {
+            // Initial sync of local settings to cloud (don't await so offline mode doesn't hang)
+            setDoc(settingsRef, {
+              locationName,
+              todayStartMode,
+              emailRemindersEnabled,
+              browserNotificationsEnabled,
+              lang,
+              calendarView,
+              desktopSidebarMode,
+            }).catch((err) => console.error("Failed to initialize cloud settings:", err));
+          }
+        } catch (err) {
+          console.error("⚠️ Settings sync failed (possibly offline):", err);
+        } finally {
+          if (!isCancelled) setSettingsLoaded(true);
+        }
       } else {
         console.log("🏠 No user, loading from local IndexedDB...");
         try {
